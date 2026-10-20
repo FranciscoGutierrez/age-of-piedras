@@ -1,5 +1,5 @@
-/* Age of Piedras v2.8 - caché offline, alcance limitado a este repositorio */
-const CACHE = 'age-of-piedras-v281-civ-hud-1';
+/* Age of Piedras v2.8.1 - caché offline, alcance limitado a este repositorio */
+const CACHE = 'age-of-piedras-v281-civilization-hud-2';
 const ASSETS = [
  './', './index.html', './manifest.webmanifest',
  './icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png',
