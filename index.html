@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Age of Piedras v2.8.1 · Civilization HUD</title>
+<title>Age of Piedras v2.8.1 · Civilizations & Difficulty</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -170,12 +170,21 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
 @media (orientation:landscape) and (max-height:470px){.homeCard{width:min(92vw,660px);padding:9px 22px}.homeCastle{font-size:33px}.homeCard h1{font-size:29px;margin:2px 0}.homeBadge{margin-bottom:2px}.homeSubtitle{margin:0 0 4px;font-size:11px}.homeIntro{margin:0 0 7px;font-size:11px}.homeLanguageLabel{margin-bottom:3px}.langSelector{margin-bottom:8px}.langChoice{padding:5px 10px}#homeStart{padding:8px;font-size:16px;box-shadow:0 3px 0 #694822}.homeFoot{margin-top:7px}}
 @media (max-height:350px){.homeCastle{display:none}.homeIntro{display:none}.homeCard{padding:8px 18px}.homeCard h1{font-size:28px}.homeFoot{display:none}}
 
-/* Civilización actual: siempre visible durante la partida, incluso en iPhone. */
-#playingCiv{display:flex;align-items:center;gap:6px;flex:0 1 auto;min-width:0;max-width:150px;padding:5px 9px;border:1px solid var(--civ-accent,#a5bd90);border-radius:9px;background:#15291ee8;box-shadow:inset 0 0 0 1px #ffffff0a;color:#f8edce;white-space:nowrap}
-#playingCivMark{font-size:19px;line-height:1}#playingCivName{font-size:11px;font-weight:850;overflow:hidden;text-overflow:ellipsis}
-@media(max-width:760px){#playingCiv{padding:4px 6px;gap:3px;max-width:95px}#playingCivMark{font-size:15px}#playingCivName{font-size:9px}}
-@media(orientation:landscape) and (max-height:460px){#playingCiv{padding:3px 7px;max-width:130px}#playingCivMark{font-size:16px}#playingCivName{font-size:10px}}
-@media(max-width:380px){#playingCiv{max-width:80px;padding:3px 4px}#playingCivName{font-size:8px}}
+/* v2.8.1: insignia de la civilización activa en el encabezado, sin otro panel flotante. */
+.brand .civSignature{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:850;letter-spacing:0;color:var(--civ-color,#e8e4b8);vertical-align:middle}
+#civHUDIcon{font-size:12px;line-height:1}
+.brand .gameDifficulty{font-size:9px;letter-spacing:0;color:#b9cbb4}
+@media (orientation:portrait) and (max-width:760px){
+  .brand{gap:4px}
+  .brand small{display:flex;align-items:center;white-space:nowrap;margin-top:3px;line-height:1}
+  .brand .civSignature{font-size:10px;white-space:nowrap}
+  .brand .gameDifficulty{display:none}
+}
+@media (orientation:landscape) and (max-height:460px){
+  .brand small{display:flex;align-items:center;white-space:nowrap;margin-top:2px}
+  .brand .gameDifficulty{display:none}
+}
+@media (max-width:355px){.brand .logo{display:none}}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
@@ -228,8 +237,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
 </div>
 <div id="app">
 <header>
-  <div class="brand"><div class="logo">🏰</div><div class="brandText"><strong>AGE OF PIEDRAS</strong><small>RTS · v2.8 <span id="gameModeSummary"></span></small></div></div>
-  <div id="playingCiv" aria-label="Civilización actual"><span id="playingCivMark" aria-hidden="true">🛡️</span><span id="playingCivName">Celtas</span></div>
+  <div class="brand"><div class="logo">🏰</div><div class="brandText"><strong>AGE OF PIEDRAS</strong><small><span class="civSignature" id="civSignature"><span id="civHUDIcon" aria-hidden="true">🛡️</span><span id="civHUDName">Celtas</span></span><span class="gameDifficulty" id="gameModeSummary"> · Estándar</span></small></div></div>
   <div class="stats" aria-label="Recursos">
     <div class="stat" title="Alimento">🌾 <span id="food">300</span></div>
     <div class="stat" title="Oro">🪙 <span id="gold">180</span></div>
@@ -440,7 +448,7 @@ function start(){activeCiv=selectedCiv;activeDifficulty=selectedDifficulty;persi
 function updateHUD(){
  let mine=alive(0).length,theirs=alive(1).length,occupied=occupiedPop(),reserved=reservedPop();
  $('food').textContent=Math.floor(food);$('gold').textContent=Math.floor(gold);$('pop').textContent=occupied;$('popCap').textContent='/'+popLimit;
- $('ageChip').textContent=ageShort[language][tech[0].age];$('gameModeSummary').textContent='· '+difficulty().name[language];$('playingCivMark').textContent=civ().mark;$('playingCivName').textContent=civ().name[language];$('playingCiv').style.setProperty('--civ-accent',civ().primary);$('playingCiv').setAttribute('aria-label',tr('Civilización: ','Civilization: ')+civ().name[language]);
+ $('ageChip').textContent=ageShort[language][tech[0].age];$('civHUDIcon').textContent=civ().mark;$('civHUDName').textContent=civ().name[language];$('civSignature').style.setProperty('--civ-color',civ().light);$('gameModeSummary').textContent=' · '+difficulty().name[language];
  $('friendly').textContent='🔵 '+mine+tr(' aliados',' allies');$('hostile').textContent='🔴 '+theirs+tr(' invasores',' invaders');
  $('waveNumber').textContent=tr('🌊 OLEADA ','🌊 WAVE ')+(waveActive?wave:Math.min(5,wave+1))+'/5';
  let msg='';
