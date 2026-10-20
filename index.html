@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#111c18">
+<title>Age of Piedras v2.6 · Hub de mejoras</title>
+<style>
+:root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;margin:0;overflow:hidden;-webkit-touch-callout:none;overscroll-behavior:none;background:var(--bg);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);touch-action:none}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-appearance:none;appearance:none}
+#app{height:100%;height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;padding-top:env(safe-area-inset-top);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left)}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;padding:5px 12px;background:#1c2922;border-bottom:1px solid #415241;white-space:nowrap}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}.logo{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#40513a;font-size:19px}.brandText{min-width:0}.brand strong{display:block;font-size:13px;letter-spacing:.04em;line-height:1.05}.brand small{display:block;font-size:9px;color:#b9cbb4;letter-spacing:.09em;margin-top:2px}
+.stats{display:flex;align-items:center;gap:7px}.stat{display:flex;align-items:center;gap:4px;font-weight:800;font-size:14px;background:#111c18;border:1px solid #43553f;padding:5px 8px;border-radius:9px;font-variant-numeric:tabular-nums;min-width:61px;justify-content:center}.stat small{font-size:10px;font-weight:500;color:var(--muted)}
+.roundBtn{width:34px;height:34px;display:grid;place-items:center;border:1px solid #526448;background:#354635;border-radius:9px;font-size:18px;flex:0 0 auto}
+#arena{position:relative;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,#355241,#172720 72%)}
+#game{display:block;-webkit-user-select:none;-webkit-touch-callout:none;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;touch-action:none;border:2px solid #769363;border-radius:6px;box-shadow:0 5px 28px #0007;cursor:default}
+#app{width:100%;max-width:100vw;min-width:0}#arena,#controls,#train,.actions{min-width:0;max-width:100%}#controls{overflow:hidden}#train .unitBtn{min-width:0}#controls .actionBtn{min-width:0}#game{max-width:100%;min-width:0}
+@media(orientation:portrait) and (max-width:760px){#controls{width:100%;grid-template-columns:minmax(0,1fr)}.actions{display:grid;grid-template-columns:1.35fr 1fr 1fr 1fr}.actionBtn{min-width:0!important;padding:4px 2px;gap:3px}#houseBtn{min-width:0!important}#houseBtn small{font-size:clamp(6px,1.8vw,9px);white-space:nowrap}#controls #houseBtn{flex-direction:column;gap:1px}#controls #houseBtn .symbol{display:none}#controls #houseBtn small{font-size:8px}#controls .actionBtn .symbol{font-size:15px}#controls .unitBtn .cost{font-size:clamp(7px,2.2vw,10px)}#train{grid-template-columns:repeat(4,minmax(0,1fr))}}
+#startupHelp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;width:min(88%,390px);background:#1b2d24f5;border:1px solid #c0c891;border-radius:14px;padding:16px;text-align:center;color:#ffedbb;font-size:13px;line-height:1.5;box-shadow:0 12px 32px #0009}#startupHelp strong{display:block;font-size:16px;margin-bottom:7px}#startupHelp small{display:block;margin-top:7px;color:#d8d5ba}#startupHelp[hidden]{display:none!important}#gameFallback{display:none;position:absolute;inset:5%;background:#17291fdc;color:#ffdaa4;padding:18px;align-content:center;text-align:center;border-radius:12px;z-index:4}
+#toast{position:absolute;left:50%;top:9px;transform:translateX(-50%);background:rgba(16,27,21,.91);border:1px solid #677a51;color:#fff0bf;max-width:min(88%,530px);padding:6px 12px;border-radius:10px;text-align:center;font-size:11px;line-height:1.35;pointer-events:none;opacity:0;transition:opacity .2s;z-index:2}#toast.show{opacity:1}
+#rotationTip{display:none;position:absolute;bottom:10px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;background:#15291ce8;padding:7px 10px;border:1px solid #719363;border-radius:9px;color:#d8ecc3;pointer-events:none}
+#controls{background:linear-gradient(180deg,#273a2d,#1b2921);border-top:1px solid #53694c;padding:6px 9px max(7px,env(safe-area-inset-bottom));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;min-height:82px;align-items:center}
+#train{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;min-width:0}
+.unitBtn{min-height:65px;display:grid;grid-template-rows:auto auto auto;align-items:center;justify-items:center;gap:1px;padding:5px 2px 4px;border-radius:9px;border:1px solid #7b8058;background:linear-gradient(#45583c,#303e30);position:relative;box-shadow:inset 0 1px #ffffff1c,0 2px #0004}
+.unitBtn:active:not(:disabled){transform:translateY(1px);background:#68794e}.unitBtn:disabled{opacity:.43;filter:saturate(.5)}.unitBtn .symbol{font-size:21px;line-height:1}.unitBtn .label{font-size:10px;font-weight:800;line-height:1.05;white-space:nowrap}.unitBtn .cost{font-size:10px;color:#ebd999;white-space:nowrap;line-height:1.2}.unitBtn .queued{position:absolute;right:3px;top:2px;font-size:10px;border-radius:5px;background:#143f3a;color:#c4f7dc;min-width:15px;font-weight:800;padding:1px 3px}
+.actions{display:flex;align-items:stretch;gap:5px}.actionBtn{min-height:65px;min-width:62px;padding:5px 7px;border:1px solid #587762;border-radius:9px;background:#345c50;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.actionBtn .symbol{font-size:20px}.actionBtn.on{background:#b18b49;border-color:#f4dc87;color:#1c2016}.actionBtn:disabled{opacity:.45}#houseBtn{border-color:#ab8d58;background:#6b5132}#houseBtn small{font-size:9px;font-weight:650;color:#f7dfab;white-space:nowrap}#houseBtn:disabled{opacity:.6}
+#techOverlay{position:fixed;inset:0;background:#07150cee;z-index:100;display:none;align-items:center;justify-content:center;padding:7px 12px}#techOverlay.show{display:flex}
+.techCard{touch-action:pan-y;-webkit-overflow-scrolling:touch;width:min(100%,450px);max-height:100%;overflow:auto;overscroll-behavior:contain;background:linear-gradient(155deg,#304a37,#172b22);border:1.5px solid #aabb7e;border-radius:16px;padding:12px 15px;box-shadow:0 12px 45px #000b}
+.techHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.techHead h2{font-size:18px;margin:0;line-height:1.2}.techHead button{height:29px;min-width:32px;border:1px solid #789171;border-radius:9px;background:#425d45;font-size:16px}
+.techSub{color:#d3d8c1;font-size:11px;line-height:1.35;margin:6px 0 8px}.techRows{display:grid;gap:7px}.techRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid #657a5b;background:#1a3025;border-radius:10px;padding:8px}.techRow strong{display:block;font-size:12px}.techRow small{color:#c6c9b6;display:block;font-size:10px;margin-top:3px;line-height:1.35}.techBuy{border:1px solid #bea369;background:#916d35;border-radius:9px;min-width:105px;max-width:132px;padding:7px 6px;display:grid;gap:2px;justify-items:center;font-weight:800;font-size:11px}.techBuy small{font-size:10px;color:#f4e3b0;white-space:nowrap}.techBuy:disabled{opacity:.45}.techProgress{height:5px;border-radius:9px;background:#15271d;margin-top:8px;overflow:hidden}.techProgress div{height:100%;width:0;background:#b4dc8a;transition:width .14s}.ageChip{font-size:9px;white-space:nowrap;color:#ffe1a2;border:1px solid #756b42;border-radius:7px;padding:4px 6px;background:#463921}
+#brief{position:absolute;top:8px;left:9px;display:flex;gap:6px;align-items:center;pointer-events:none;font-size:10px;font-weight:800;opacity:.94}.pill{background:#16291dcf;border:1px solid #90a48166;padding:5px 8px;border-radius:7px}.pill.blue{color:#b2e1ff}.pill.red{color:#ffb5a5}#selectedInfo{position:absolute;top:8px;right:9px;pointer-events:none;font-size:10px;font-weight:750;background:#16291de8;border:1px solid #82936d77;padding:5px 9px;border-radius:7px;max-width:43%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#endScreen{position:absolute;inset:0;background:#06120bcc;display:none;align-items:center;justify-content:center;z-index:6;padding:12px;text-align:center}#endScreen.show{display:flex}.endCard{border:2px solid #a2b782;background:linear-gradient(#284334,#17291f);border-radius:20px;padding:20px 28px;max-width:400px;box-shadow:0 12px 45px #000b}.endCard h1{font-size:clamp(25px,6vh,43px);margin:0 0 8px;color:#ffe8a1}.endCard p{margin:0 0 14px;font-size:13px;color:#e4e4ce}.endCard button{padding:10px 22px;border-radius:9px;background:#b59256;border:1px solid #efce84;font-weight:800;color:#1c1b14}
+#menu{position:absolute;inset:0;background:#07130bbf;display:none;z-index:7;align-items:center;justify-content:center;padding:15px}#menu.show{display:flex}.menuCard{max-width:390px;width:100%;border:1px solid #97ab7a;background:#223529;border-radius:16px;padding:18px 22px;box-shadow:0 15px 40px #000a}.menuCard h2{margin:0 0 10px;font-size:21px}.menuCard p{font-size:13px;line-height:1.5;color:#e1ddc8;margin:0 0 9px}.menuCard button{width:100%;padding:11px;margin-top:8px;border-radius:9px;background:#496e4d;border:1px solid #8eb68a;font-weight:800}
+@media (orientation:portrait) and (max-width:760px){#rotationTip{display:block}header{padding:4px 6px;min-height:45px}.brand small{display:none}.brand strong{font-size:10px;letter-spacing:0}.logo{width:24px;height:26px;font-size:16px}.stats{gap:3px}.stat{min-width:0;padding:5px 5px;font-size:11px;gap:2px}.stat small{display:none}.ageChip{font-size:8px;padding:3px 4px}.roundBtn{width:27px;height:29px;font-size:14px}#controls{grid-template-columns:1fr;gap:4px;padding:5px;min-height:145px}.actions{justify-content:stretch;gap:5px}.actionBtn{min-height:36px;flex:1;flex-direction:row;font-size:11px;gap:8px}.actionBtn .symbol{font-size:16px}#houseBtn small{font-size:9px}.unitBtn{min-height:58px}.unitBtn .symbol{font-size:18px}.unitBtn .label,.unitBtn .cost{font-size:9px}#arena{align-items:center}#selectedInfo{font-size:9px}}
+@media (orientation:landscape) and (max-height:460px){header{min-height:38px;padding:2px 9px}.brand small{display:none}.logo{width:24px;height:25px;font-size:17px}.brand strong{font-size:12px}.stat{font-size:12px;padding:3px 7px}.roundBtn{width:28px;height:27px;font-size:15px}#controls{min-height:70px;padding:4px 7px}.unitBtn{min-height:57px;grid-template-rows:auto auto;gap:0;padding:3px}.unitBtn .symbol{font-size:18px}.unitBtn .label{font-size:9px}.unitBtn .cost{font-size:9px}.actionBtn{min-height:57px;min-width:54px;font-size:9px;padding:3px}.techCard{max-height:calc(100% - 4px);padding:8px 11px}.techHead h2{font-size:15px}.techSub{margin:4px 0 5px}.techRows{gap:4px}.techRow{padding:5px}.techBuy{padding:4px;min-width:100px}.actionBtn .symbol{font-size:17px}#houseBtn{min-width:78px}#houseBtn small{font-size:8px}#brief,#selectedInfo{top:4px}}
+@media(max-width:380px){.unitBtn .label{font-size:8px}.unitBtn .cost{font-size:8px}.brand strong{font-size:9px}}
+
+#waveHUD{position:absolute;top:7px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;white-space:nowrap;z-index:1;background:#14261de5;border:1px solid #a2bd8688;border-radius:10px;padding:5px 12px;box-shadow:0 3px 9px #0005}
+#waveTimerTrack{width:100%;height:3px;background:#5f765d;border-radius:5px;overflow:hidden}#waveTimerFill{height:100%;width:100%;background:#f4cc77;transition:width .12s linear}#waveNumber{font-size:12px;color:#ffdea1;font-weight:950;letter-spacing:.07em}#waveMessage{font-size:10px;color:#f0f5d7;font-weight:650}
+#bossHUD{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:min(75%,320px);background:#24151de8;border:1px solid #f38c65;border-radius:10px;color:#ffe5cb;padding:6px 9px;font-size:10px;pointer-events:none;z-index:2;text-align:center}#bossHPText{font-variant-numeric:tabular-nums;color:#ffaf9c}.bossTrack{height:7px;border-radius:9px;background:#080a0b;margin-top:5px;overflow:hidden}#bossBar{height:100%;width:100%;background:linear-gradient(90deg,#a8223c,#ff8453)}
+@media(max-width:650px){#waveHUD{top:28px;padding:3px 8px}#waveNumber{font-size:10px}#waveMessage{font-size:9px}#bossHUD{bottom:5px;font-size:9px}}
+@media(orientation:landscape) and (max-height:460px){#waveHUD{top:3px;padding:2px 10px;gap:0}#waveNumber{font-size:10px}#waveMessage{font-size:9px}#bossHUD{bottom:3px;padding:3px 8px}}
+
+/* Una investigación en curso no tapa el campo de batalla. */
+#researchBadge{position:absolute;top:8px;left:9px;width:53px;height:53px;padding:4px;border:1px solid #e3c478;border-radius:14px;background:#12251ee8;box-shadow:0 3px 12px #0008;display:none;align-items:center;justify-content:center;z-index:3;color:#fff0ba;cursor:pointer;touch-action:manipulation}
+#researchBadge.active{display:flex}
+#researchRing{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#f2cd78 0deg,#3b5547 0deg);padding:4px}
+#researchCore{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#1b3329;position:relative;font-size:21px}
+#researchSeconds{position:absolute;right:-7px;bottom:-9px;font-size:9px;font-weight:900;font-variant-numeric:tabular-nums;border-radius:5px;background:#b88d46;color:#16231b;padding:1px 3px;border:1px solid #f5dc8c;white-space:nowrap}
+#arena.researchActive #brief{top:68px}
+#uniBtn{background:#4a405d;border-color:#9784b8}#uniBtn:not(:disabled){background:#56446f}#uniBtn small{font-size:9px;color:#e1cafa}#uniBtn:disabled{opacity:.53}
+#castleHUD{position:absolute;top:8px;right:9px;z-index:2;pointer-events:none;color:#f5e5c3;font-size:10px;font-weight:800;border:1px solid #ad9475;background:#18281de8;border-radius:8px;padding:5px 8px;min-width:125px;text-align:center}
+.castleTrack{height:4px;background:#38342a;border-radius:4px;margin-top:4px;overflow:hidden}#castleHpBar{height:100%;width:100%;background:#8bd39b;transition:width .15s}
+#selectedInfo{display:none}
+#uniBtn #uniLabel{font-size:10px;line-height:1.05;max-width:100%;overflow-wrap:anywhere;text-align:center}
+@media(max-width:760px){#uniBtn #uniLabel{font-size:9px}#uniBtn:not(:disabled) #uniUnlock{display:none}}
+#controls .actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:760px){.actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.actionBtn{min-width:0;font-size:9px;gap:2px;padding:4px 2px}#houseBtn{min-width:0}#uniBtn small{font-size:8px}}
+@media(orientation:landscape) and (max-height:460px){#castleHUD{top:3px;right:4px;padding:3px 5px;font-size:9px;min-width:105px}}
+@media(orientation:landscape) and (max-height:460px){#researchBadge{top:4px;left:5px;width:47px;height:47px;border-radius:11px}#researchRing{width:38px;height:38px}#researchCore{font-size:18px}#arena.researchActive #brief{top:54px}}
+
+
+/* Niveles: barras segmentadas con estado completo/disponible/bloqueado. */
+.levelTrack{display:flex;gap:5px;align-items:center;margin-top:7px;max-width:240px;min-height:18px}
+.levelEdge{font-size:9px;color:#cbd6c0;font-weight:800;white-space:nowrap;line-height:1}
+.levelEdge.end{color:#e0c88d}
+.levelSegments{display:flex;flex:1;gap:4px;align-items:stretch;min-width:0;height:11px}
+.levelSegment{flex:1;border:1px solid #627764;border-radius:3px;background:#1a2b24;box-shadow:inset 0 1px 2px #0005;position:relative}
+.levelSegment.filled{background:linear-gradient(#f4db85,#c99440);border-color:#ffdd87;box-shadow:0 0 7px #e0b65944}
+.levelSegment.available{background:#536f50;border-color:#9cc291;box-shadow:inset 0 0 0 1px #b6d5a33b}
+.levelSegment.locked{background:#1c2825;border-color:#41544b;opacity:.55}
+.levelSegment.locked:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(120deg,transparent,transparent 4px,#0002 4px,#0002 6px)}
+.levelTrack .levelNow{font-size:10px;font-weight:900;color:#ffe3a0;min-width:28px;text-align:right;white-space:nowrap}
+.techRow:has(.levelTrack){min-height:72px}
+@media (orientation:landscape) and (max-height:460px){.levelTrack{margin-top:4px;min-height:14px}.levelSegments{height:9px}.techRow:has(.levelTrack){min-height:61px}}
+
+/* v2.6: hub único, compacto y táctil para un RTS sin pausas. */
+#controls .actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:6px;min-width:0}
+#controls .actions .actionBtn{min-width:0!important;width:100%}
+#controls .actions .hubLauncher{background:linear-gradient(160deg,#467567,#274d43);border-color:#92bc9b}
+#hubLauncherLabel{font-size:9px;color:#d0e9d6;font-weight:650;white-space:nowrap}
+.techCard{width:min(96vw,510px);max-height:calc(100dvh - 18px);max-height:calc(100vh - 18px);padding:13px 15px 12px;overflow-y:auto}
+.hubEyebrow{font-size:9px;font-weight:900;letter-spacing:.12em;color:#c8d9b7;margin-bottom:3px}
+.techHead h2{font-size:19px}
+.techHead button{width:36px;height:34px;flex-shrink:0}
+.hubWallet{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:11px;margin-bottom:10px}
+.hubWallet span{background:#13261c;border:1px solid #4d7256;border-radius:7px;color:#f5e8c4;padding:5px 9px;font-size:12px;font-weight:750;font-variant-numeric:tabular-nums}
+.hubWallet span:first-child{margin-right:auto;color:#d3ecc3}
+.hubTabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.hubTab{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;min-height:65px;padding:7px 3px;background:#233a2d;border:1px solid #63856a;border-radius:10px;font-size:12px;font-weight:900;color:#e4e9cf;line-height:1.15}
+.hubTab .tabEmoji{font-size:20px;line-height:1.05}
+.hubTab small{font-size:9px;font-weight:650;color:#abcba8;white-space:nowrap}
+.hubTab.active{background:linear-gradient(#6c6845,#475637);border-color:#f3d17d;box-shadow:inset 0 0 0 1px #d3b772;color:#fff6cb}
+.hubTab.active small{color:#ffebb7}
+.hubTab:disabled{background:#18251e;border-color:#3b4c40;color:#778779;opacity:.8;filter:saturate(.65);cursor:not-allowed}
+.hubTab:disabled small{color:#b0ab8d}
+.hubTab:focus-visible{outline:2px solid #f5d483;outline-offset:2px}
+.techSub{margin:5px 0 10px;font-size:11px}
+.techRows{gap:8px}
+.techRow{min-height:67px}
+.hubFeedback{color:#bfe9ad;border-top:1px solid #4e654d;margin-top:10px;padding-top:8px;font-size:11px;line-height:1.4;min-height:25px}
+@media(orientation:landscape) and (max-height:470px){
+ .techCard{padding:7px 12px;max-height:calc(100vh - 10px)}
+ .hubEyebrow{font-size:8px}.techHead h2{font-size:16px}.techHead button{height:28px;width:30px}
+ .hubWallet{margin-top:5px;margin-bottom:5px;gap:4px}.hubWallet span{padding:3px 7px;font-size:10px}
+ .hubTabs{gap:5px;margin-bottom:4px}.hubTab{min-height:44px;gap:1px;padding:3px 2px;font-size:10px;flex-direction:row;flex-wrap:wrap}.hubTab .tabEmoji{font-size:15px}.hubTab small{font-size:8px;width:100%;text-align:center}
+ .techSub{font-size:10px;margin:3px 0 5px}.techRow{min-height:51px}.techRows{gap:5px}.hubFeedback{margin-top:5px;padding-top:5px;font-size:10px}
+}
+@media(orientation:portrait) and (max-width:760px){#controls .actions{grid-template-columns:1fr 1.2fr}#hubLauncherLabel{font-size:8px}.hubTab{min-height:68px}}
+</style>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+<link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Age of Piedras">
+<meta name="application-name" content="Age of Piedras">
+<meta name="description" content="Defiende el castillo y sobrevive a cinco oleadas en Age of Piedras.">
+</head>
+<body>
+<div id="app">
+<header>
+  <div class="brand"><div class="logo">🏰</div><div class="brandText"><strong>AGE OF PIEDRAS</strong><small>RTS CONTINUO · v2.6</small></div></div>
+  <div class="stats" aria-label="Recursos">
+    <div class="stat" title="Alimento">🌾 <span id="food">300</span></div>
+    <div class="stat" title="Oro">🪙 <span id="gold">180</span></div>
+    <div class="stat" title="Población propia">👥 <span id="pop">0</span><small id="popCap">/10</small></div><span class="ageChip" id="ageChip" title="Edad actual">🪵 Oscurita</span>
+  </div>
+  <button class="roundBtn" id="menuBtn" aria-label="Pausa y ayuda">☰</button>
+</header>
+<main id="arena">
+  <canvas id="game" width="960" height="500" aria-label="Mapa interactivo de Age of Piedras"></canvas>
+  <div id="startupHelp" role="status"><strong>🏰 Iniciando Age of Piedras…</strong>Si el juego no aparece, es posible que estés en la vista previa de archivos, que no ejecuta el JavaScript del juego.<small>Para jugar en iPhone, abre esta página en Safari desde una dirección web normal.</small></div>
+  <div id="gameFallback" role="alert"></div>
+  <button id="researchBadge" type="button" aria-label="Ver investigación en curso" title="Ver progreso de la investigación"><span id="researchRing"><span id="researchCore"><span id="researchIcon">🏛️</span><span id="researchSeconds">9 s</span></span></span></button>
+  <div id="brief"><span class="pill blue" id="friendly">🔵 0</span><span class="pill red" id="hostile">🔴 0</span></div>
+  <div id="selectedInfo">⚔️ Defensa automática activada</div>
+  <div id="castleHUD" aria-label="Vida del castillo">🏰 <span id="castleHpText">1000 / 1000</span> PV <div class="castleTrack"><div id="castleHpBar"></div></div></div>
+  <div id="waveHUD" aria-live="off"><span id="waveNumber">OLEADA 1/5</span><span id="waveMessage">Próximo ataque en 30s</span><div id="waveTimerTrack"><div id="waveTimerFill"></div></div></div>
+  <div id="bossHUD" style="display:none"><div>👹 <b>EL GRAN OGRO DEL GARROTE</b> <span id="bossHPText">900 PV</span></div><div class="bossTrack"><div id="bossBar"></div></div></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="techOverlay" role="dialog" aria-label="Tecnologías">
+    <div class="techCard">
+      <div class="techHead"><div><div class="hubEyebrow">TU REINO · ÁRBOL TECNOLÓGICO</div><h2 id="techTitle">📜 Hub de Mejoras</h2></div><button id="techClose" aria-label="Cerrar hub de mejoras">✕</button></div>
+      <div class="hubWallet" aria-label="Recursos y edad actuales"><span id="hubAge">🪵 Oscurita</span><span>🌾 <b id="hubFood">0</b></span><span>🪙 <b id="hubGold">0</b></span></div>
+      <div class="hubTabs" role="tablist" aria-label="Categorías de mejoras">
+        <button type="button" class="hubTab active" id="hubTabAge" role="tab" aria-controls="techRows" aria-selected="true" data-hub-tab="age"><span class="tabEmoji">🏛️</span><span>Centro</span><small>Edades</small></button>
+        <button type="button" class="hubTab" id="hubTabForge" role="tab" aria-controls="techRows" aria-selected="false" data-hub-tab="forge" disabled><span class="tabEmoji">🔨</span><span>Herrería</span><small id="forgeUnlock">🔒 Edad II</small></button>
+        <button type="button" class="hubTab" id="hubTabUni" role="tab" aria-controls="techRows" aria-selected="false" data-hub-tab="uni" disabled><span class="tabEmoji">🎓</span><span>Universidad</span><small id="universityUnlock">🔒 Edad III</small></button>
+      </div>
+      <p class="techSub" id="techSubtitle">Avanza de edad para desbloquear nuevas tecnologías.</p>
+      <div class="techRows" id="techRows" role="tabpanel" aria-label="Mejoras disponibles">
+        <div class="techRow" id="ageRow"><div><strong id="nextAgeName"></strong><small id="nextAgeDesc"></small></div><button class="techBuy" id="upgradeAge"><span>Avanzar</span><small id="ageCost"></small></button></div>
+        <div class="techRow" id="attackRow"><div><strong id="attackLabel"></strong><small id="attackDesc"></small><div class="levelTrack" id="attackLevelTrack" role="img" aria-label="Nivel 0 de 3"><span class="levelEdge">0</span><div class="levelSegments" id="attackLevelSegments"></div><span class="levelEdge end">3 MÁX</span><span class="levelNow" id="attackLevelNow">0/3</span></div></div><button class="techBuy" id="upgradeAttack"><span>Investigar</span><small id="attackCost"></small></button></div>
+        <div class="techRow" id="armorRow"><div><strong id="armorLabel"></strong><small id="armorDesc"></small><div class="levelTrack" id="armorLevelTrack" role="img" aria-label="Nivel 0 de 3"><span class="levelEdge">0</span><div class="levelSegments" id="armorLevelSegments"></div><span class="levelEdge end">3 MÁX</span><span class="levelNow" id="armorLevelNow">0/3</span></div></div><button class="techBuy" id="upgradeArmor"><span>Investigar</span><small id="armorCost"></small></button></div>
+        <div class="techRow" id="farmRow"><div><strong id="farmLabel"></strong><small id="farmDesc"></small><div class="levelTrack" id="farmLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="farmLevelSegments"></div><span class="levelEdge end">2 MÁX</span><span class="levelNow" id="farmLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeFarm"><span>Investigar</span><small id="farmCost"></small></button></div>
+        <div class="techRow" id="mineRow"><div><strong id="mineLabel"></strong><small id="mineDesc"></small><div class="levelTrack" id="mineLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="mineLevelSegments"></div><span class="levelEdge end">2 MÁX</span><span class="levelNow" id="mineLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeMine"><span>Investigar</span><small id="mineCost"></small></button></div>
+        <div class="techRow" id="castleRow"><div><strong id="castleLabel"></strong><small id="castleDesc"></small><div class="levelTrack" id="castleLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="castleLevelSegments"></div><span class="levelEdge end">2 MÁX</span><span class="levelNow" id="castleLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeCastle"><span>Investigar</span><small id="castleCost"></small></button></div>
+      </div>
+      <div class="hubFeedback" id="hubFeedback" role="status" aria-live="polite">⚡ Mejoras instantáneas. El combate sigue mientras investigas.</div>
+      <div id="techResearchText" class="techSub hubResearchText" style="display:none"></div><div class="techProgress" style="display:none"><div id="techBar"></div></div>
+    </div>
+  </div>
+  <div id="rotationTip">↻ Gira tu teléfono para ampliar el campo de batalla</div>
+  <div id="endScreen"><div class="endCard"><h1 id="endTitle">¡VICTORIA!</h1><p id="endText">Has derrotado al enemigo.</p><button id="again">⚔️ Nueva partida</button></div></div>
+  <div id="menu"><div class="menuCard"><h2>🏰 El Asedio de las Piedras</h2><p>🌾 Empiezas con un castillo en el centro, una granja, una mina y <b>dos aldeanos vulnerables</b> (máximo 8). La recolección es automática durante la batalla. ¡Protege a tus aldeanos!</p><p>🎮 <b>RTS en tiempo real:</b> nunca se detienen la economía ni el combate. Recolecta alimento y oro, entrena tropas y compra mejoras mientras se acerca el siguiente ataque. El indicador superior muestra cuánto falta para la próxima oleada. 🌊 Sobrevive a <b>cinco oleadas</b>: norte, este, sur, oeste y luego los cuatro lados. Cada una contiene grupos progresivamente más difíciles y el último ataque culmina con el <b>Gran Ogro del Garrote</b>.</p><p>⚔️ Los soldados atacan solos, priorizando tropas enemigas y después a los aldeanos. Los aldeanos pueden morir. Espada &gt; lanza &gt; arco &gt; espada.</p><p>🏠 Amplía tu castillo con Casitas: +5 de capacidad por mejora, de 10 a 80. Aldeanos ocupan 1 espacio y soldados 2. No se coloca nada en el mapa: el castillo crece visualmente.</p><p>📜 El botón Mejoras abre un hub con pestañas. Centro está disponible desde el inicio; Herrería se desbloquea en Edad Feudalona y Universidad en Edad Castillosa. Todas las investigaciones son instantáneas, puedes comprar varias sin cerrar el hub. El juego continúa en tiempo real.</p><p>🏆 Ganas al derrotar al ogro. Pierdes si destruyen el castillo. La primera oleada es sencilla: las siguientes son más exigentes, y los enemigos ganan armadura por fases ocultas.</p><button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button></div></div>
+</main>
+<footer id="controls">
+ <div id="train">
+  <button class="unitBtn" data-unit="villager" aria-label="Crear aldeano por 50 de alimento"><span class="symbol">👨‍🌾</span><span class="label">Aldeano</span><span class="cost">50 🌾</span></button>
+  <button class="unitBtn" data-unit="sword" aria-label="Crear espadachín por 60 de alimento y 25 de oro"><span class="symbol">⚔️</span><span class="label">Espada</span><span class="cost">60 🌾 · 25 🪙</span></button>
+  <button class="unitBtn" data-unit="spear" aria-label="Crear lancero por 65 de alimento y 15 de oro"><span class="symbol">🔱</span><span class="label">Lancero</span><span class="cost">65 🌾 · 15 🪙</span></button>
+  <button class="unitBtn" data-unit="archer" aria-label="Crear arquero por 45 de alimento y 35 de oro"><span class="symbol">🏹</span><span class="label">Arquero</span><span class="cost">45 🌾 · 35 🪙</span></button>
+ </div>
+ <div class="actions">
+  <button id="houseBtn" class="actionBtn" aria-label="Ampliar castillo y añadir cinco espacios de población"><span class="symbol">🏠</span><span id="houseLabel">Casitas +5</span><small id="houseCost">100 🌾 · 60 🪙</small></button>
+  <button id="upgradesBtn" class="actionBtn hubLauncher" aria-label="Abrir Hub de Mejoras: Centro, Herrería y Universidad"><span class="symbol">📜</span><span>Mejoras</span><small id="hubLauncherLabel">Centro · Herrería · Uni</small></button>
+ </div>
+</footer>
+</div>
+<script>
+(()=>{'use strict';
+const W=960,H=500,cv=document.getElementById('game'),ctx=cv.getContext('2d');
+if(!ctx){const e=document.getElementById('gameFallback');e.style.display='block';e.textContent='Safari no pudo iniciar el lienzo 2D. Prueba abrir esta página directamente en Safari.';return;}
+const $=id=>document.getElementById(id),btns=[...document.querySelectorAll('[data-unit]')];
+// Panel de tecnologías por encima del tablero RTS.
+document.body.appendChild($('techOverlay'));
+const troops={ogre:{hp:2100,speed:29,attack:34,range:37,cooldown:1.65,counter:null,cost:{food:0,gold:0},train:0},villager:{hp:50,speed:53,attack:0,range:0,cooldown:0,cost:{food:50,gold:0},train:1.1},sword:{hp:120,speed:66,attack:19,range:22,cooldown:.75,counter:'spear',cost:{food:60,gold:25},train:1.8},spear:{hp:100,speed:64,attack:15,range:29,cooldown:.72,counter:'archer',cost:{food:65,gold:15},train:1.65},archer:{hp:74,speed:64,attack:14,range:132,cooldown:1.05,counter:'sword',cost:{food:45,gold:35},train:2.1}};
+const labels={villager:'Aldeano',sword:'Espadachín',spear:'Lancero',archer:'Arquero',ogre:'Gran Ogro'},icons={villager:'👨‍🌾',sword:'⚔️',spear:'🔱',archer:'🏹',ogre:'👹'};
+const ages=['Edad Oscurita','Edad Feudalona','Edad Castillosa','Edad Imperialísima'];
+const ageCosts=[null,{food:320,gold:180,seconds:9},{food:460,gold:300,seconds:13},{food:730,gold:510,seconds:18}];
+const smithNames={attack:'Filo del Tío Beto',armor:'Chaleco Antiflechas'};
+const uniNames={farm:'Granjas con doctorado',mine:'Picos con posgrado',castle:'Muros de tesis doctoral'};
+const uniCosts={farm:[{food:210,gold:155,seconds:8},{food:350,gold:255,seconds:11}],mine:[{food:175,gold:220,seconds:8},{food:285,gold:360,seconds:11}],castle:[{food:260,gold:225,seconds:10},{food:400,gold:355,seconds:13}]};
+const castleBaseHp=1000,castleHpBonus=450,uniProductionBonus=.40;
+const POP_START=10,POP_MAX=80,POP_STEP=5,VILLAGER_CAP=8,HOUSE_COST={food:100,gold:60};
+const popWeight=type=>type==='villager'?1:type==='ogre'?0:2;
+const occupiedPop=()=>alive(0).reduce((sum,u)=>sum+popWeight(u.type),0);
+const reservedPop=()=>queue.reduce((sum,q)=>sum+popWeight(q.type),0);
+const villagerCount=()=>alive(0).filter(u=>u.type==='villager').length+queue.filter(q=>q.type==='villager').length;
+const villagerLimitReached=()=>villagerCount()>=VILLAGER_CAP;
+const forgeCost=(type,level)=>({food:(type==='attack'?95:80)+level*(type==='attack'?80:70),gold:(type==='attack'?60:55)+level*(type==='attack'?70:60),seconds:5+level*2});
+let tech=[],research=[],techView=null,popLimit=POP_START;
+let units=[],buildings=[],resources=[],fx=[],queue=[],enemyQueue=[],selected=null,gameOver=false,victor=null,paused=false,time=0,enemyBrain=0,enemyFood=300,enemyGold=180,food=300,gold=180,nextId=1,last=0,toastTimer=0,statsTimer=0;
+const FIRST_ATTACK_DELAY=30;
+const NEXT_ATTACK_DELAY=[0,20,22,24,27];
+let wave=0,waveActive=false,waveTimer=FIRST_ATTACK_DELAY,nextAttackTotal=FIRST_ATTACK_DELAY,pendingSpawns=[],spawnClock=0,bossWaiting=false,bossSpawned=false,announcedBoss=false;
+const waveSize=[0,3,6,9,13,18],directions=[null,'NORTE ↑','ESTE →','SUR ↓','OESTE ←','TODOS LOS FRENTES!'];
+const rand=(a,b)=>a+Math.random()*(b-a),distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const alive=team=>units.filter(u=>u.team===team&&u.hp>0),castle=team=>buildings.find(b=>b.team===team),resource=(team,type)=>resources.find(r=>r.team===team&&r.type===type);
+function notify(text,seconds=2.4){$('toast').textContent=text;$('toast').classList.add('show');toastTimer=seconds}
+function createUnit(type,team,x,y){const p=troops[type],u={id:nextId++,type,team,x,y,hp:p.hp,max:p.hp,target:null,goal:null,mode:'idle',cooldown:rand(0,.2),retarget:0,work:0,carrying:0,resourceType:null,guard:{x,y},movingOrder:false};units.push(u);return u}
+function start(){popLimit=POP_START;tech=[{age:0,attack:0,armor:0,farm:0,mine:0,castle:0},{age:0,attack:0,armor:0,farm:0,mine:0,castle:0}];research=[null,null];techView=null;$('techOverlay').classList.remove('show');$('hubFeedback').textContent='⚡ Mejoras instantáneas. El combate sigue mientras investigas.';units=[];buildings=[];resources=[];fx=[];queue=[];enemyQueue=[];selected=null;gameOver=false;victor=null;paused=false;time=0;enemyBrain=0;enemyFood=300;enemyGold=180;food=320;gold=200;nextId=1;last=performance.now();toastTimer=0;statsTimer=0;wave=0;waveActive=false;waveTimer=FIRST_ATTACK_DELAY;nextAttackTotal=FIRST_ATTACK_DELAY;pendingSpawns=[];spawnClock=0;bossWaiting=false;bossSpawned=false;announcedBoss=false;
+ buildings.push({team:0,x:W/2,y:H/2,hp:castleBaseHp,maxHp:castleBaseHp,damageTimer:0});
+ resources.push({team:0,type:'food',x:W/2-142,y:H/2+78},{team:0,type:'gold',x:W/2+142,y:H/2+78});
+ createUnit('villager',0,W/2-110,H/2+120);createUnit('villager',0,W/2+110,H/2+120);
+ $('endScreen').classList.remove('show');$('menu').classList.remove('show');$('bossHUD').style.display='none';updateResearchBadge();updateHUD();notify('🏰 ¡Construye tu defensa! El primer ataque llega en '+FIRST_ATTACK_DELAY+' segundos.',4)}
+function updateHUD(){let mine=alive(0).length,theirs=alive(1).length,occupied=occupiedPop(),reserved=reservedPop();$('food').textContent=Math.floor(food);$('gold').textContent=Math.floor(gold);$('pop').textContent=occupied;$('popCap').textContent='/'+popLimit;$('ageChip').textContent=['🪵 Oscurita','🌾 Feudalona','🏰 Castillosa','👑 Imperialísima'][tech[0].age];$('friendly').textContent='🔵 '+mine+' aliados';$('hostile').textContent='🔴 '+theirs+' invasores';
+ $('waveNumber').textContent='🌊 OLEADA '+(waveActive?wave:Math.min(5,wave+1))+'/5';
+ let msg='';
+ if(gameOver)msg='Fin de la partida';
+ else if(waveActive)msg=bossSpawned?'👹 ¡EL GRAN OGRO!':bossWaiting&&pendingSpawns.length===0?'💀 ¡EL OGRO SE ACERCA!':'⚔️ '+directions[wave]+' · '+(theirs+pendingSpawns.length)+' invasores restantes';
+ else msg='📯 Próximo ataque en '+Math.ceil(waveTimer)+'s · '+directions[wave+1];
+ $('waveMessage').textContent=msg;
+ $('waveTimerTrack').style.display=!waveActive&&!gameOver?'block':'none';
+ $('waveTimerFill').style.width=(100*Math.max(0,waveTimer)/Math.max(1,nextAttackTotal)).toFixed(1)+'%';
+ const boss=units.find(u=>u.type==='ogre'&&u.hp>0);$('bossHUD').style.display=boss?'block':'none';if(boss){$('bossHPText').textContent=Math.ceil(boss.hp)+' / '+Math.ceil(boss.max)+' PV';$('bossBar').style.width=(100*boss.hp/boss.max).toFixed(1)+'%'}
+ let here=selected&&units.includes(selected)&&selected.hp>0?selected:null;if(!here)selected=null;
+ $('selectedInfo').textContent=here?icons[here.type]+' '+labels[here.type]+(here.team===0&&here.type!=='villager'?' · ⚔'+tech[0].attack+' 🛡'+tech[0].armor:here.team===1&&here.enemyTier!==undefined?' · Nv. '+(here.enemyTier+1):'')+' · '+Math.ceil(here.hp)+' PV':queue.length?'🏰 Entrenando: '+labels[queue[0].type]+' ('+Math.ceil(queue[0].remaining)+' s)':'👨‍🌾 '+villagerCount()+'/8 · Aldeanos en riesgo';
+ for(const b of btns){const p=troops[b.dataset.unit];b.disabled=gameOver||food<p.cost.food||gold<p.cost.gold||occupied+reserved+popWeight(b.dataset.unit)>popLimit||(b.dataset.unit==='villager'&&villagerLimitReached());if(b.dataset.unit==='villager'){b.querySelector('.label').textContent='Aldeano '+villagerCount()+'/'+VILLAGER_CAP;b.querySelector('.cost').textContent=villagerLimitReached()?'MÁX. 8':'50 🌾';}const count=queue.filter(q=>q.type===b.dataset.unit).length;let n=b.querySelector('.queued');if(count){if(!n){n=document.createElement('span');n.className='queued';b.appendChild(n)}n.textContent=count}else if(n)n.remove()}const house=$('houseBtn');house.disabled=gameOver||popLimit>=POP_MAX||food<HOUSE_COST.food||gold<HOUSE_COST.gold;$('houseLabel').textContent=popLimit>=POP_MAX?'Máximo 80':'Casitas +5';$('houseCost').textContent=popLimit>=POP_MAX?'COMPLETO':HOUSE_COST.food+' 🌾 · '+HOUSE_COST.gold+' 🪙';house.title=popLimit>=POP_MAX?'Máximo poblacional conseguido':`Ampliar capacidad de ${popLimit} a ${popLimit+POP_STEP}`;
+ $('hubLauncherLabel').textContent=tech[0].age>=2?'3 secciones disponibles':tech[0].age>=1?'Centro + Herrería':'Centro disponible';
+ const c=castle(0);if(c){$('castleHpText').textContent=Math.ceil(c.hp)+' / '+Math.ceil(c.maxHp);$('castleHpBar').style.width=(100*c.hp/c.maxHp).toFixed(1)+'%';$('castleHpBar').style.background=c.hp/c.maxHp<.3?'#ef7767':'#8bd39b'}
+ if(techView)refreshTech();updateResearchBadge()}
+function train(type){
+ if(gameOver||paused)return;
+ const p=troops[type];if(!p)return;
+ if(type==='villager'&&villagerLimitReached()){notify('👨‍🌾 Límite de 8 aldeanos alcanzado');return}
+ if(occupiedPop()+reservedPop()+popWeight(type)>popLimit){notify('🏠 Población llena: amplía el castillo con Casitas');return}
+ if(food<p.cost.food||gold<p.cost.gold){notify('Necesitas más alimento u oro');return}
+ food-=p.cost.food;gold-=p.cost.gold;
+ // Producción inmediata: los tiempos de 1–2 segundos interrumpían el ritmo táctil.
+ const c=castle(0),a=rand(0,Math.PI*2),r=rand(64,87);
+ const x=clamp(c.x+Math.cos(a)*r,15,W-15),y=clamp(c.y+Math.sin(a)*r,22,H-18);
+ const u=createUnit(type,0,x,y);u.guard={x,y};
+ fx.push({kind:'gather',x,y:y-18,t:.55,text:'+'+icons[type]});
+ notify('✅ '+labels[type]+' listo',.8);updateHUD();
+}
+function buyHouse(){if(gameOver||paused)return;if(popLimit>=POP_MAX){notify('🏰 ¡Capacidad máxima de 80!');return}if(food<HOUSE_COST.food||gold<HOUSE_COST.gold){notify('Necesitas más alimento u oro para ampliar el castillo');return}food-=HOUSE_COST.food;gold-=HOUSE_COST.gold;popLimit=Math.min(POP_MAX,popLimit+POP_STEP);fx.push({kind:'gather',x:W/2,y:H/2-83,t:1,text:'🏰 +5 población'});notify('🏠 Castillo ampliado: capacidad ' + popLimit + '/80',2.2);updateHUD()}
+function trainEnemy(type){const p=troops[type];if(!p||enemyQueue.length>=6||enemyFood<p.cost.food||enemyGold<p.cost.gold||alive(1).length+enemyQueue.length>=40)return false;enemyFood-=p.cost.food;enemyGold-=p.cost.gold;enemyQueue.push({type,remaining:p.train});return true}
+function resourcesFor(team){return team===0?{food,gold}:{food:enemyFood,gold:enemyGold}}
+function canResearch(team,type){const t=tech[team];if(gameOver||research[team])return false;if(type==='age')return t.age<3;
+ if(type==='attack'||type==='armor')return t[type]<t.age;
+ return (type==='farm'||type==='mine'||type==='castle')&&t.age>=2&&t[type]<t.age-1}
+function getCost(team,type){return type==='age'?ageCosts[tech[team].age+1]:type==='attack'||type==='armor'?forgeCost(type,tech[team][type]):uniCosts[type][tech[team][type]]}
+function updateResearchBadge(){
+ const r=research[0],button=$('researchBadge'),arena=$('arena');
+ if(!r||gameOver){button.classList.remove('active');arena.classList.remove('researchActive');button.setAttribute('aria-hidden','true');return}
+ const icon=({age:'🏛️',attack:'⚔️',armor:'🛡️',farm:'🌾',mine:'🪙',castle:'🏰'})[r.type];
+ const title=r.type==='age'?ages[tech[0].age+1]:(smithNames[r.type]||uniNames[r.type]);
+ const progress=Math.max(0,Math.min(1,1-r.remaining/r.total));
+ $('researchRing').style.background='conic-gradient(#f2cd78 '+(progress*360).toFixed(1)+'deg, #3b5547 0deg)';
+ $('researchIcon').textContent=icon;
+ $('researchSeconds').textContent=Math.max(0,Math.ceil(r.remaining))+'s';
+ button.title='Investigando '+title+' · '+Math.round(progress*100)+'%';
+ button.setAttribute('aria-label','Investigación '+title+', '+Math.round(progress*100)+' por ciento, '+Math.max(0,Math.ceil(r.remaining))+' segundos. Toca para ver detalles.');
+ button.removeAttribute('aria-hidden');button.classList.add('active');arena.classList.add('researchActive');
+}
+function requestResearch(type){
+ if(beginResearch(0,type)){
+  const t=tech[0],name=type==='age'?ages[t.age]:(smithNames[type]||uniNames[type]);
+  $('hubFeedback').textContent='✅ '+name+(type==='age'?' desbloqueada.': ' · nivel '+t[type]+' conseguido.')+(type==='age'&&t.age===1?' ¡La Herrería está disponible!':type==='age'&&t.age===2?' ¡La Universidad está disponible!':'');
+  refreshTech();updateResearchBadge();
+ }else{
+  const c=getCost(0,type);
+  const info=!canResearch(0,type)?'🔒 Requiere avanzar de edad':c&&(food<c.food||gold<c.gold)?'🌾🪙 Recursos insuficientes':'⚠️ No disponible ahora';
+  $('hubFeedback').textContent=info;refreshTech();
+ }
+}
+function beginResearch(team,type){if(!canResearch(team,type))return false;const c=getCost(team,type),r=resourcesFor(team);if(!c||r.food<c.food||r.gold<c.gold)return false;
+ if(team===0){food-=c.food;gold-=c.gold}else{enemyFood-=c.food;enemyGold-=c.gold}
+ // Mejoras instantáneas: el costo y los requisitos se mantienen intactos.
+ research[team]={type,remaining:0,total:1};
+ processResearch(team,1);
+ return true}
+function processResearch(team,dt){const r=research[team];if(!r)return;r.remaining-=dt;if(r.remaining>0)return;const t=tech[team];if(r.type==='age')t.age=Math.min(3,t.age+1);else if(r.type==='attack'||r.type==='armor')t[r.type]=Math.min(3,t[r.type]+1);else t[r.type]=Math.min(2,t[r.type]+1);
+ if(r.type==='castle'){const c=castle(team);if(c){c.maxHp=castleBaseHp+castleHpBonus*t.castle;c.hp=Math.min(c.maxHp,c.hp+castleHpBonus)}}
+ research[team]=null;
+ if(team===0){updateResearchBadge();notify(r.type==='age'?'🎉 ¡Bienvenidos a la '+ages[t.age]+'!':(smithNames[r.type]||uniNames[r.type])+' nivel '+t[r.type]+' completado',3.4);updateHUD()}}
+function techCostText(c){return c?c.food+' 🌾 · '+c.gold+' 🪙':''}
+function selectHubTab(which){
+ if(which==='forge'&&tech[0].age<1)return;
+ if(which==='uni'&&tech[0].age<2)return;
+ techView=which;
+ refreshHubTabs();
+ $('techSubtitle').textContent=which==='age'?'🏛️ Desde la Edad Oscurita hasta la Imperialísima.':which==='forge'?'🔨 Mejora daño y armadura. Tus tropas cambian de apariencia.':'🎓 Fortalece la economía y la vida de tu castillo.';
+ $('ageRow').style.display=which==='age'?'grid':'none';
+ $('attackRow').style.display=which==='forge'?'grid':'none';$('armorRow').style.display=which==='forge'?'grid':'none';
+ for(const type of ['farm','mine','castle'])$(type+'Row').style.display=which==='uni'?'grid':'none';
+ $('techRows').setAttribute('aria-label',which==='age'?'Avanzar de edad':which==='forge'?'Mejoras de herrería':'Mejoras universitarias');
+ refreshTech();
+}
+function refreshHubTabs(){
+ if(!techView)return;
+ const age=tech[0].age;
+ $('hubTabForge').disabled=age<1;
+ $('hubTabUni').disabled=age<2;
+ $('forgeUnlock').textContent=age<1?'🔒 Edad II':'Ataque y defensa';
+ $('universityUnlock').textContent=age<2?'🔒 Edad III':'Economía y castillo';
+ for(const kind of ['age','forge','uni']){
+  const tab=$('hubTab'+(kind==='age'?'Age':kind==='forge'?'Forge':'Uni'));
+  const active=techView===kind;
+  tab.classList.toggle('active',active);
+  tab.setAttribute('aria-selected',active?'true':'false');
+  tab.tabIndex=active?0:-1;
+ }
+ $('hubAge').textContent=['🪵 Oscurita','🌾 Feudalona','🏰 Castillosa','👑 Imperialísima'][age];
+ $('hubFood').textContent=Math.floor(food);
+ $('hubGold').textContent=Math.floor(gold);
+}
+function openTech(which='age'){
+ if(gameOver||paused)return;
+ $('techOverlay').classList.add('show');
+ selectHubTab(which==='forge'&&tech[0].age<1?'age':which==='uni'&&tech[0].age<2?'age':which);
+ $('techClose').focus({preventScroll:true});
+}
+function closeTech(){techView=null;$('techOverlay').classList.remove('show')}
+const levelMax={attack:3,armor:3,farm:2,mine:2,castle:2};
+function updateLevelTrack(type){
+ const level=tech[0][type],max=levelMax[type],unlockedMax=type==='attack'||type==='armor'?tech[0].age:Math.max(0,tech[0].age-1);
+ const segments=$(type+'LevelSegments');
+ // Reutiliza los nodos para evitar parpadeos mientras el panel está abierto.
+ if(segments.children.length!==max){segments.textContent='';for(let i=0;i<max;i++){const s=document.createElement('span');s.className='levelSegment';segments.appendChild(s)}}
+ for(let i=0;i<max;i++){let s=segments.children[i];const state=i<level?'filled':i<unlockedMax?'available':'locked';s.className='levelSegment '+state;s.title='Nivel '+(i+1)+': '+(state==='filled'?'completado':state==='available'?'disponible':'requiere avanzar de edad')}
+ $(type+'LevelNow').textContent=level+'/'+max;
+ $(type+'LevelTrack').setAttribute('aria-label',type+' nivel '+level+' de '+max+'. '+Math.max(0,unlockedMax-level)+' niveles desbloqueados pendientes.');
+}
+function refreshAllLevelTracks(){for(const type of Object.keys(levelMax))updateLevelTrack(type)}
+function refreshTech(){if(!techView)return;refreshHubTabs();const t=tech[0],r=research[0],wallet=resourcesFor(0);$('techResearchText').textContent=r?'⏳ Investigando '+(r.type==='age'?ages[t.age+1]:(smithNames[r.type]||uniNames[r.type]))+' · '+Math.ceil(r.remaining)+' s':'⚡ Mejoras instantáneas al pagar su costo.';$('techBar').style.width=r?(100*(1-r.remaining/r.total)).toFixed(1)+'%':'0%';
+ const nxt=ageCosts[t.age+1];$('nextAgeName').textContent=t.age===3?'👑 ¡Edad Imperialísima alcanzada!':'➡️ '+ages[t.age+1];$('nextAgeDesc').textContent=t.age===3?'Ya conoces todos los secretos del garrote.':'Actual: '+ages[t.age]+' · mejora de ataque y defensa disponible después';$('ageCost').textContent=techCostText(nxt);$('upgradeAge').disabled=!canResearch(0,'age')||!nxt||wallet.food<nxt.food||wallet.gold<nxt.gold;
+ for(const kind of ['attack','armor']){const lvl=t[kind],next=forgeCost(kind,lvl),unlocked=lvl<t.age,done=lvl>=3;$((kind==='attack'?'attackLabel':'armorLabel')).textContent=(kind==='attack'?'⚔️ ':'🛡️ ')+smithNames[kind]+' +'+lvl;$((kind==='attack'?'attackDesc':'armorDesc')).textContent=done?'Mejora máxima conseguida':unlocked?kind==='attack'?'+17% de daño por nivel, para soldados presentes y futuros':'-2.5 de daño recibido y -5% adicional por nivel':'Requiere avanzar de edad para investigar el nivel '+(lvl+1);$(kind+'Cost').textContent=done?'MÁXIMO':techCostText(next);$('upgrade'+(kind==='attack'?'Attack':'Armor')).disabled=!canResearch(0,kind)||wallet.food<next.food||wallet.gold<next.gold}
+ for(const type of ['farm','mine','castle']){const level=t[type],done=level>=2,next=done?null:uniCosts[type][level],unlocked=t.age>=2&&level<t.age-1;
+  $(type+'Label').textContent=({farm:'🌾 ',mine:'🪙 ',castle:'🏰 '})[type]+uniNames[type]+' · Nv. '+level+'/2';
+  $(type+'Desc').textContent=done?'¡Investigación al máximo!':!unlocked?'Se requiere una edad superior para el siguiente nivel':type==='farm'?'Cada nivel aumenta +40% la producción de alimento':type==='mine'?'Cada nivel aumenta +40% la producción de oro':'Cada nivel aporta +450 PV máximos al castillo y repara 450 PV';
+  $(type+'Cost').textContent=done?'MÁXIMO':techCostText(next);
+  $('upgrade'+type[0].toUpperCase()+type.slice(1)).disabled=!canResearch(0,type)||!next||wallet.food<next.food||wallet.gold<next.gold;
+ }
+ refreshAllLevelTracks();
+}
+function assignWork(u,dt){const foodNode=resource(u.team,'food'),goldNode=resource(u.team,'gold');if(!u.resourceType){const others=alive(u.team).filter(v=>v.type==='villager'&&v!==u);const f=others.filter(v=>v.resourceType==='food').length,g=others.filter(v=>v.resourceType==='gold').length;u.resourceType=f<=g?'food':'gold'}
+ const node=u.resourceType==='food'?foodNode:goldNode;if(!node)return;
+ const d=distance(u,node);if(d>29.5){walk(u,node,dt,29)}else{u.work+=dt;while(u.work>=.55){u.work-=.55;const value=2*(1+uniProductionBonus*(tech[u.team][node.type==='food'?'farm':'mine']||0));if(u.team===0){if(node.type==='food')food+=value;else gold+=value}else{if(node.type==='food')enemyFood+=value;else enemyGold+=value}if(Math.random()<.18)fx.push({x:u.x+rand(-6,6),y:u.y-16,t:.58,full:.58,kind:'gather',text:(node.type==='food'?'🌾':'🪙')+' +'+Math.round(value)})}}}
+function walk(u,p,dt,stop=0){let d=distance(u,p);if(d<=stop+.1)return true;const speed=(u.speedMul||1)*troops[u.type].speed;const n=Math.min(d-stop,speed*dt);if(n>0){u.x=clamp(u.x+(p.x-u.x)/d*n,13,W-13);u.y=clamp(u.y+(p.y-u.y)/d*n,22,H-16)}return false}
+function chooseTarget(u){const foes=alive(1-u.team);if(!foes.length)return null;
+ // Los invasores dan prioridad a defensores próximos; si el camino está libre, asedian el castillo.
+ const nearby=u.team===1?foes.filter(a=>distance(u,a)<175):foes;
+ if(!nearby.length)return null;
+ const soldiers=nearby.filter(a=>a.type!=='villager');const candidates=soldiers.length?soldiers:nearby;
+ candidates.sort((a,b)=>{const score=v=>distance(u,v)-(troops[u.type].counter===v.type?75:0)-(v.type==='ogre'?40:0);return score(a)-score(b)});return candidates[0]}
+function shot(u,target,damage){if(u.type==='archer')fx.push({kind:'arrow',x:u.x,y:u.y,tx:target.x,ty:target.y,t:.2,full:.2});const armor=target.team===0?tech[0].armor:(target.enemyArmor||0);const reduced=Math.max(1,damage*(1-armor*.05)-armor*2.5);target.hp=Math.max(0,target.hp-reduced);fx.push({kind:'hit',x:target.x+rand(-6,6),y:target.y-11,t:.55,text:'-'+Math.ceil(reduced)});
+ if(u.type==='ogre'){fx.push({kind:'shock',x:target.x,y:target.y,t:.55,full:.55});for(const ally of alive(0)){if(ally!==target&&distance(ally,target)<49){const splash=Math.max(1,reduced*.36);ally.hp=Math.max(0,ally.hp-splash);fx.push({kind:'hit',x:ally.x,y:ally.y-14,t:.55,text:'-'+Math.ceil(splash)})}}}}
+function combat(u,dt){u.cooldown=Math.max(0,u.cooldown-dt);u.retarget-=dt;
+ if(!u.target||u.target.hp<=0||!units.includes(u.target)||u.target.team===u.team||u.retarget<=0){u.target=chooseTarget(u);u.retarget=.35}
+ if(u.target){const enemy=u.target;if(walk(u,enemy,dt,troops[u.type].range)){if(u.cooldown<=0){let d=troops[u.type].attack*(u.team===0?1+tech[0].attack*.17:(u.attackMul||1));if(troops[u.type].counter===enemy.type)d*=2.25;shot(u,enemy,d);u.cooldown=troops[u.type].cooldown}}}
+ else if(u.team===0&&distance(u,u.guard)>10){walk(u,u.guard,dt,8)}else if(u.team===1){const c=castle(0);if(c&&walk(u,c,dt,52)){if(u.cooldown<=0){const damage=troops[u.type].attack*(u.attackMul||1);c.hp=Math.max(0,c.hp-damage);u.cooldown=troops[u.type].cooldown;fx.push({kind:'hit',x:c.x+rand(-18,18),y:c.y-37,t:.55,text:'🏰 -'+Math.ceil(damage)})}}}}
+// Curva incremental: las fases son deliberadamente invisibles para el jugador.
+// La primera oleada NO puede crear enemigos blindados.
+const ENEMY_PHASE_TIERS={1:[0,0,0],2:[0,0,1],3:[0,1,1,2],4:[0,1,2,2],5:[1,1,2,3,3]};
+function buildWaveSpawns(w){
+ const tiers=ENEMY_PHASE_TIERS[w],phases=tiers.length;
+ const sides=w===5?['top','right','bottom','left']:['top','right','bottom','left'][w-1];
+ const weights=Array.from({length:phases},(_,i)=>i+1),sumWeights=weights.reduce((a,b)=>a+b,0);
+ let counts=weights.map(v=>Math.max(1,Math.floor(waveSize[w]*v/sumWeights)));
+ let remain=waveSize[w]-counts.reduce((a,b)=>a+b,0);
+ let cursor=phases-1;
+ while(remain>0){counts[cursor]++;remain--;cursor=(cursor-1+phases)%phases}
+ while(remain<0){if(counts[cursor]>1){counts[cursor]--;remain++}cursor=(cursor-1+phases)%phases}
+ const out=[];
+ for(let p=0;p<phases;p++){
+  const tier=tiers[p];
+  for(let i=0;i<counts[p];i++){
+   const side=w===5?sides[(p+i)%4]:sides;
+   out.push({type:pickEnemyType(w,tier,i,p),side,tier,
+    delayBefore:out.length===0?0:i===0?Math.max(2.3,3.8-w*.18):Math.max(.72,1.12-w*.055)});
+  }
+ }
+ return out;
+}
+function pickEnemyType(w,tier,index,phase){
+ if(w===1)return 'sword';
+ if(w===2)return ['sword','spear','sword'][index%3];
+ if(w===3)return ['sword','spear','archer','sword'][(index+phase)%4];
+ if(w===4)return ['spear','archer','sword','archer'][(index+phase)%4];
+ return ['archer','spear','sword','archer','spear'][(index+phase)%5];
+}
+function launchWave(){
+ if(gameOver||waveActive||wave>=5)return;
+ wave++;
+ waveActive=true;spawnClock=0;bossWaiting=wave===5;bossSpawned=false;
+ pendingSpawns=buildWaveSpawns(wave);
+ spawnClock=pendingSpawns.length?pendingSpawns[0].delayBefore:0;
+ notify('🌊 ¡OLEADA '+wave+'/5! '+(wave===1?'Llegan los primeros reclutas.':wave===5?'¡Ataque por los cuatro frentes!':'¡Defiende tu castillo!'),4);
+ updateHUD();
+}
+function step(dt){
+ if(paused||gameOver)return;
+ time+=dt;
+ processResearch(0,dt);
+ // RTS continuo: aldeanos recolectan, tropas combaten y el jugador puede mejorar siempre.
+ if(!waveActive&&wave<5){
+  waveTimer=Math.max(0,waveTimer-dt);
+  if(waveTimer<=0)launchWave();
+ }
+ if(waveActive&&pendingSpawns.length){
+  spawnClock-=dt;
+  if(spawnClock<=0){
+   spawnInvader(pendingSpawns.shift());
+   spawnClock=pendingSpawns.length?pendingSpawns[0].delayBefore:0;
+  }
+ }
+ for(const u of [...units]){
+  if(u.hp<=0)continue;
+  if(u.type==='villager')assignWork(u,dt);
+  else combat(u,dt);
+ }
+ units=units.filter(u=>u.hp>0);
+ if(selected&&!units.includes(selected))selected=null;
+ for(const e of fx)e.t-=dt;
+ fx=fx.filter(e=>e.t>0);
+ const c=castle(0);
+ if(c&&c.hp<=0)finish(1);
+ else if(waveActive&&!pendingSpawns.length&&alive(1).length===0){
+  if(wave===5&&!bossSpawned){spawnBoss()}
+  else if(wave===5&&bossSpawned){finish(0)}
+  else{
+   waveActive=false;
+   const rewardFood=115+wave*18,rewardGold=90+wave*14;
+   food+=rewardFood;gold+=rewardGold;
+   nextAttackTotal=NEXT_ATTACK_DELAY[wave]||20;
+   waveTimer=nextAttackTotal;
+   notify('🏆 Oleada '+wave+' superada · +'+rewardFood+' 🌾 +'+rewardGold+' 🪙. Próximo ataque en '+Math.ceil(waveTimer)+'s.',4);
+  }
+ }
+ statsTimer+=dt;if(statsTimer>.12){statsTimer=0;updateHUD()}
+ if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').classList.remove('show')}
+}
+function beginWave(){launchWave()}
+function spawnInvader({type,side,tier=0}){
+ const margin=13;let x,y;
+ if(side==='top'){x=rand(55,W-55);y=margin}
+ else if(side==='right'){x=W-margin;y=rand(55,H-40)}
+ else if(side==='bottom'){x=rand(55,W-55);y=H-margin}
+ else{x=margin;y=rand(55,H-40)}
+ const u=createUnit(type,1,x,y);
+ const waveHp=[0,.57,.78,1,1.13,1.25];
+ const waveDamage=[0,.48,.74,.94,1.09,1.23];
+ const waveSpeed=[0,.88,.94,1,1.03,1.06];
+ u.enemyTier=tier;
+ u.enemyArmor=tier*.75 + Math.max(0,wave-3)*.15;
+ u.attackMul=waveDamage[wave]*(1+tier*.085);
+ u.speedMul=waveSpeed[wave]*(1+tier*.022);
+ u.max=Math.round(u.max*waveHp[wave]*(1+tier*.13));
+ u.hp=u.max;u.guard={x:W/2,y:H/2};
+}
+function spawnBoss(){bossSpawned=true;bossWaiting=false;const u=createUnit('ogre',1,W/2,28);u.guard={x:W/2,y:H/2};notify('👹 ¡LLEGÓ EL GRAN OGRO DEL GARROTE! ¡DERROTALO!',6);updateHUD()}
+function finish(w){if(gameOver)return;gameOver=true;victor=w;$('endTitle').textContent=w===0?'🏆 ¡VICTORIA!':w===1?'💀 EL CASTILLO HA CAÍDO':'⚖️ EMPATE';$('endText').textContent=w===0?'¡Sobreviviste a las cinco oleadas y derrotaste al Gran Ogro del Garrote! La aldea entera canta WOLOLO.':w===1?'El enemigo derribó tu castillo. Invierte en soldados y mejoras de la Universidad.':'Fin del asedio.';$('endScreen').classList.add('show');updateResearchBadge();updateHUD()}
+function ground(){ctx.fillStyle='#68894f';ctx.fillRect(0,0,W,H);for(let y=0;y<H;y+=34)for(let x=0;x<W;x+=34){ctx.fillStyle=((Math.floor(x/34)+Math.floor(y/34))%3===0)?'#709253':'#66854b';ctx.fillRect(x,y,33,33)}
+ ctx.strokeStyle='#a1a26a40';ctx.lineWidth=28;ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.strokeStyle='#d0ba8060';ctx.lineWidth=2;ctx.setLineDash([8,9]);ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.setLineDash([]);
+ for(let i=0;i<70;i++){let xx=(i*131+46)%W,yy=(i*97+57)%H;ctx.fillStyle=i%3===0?'#3d7440':'#a2a75e';ctx.fillRect(xx,yy,3,4)}
+ ctx.save();ctx.globalAlpha=.85;ctx.textAlign='center';ctx.font='bold 13px system-ui';ctx.fillStyle='#fbe3af';ctx.fillText('↓ NORTE',W/2,20);ctx.fillText('↑ SUR',W/2,H-8);ctx.save();ctx.translate(18,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('OESTE →',0,0);ctx.restore();ctx.save();ctx.translate(W-18,H/2);ctx.rotate(Math.PI/2);ctx.fillText('← ESTE',0,0);ctx.restore();ctx.restore()}
+function drawFarm(n){const age=(tech[n.team]&&tech[n.team].age)||0,{x,y}=n;ctx.save();ctx.translate(x,y);ctx.fillStyle="#0004";ctx.beginPath();ctx.ellipse(0,24,48,14,0,0,Math.PI*2);ctx.fill();
+ if(age===0){ctx.fillStyle='#6d4f2a';ctx.fillRect(-42,-12,84,34);ctx.fillStyle='#8a6d43';ctx.fillRect(-10,-28,20,16);ctx.fillStyle='#5d4020';ctx.beginPath();ctx.moveTo(-14,-12);ctx.lineTo(0,-36);ctx.lineTo(14,-12);ctx.fill();for(let i=-28;i<=28;i+=12){ctx.strokeStyle='#dec36a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,-7);ctx.lineTo(i+2,16);ctx.stroke();ctx.beginPath();ctx.moveTo(i+1,2);ctx.lineTo(i-5,-4);ctx.moveTo(i+1,2);ctx.lineTo(i+7,-3);ctx.stroke()}}
+ else if(age===1){ctx.fillStyle='#7e5a2f';ctx.fillRect(-46,-18,92,42);ctx.fillStyle='#97bc5a';ctx.fillRect(-42,-14,84,34);for(let i=-34;i<=34;i+=11){ctx.strokeStyle='#ead383';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,-9);ctx.lineTo(i+3,15);ctx.stroke()}ctx.fillStyle='#74614a';ctx.fillRect(-14,-33,28,15);ctx.fillStyle='#90592e';ctx.beginPath();ctx.moveTo(-18,-18);ctx.lineTo(0,-42);ctx.lineTo(18,-18);ctx.fill();ctx.strokeStyle='#caa56b';ctx.lineWidth=3;ctx.strokeRect(-49,-21,98,48)}
+ else if(age===2){ctx.fillStyle='#8f6d39';ctx.fillRect(-50,-20,100,46);ctx.fillStyle='#8db85a';ctx.fillRect(-45,-15,90,36);for(let i=-38;i<=38;i+=10){ctx.strokeStyle='#f0d58a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,-10);ctx.lineTo(i+3,17);ctx.stroke()}ctx.fillStyle='#8b8f8d';ctx.fillRect(-17,-40,34,20);ctx.fillStyle='#a86135';ctx.beginPath();ctx.moveTo(-22,-20);ctx.lineTo(0,-50);ctx.lineTo(22,-20);ctx.fill();ctx.fillStyle='#d7c48b';ctx.fillRect(22,-30,12,13);ctx.strokeStyle='#d7bc7a';ctx.lineWidth=3;ctx.strokeRect(-52,-22,104,50)}
+ else {ctx.fillStyle='#9d7b43';ctx.fillRect(-54,-22,108,50);ctx.fillStyle='#95bf5f';ctx.fillRect(-48,-17,96,40);for(let i=-41;i<=41;i+=9){ctx.strokeStyle='#f5dc91';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,-12);ctx.lineTo(i+4,20);ctx.stroke()}ctx.fillStyle='#a5a8aa';ctx.fillRect(-18,-44,36,22);ctx.fillStyle='#bb6e3a';ctx.beginPath();ctx.moveTo(-24,-22);ctx.lineTo(0,-56);ctx.lineTo(24,-22);ctx.fill();ctx.fillStyle='#edd9a5';ctx.fillRect(23,-35,14,14);ctx.fillStyle='#72522e';ctx.fillRect(-46,-34,8,20);ctx.fillRect(38,-34,8,20);ctx.strokeStyle='#ebd59b';ctx.lineWidth=3;ctx.strokeRect(-56,-24,112,54)}ctx.restore()}
+function drawMine(n){const age=(tech[n.team]&&tech[n.team].age)||0,{x,y}=n;ctx.save();ctx.translate(x,y);ctx.fillStyle='#0004';ctx.beginPath();ctx.ellipse(0,24,45,14,0,0,Math.PI*2);ctx.fill();
+ if(age===0){ctx.fillStyle='#5c594f';ctx.beginPath();ctx.moveTo(-42,24);ctx.lineTo(-30,-12);ctx.lineTo(-5,-30);ctx.lineTo(24,-18);ctx.lineTo(39,14);ctx.lineTo(18,30);ctx.closePath();ctx.fill();ctx.fillStyle='#f2c955';ctx.beginPath();ctx.moveTo(-18,10);ctx.lineTo(-12,-8);ctx.lineTo(4,-18);ctx.lineTo(13,-2);ctx.lineTo(10,15);ctx.closePath();ctx.fill();ctx.strokeStyle='#c4983b';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-24,-6);ctx.lineTo(-24,18);ctx.moveTo(15,-1);ctx.lineTo(15,20);ctx.moveTo(-28,-6);ctx.lineTo(18,-6);ctx.stroke()}
+ else if(age===1){ctx.fillStyle='#666258';ctx.beginPath();ctx.moveTo(-46,25);ctx.lineTo(-34,-16);ctx.lineTo(-7,-34);ctx.lineTo(28,-20);ctx.lineTo(43,16);ctx.lineTo(21,32);ctx.closePath();ctx.fill();ctx.fillStyle='#f5ce5c';ctx.beginPath();ctx.moveTo(-20,10);ctx.lineTo(-13,-9);ctx.lineTo(6,-19);ctx.lineTo(18,-3);ctx.lineTo(16,18);ctx.closePath();ctx.fill();ctx.fillStyle='#7d5c36';ctx.fillRect(-24,-5,48,7);ctx.fillRect(-21,-5,6,26);ctx.fillRect(15,-5,6,26);ctx.strokeStyle='#d4ad62';ctx.lineWidth=3;ctx.strokeRect(18,11,18,9);ctx.fillStyle='#7d5c36';ctx.fillRect(25,4,4,8)}
+ else if(age===2){ctx.fillStyle='#767168';ctx.beginPath();ctx.moveTo(-48,27);ctx.lineTo(-37,-19);ctx.lineTo(-9,-38);ctx.lineTo(31,-23);ctx.lineTo(46,17);ctx.lineTo(24,35);ctx.closePath();ctx.fill();ctx.fillStyle='#ffda6c';ctx.beginPath();ctx.moveTo(-22,12);ctx.lineTo(-15,-10);ctx.lineTo(8,-22);ctx.lineTo(19,-2);ctx.lineTo(17,19);ctx.closePath();ctx.fill();ctx.fillStyle='#99958e';ctx.fillRect(-26,-8,52,9);ctx.fillRect(-25,-8,7,31);ctx.fillRect(18,-8,7,31);ctx.fillStyle='#86745e';ctx.fillRect(-31,-15,62,7);ctx.fillStyle='#6e5537';ctx.fillRect(20,11,19,10);ctx.fillRect(26,4,5,8);ctx.strokeStyle='#e7d1a0';ctx.lineWidth=2;ctx.strokeRect(19,10,20,11)}
+ else {ctx.fillStyle='#817b72';ctx.beginPath();ctx.moveTo(-50,29);ctx.lineTo(-40,-20);ctx.lineTo(-11,-40);ctx.lineTo(33,-24);ctx.lineTo(48,19);ctx.lineTo(25,37);ctx.closePath();ctx.fill();ctx.fillStyle='#ffdf73';ctx.beginPath();ctx.moveTo(-23,13);ctx.lineTo(-16,-11);ctx.lineTo(10,-24);ctx.lineTo(20,-2);ctx.lineTo(18,21);ctx.closePath();ctx.fill();ctx.fillStyle='#a6a099';ctx.fillRect(-28,-10,56,10);ctx.fillRect(-27,-10,8,33);ctx.fillRect(19,-10,8,33);ctx.fillStyle='#8a765f';ctx.fillRect(-33,-18,66,8);ctx.fillStyle='#7b5d3c';ctx.fillRect(19,-34,6,24);ctx.fillRect(28,-34,6,24);ctx.fillRect(17,-34,19,5);ctx.strokeStyle='#e5d59b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(22,-34);ctx.lineTo(40,-48);ctx.moveTo(31,-34);ctx.lineTo(12,-48);ctx.stroke();ctx.fillStyle='#6f5836';ctx.fillRect(21,11,20,10);ctx.fillRect(28,4,5,8)}ctx.restore()}
+function drawCastle(b){const age=(tech[b.team]&&tech[b.team].age)||0;const base=b.team?'#993f3d':'#3b75a9';const light=b.team?'#ed8b6c':'#91c7e9';const stage=b.team===0?(popLimit-POP_START)/POP_STEP:0;ctx.save();ctx.translate(b.x,b.y);ctx.scale(1+stage*.022,1+stage*.022);ctx.fillStyle='#0004';ctx.beginPath();ctx.ellipse(0,31,58,18,0,0,Math.PI*2);ctx.fill();
+ if(age===0){ctx.fillStyle='#6f5333';ctx.fillRect(-46,-16,92,46);ctx.fillStyle='#8b6a44';ctx.fillRect(-36,-29,72,18);for(let i=-40;i<=40;i+=10){ctx.fillStyle='#7c5c37';ctx.fillRect(i,-37,8,12)}ctx.fillStyle='#5e4527';ctx.fillRect(-11,-8,22,38);ctx.fillStyle=base;ctx.fillRect(-10,-24,20,16);ctx.fillStyle=light;ctx.fillRect(-3,-49,6,20);ctx.beginPath();ctx.moveTo(3,-49);ctx.lineTo(20,-42);ctx.lineTo(3,-35);ctx.fill()}
+ else if(age===1){ctx.fillStyle='#6b6860';ctx.fillRect(-48,-24,96,54);ctx.fillStyle='#8e8c84';ctx.fillRect(-56,-6,16,36);ctx.fillRect(40,-6,16,36);ctx.fillStyle=base;ctx.fillRect(-42,-23,84,40);ctx.fillStyle='#4b5052';ctx.fillRect(-35,-35,70,12);for(let i=-35;i<36;i+=17){ctx.fillStyle='#b6b3a3';ctx.fillRect(i,-41,10,10)}for(const xx of [-48,48]){ctx.fillStyle='#5e5f5d';ctx.fillRect(xx-10,-41,20,55);ctx.fillStyle=light;ctx.fillRect(xx-9,-47,18,14)}ctx.fillStyle='#1f241f';ctx.beginPath();ctx.arc(0,19,13,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-13,18,26,12);ctx.fillStyle=light;ctx.fillRect(-3,-60,6,22);ctx.beginPath();ctx.moveTo(3,-60);ctx.lineTo(23,-52);ctx.lineTo(3,-44);ctx.fill()}
+ else if(age===2){ctx.fillStyle='#676d71';ctx.fillRect(-57,2,114,24);ctx.fillStyle='#828987';ctx.fillRect(-62,-12,24,40);ctx.fillRect(38,-12,24,40);ctx.fillStyle='#676d71';ctx.fillRect(-46,-24,92,48);ctx.fillStyle=base;ctx.fillRect(-41,-23,82,42);ctx.fillStyle='#4d5458';ctx.fillRect(-34,-37,68,12);for(let i=-34;i<35;i+=17){ctx.fillStyle='#c2c2b4';ctx.fillRect(i,-43,10,11)}for(const xx of [-47,47]){ctx.fillStyle='#565e61';ctx.fillRect(xx-12,-46,24,61);ctx.fillStyle=light;ctx.fillRect(xx-11,-52,22,15);ctx.fillStyle='#d9ccb3';ctx.fillRect(xx-11,-57,6,8);ctx.fillRect(xx+5,-57,6,8)}ctx.fillStyle='#1c231e';ctx.beginPath();ctx.arc(0,17,15,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-15,16,30,15);ctx.fillStyle=light;ctx.fillRect(-3,-72,6,23);ctx.beginPath();ctx.moveTo(3,-72);ctx.lineTo(26,-64);ctx.lineTo(3,-56);ctx.fill();ctx.fillStyle='#ddc272';ctx.fillRect(-22,-58,9,18);ctx.fillRect(13,-58,9,18)}
+ else {ctx.fillStyle='#71777b';ctx.fillRect(-63,2,126,24);ctx.fillStyle='#919894';ctx.fillRect(-69,-15,27,43);ctx.fillRect(42,-15,27,43);ctx.fillStyle='#71777b';ctx.fillRect(-48,-29,96,53);ctx.fillStyle=base;ctx.fillRect(-43,-28,86,46);ctx.fillStyle='#535a5f';ctx.fillRect(-36,-41,72,12);for(let i=-36;i<37;i+=16){ctx.fillStyle='#cbcabf';ctx.fillRect(i,-47,10,11)}for(const xx of [-52,52]){ctx.fillStyle='#5e666b';ctx.fillRect(xx-13,-49,26,66);ctx.fillStyle=light;ctx.fillRect(xx-12,-55,24,15);ctx.fillStyle='#e4d9c0';ctx.fillRect(xx-12,-60,7,9);ctx.fillRect(xx+4,-60,7,9)}ctx.fillStyle='#202823';ctx.beginPath();ctx.arc(0,18,16,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-16,17,32,15);ctx.fillStyle='#ddb968';ctx.fillRect(-49,-70,12,28);ctx.fillRect(37,-70,12,28);ctx.fillStyle=light;ctx.fillRect(-3,-77,6,26);ctx.beginPath();ctx.moveTo(3,-77);ctx.lineTo(29,-68);ctx.lineTo(3,-59);ctx.fill();ctx.fillStyle='#be613e';ctx.beginPath();ctx.moveTo(-37,-69);ctx.lineTo(-18,-62);ctx.lineTo(-37,-55);ctx.moveTo(49,-69);ctx.lineTo(68,-62);ctx.lineTo(49,-55);ctx.fill()}ctx.restore()}
+function drawOgre(u){ctx.save();ctx.translate(u.x,u.y);const s=1.35+Math.sin(time*3)*.018;ctx.scale(s,s);ctx.fillStyle='#0006';ctx.beginPath();ctx.ellipse(0,25,33,11,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#553d2d';ctx.fillRect(-17,14,14,18);ctx.fillRect(8,14,14,18);ctx.fillStyle='#718a4e';ctx.beginPath();ctx.ellipse(0,0,28,31,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#526b3b';ctx.beginPath();ctx.ellipse(-26,1,12,19,0,0,Math.PI*2);ctx.ellipse(26,1,12,19,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#4c311d';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(28,-2);ctx.lineTo(38,-34);ctx.stroke();ctx.strokeStyle='#a37b4f';ctx.lineWidth=17;ctx.beginPath();ctx.moveTo(39,-34);ctx.lineTo(44,-60);ctx.stroke();ctx.strokeStyle='#563420';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(36,-35);ctx.lineTo(50,-34);ctx.stroke();ctx.fillStyle='#82985a';ctx.beginPath();ctx.arc(0,-16,20,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e3d0a1';ctx.beginPath();ctx.moveTo(-14,-29);ctx.lineTo(-24,-49);ctx.lineTo(-5,-35);ctx.moveTo(13,-29);ctx.lineTo(24,-49);ctx.lineTo(5,-35);ctx.fill();ctx.fillStyle='#ff6c55';ctx.fillRect(-12,-19,8,5);ctx.fillRect(5,-19,8,5);ctx.fillStyle='#2b261e';ctx.fillRect(-3,-7,7,8);ctx.fillStyle='#ffffff';ctx.fillRect(-9,0,5,7);ctx.fillRect(7,0,5,7);ctx.fillStyle='#220f0ed0';ctx.fillRect(-34,-74,68,7);ctx.fillStyle='#ff7862';ctx.fillRect(-34,-74,68*u.hp/u.max,7);ctx.fillStyle='#ffdfb4';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText('👹 OGRO',0,-80);ctx.restore()}
+function drawUnit(u){if(u.type==='ogre'){drawOgre(u);return}ctx.save();ctx.translate(u.x,u.y);const owned=u.team===0;const isVillager=u.type==='villager';const attackLv=owned?tech[0].attack:0;const defenseLv=owned?tech[0].armor:(u.enemyTier!==undefined?Math.min(3,u.enemyTier+1):0);ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(0,9,11,4,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=owned?'#2c679f':'#a43e3c';ctx.beginPath();ctx.arc(0,2,isVillager?8.5:10.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=isVillager?'#d6ad69':u.type==='spear'?'#d0bd85':u.type==='archer'?'#7cc38d':'#a7bedb';ctx.fillRect(-6,-1,12,9);
+ if(owned&&!isVillager){
+  const armorPal=['','#95a9b1','#c8d5d9','#f0d17d'][defenseLv];
+  if(defenseLv>0){
+   ctx.fillStyle=armorPal;ctx.fillRect(-8,-2,16,5);ctx.fillRect(-10,1,4,8);ctx.fillRect(6,1,4,8);
+   if(defenseLv>=2){ctx.fillRect(-7,-12,14,4);ctx.fillRect(-7,5,14,3);ctx.fillRect(-12,0,3,7);ctx.fillRect(9,0,3,7)}
+   if(defenseLv>=3){ctx.fillRect(-4,-17,8,5);ctx.fillRect(-3,-21,6,4);ctx.fillRect(-12,-1,24,2)}
+  }
+  if(attackLv>=2){ctx.fillStyle='#b58a52';ctx.fillRect(-13,-1,3,9)}
+  if(attackLv>=3){ctx.fillStyle='#f2ddb0';ctx.fillRect(-15,-14,2,13);ctx.beginPath();ctx.moveTo(-13,-14);ctx.lineTo(-5,-11);ctx.lineTo(-13,-8);ctx.fill()}
+ }
+ if(!owned&&u.enemyTier!==undefined){const armorPal=['#8e7451','#a8afb7','#e1be63','#bde7ff'][Math.min(3,u.enemyTier)];ctx.fillStyle=armorPal;ctx.fillRect(-8,-2,16,5);ctx.fillRect(-10,1,4,8);ctx.fillRect(6,1,4,8);if(u.enemyTier>=1){ctx.fillRect(-5,-13,10,4)}if(u.enemyTier>=2){ctx.fillRect(-7,-9,14,3)}if(u.enemyTier>=3){ctx.fillRect(-2,-17,4,6)}for(let i=0;i<=u.enemyTier;i++){ctx.fillRect(-11+i*6,-27,4,3)}}ctx.fillStyle='#e9c69b';ctx.beginPath();ctx.arc(0,-7,5.5,0,Math.PI*2);ctx.fill();
+ if(u.type==='sword'){
+  const len=16+attackLv*2.2, top=-13-attackLv*1.2;ctx.lineWidth=2.3+attackLv*.32;ctx.strokeStyle=attackLv>=3?'#fff2af':attackLv===2?'#f3d082':'#f2ead5';ctx.beginPath();ctx.moveTo(6,2);ctx.lineTo(6+len*0.62,top);ctx.stroke();if(attackLv>=1){ctx.strokeStyle='#9b6e3f';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(4,-2);ctx.lineTo(10,-2);ctx.stroke()}if(attackLv>=2){ctx.fillStyle='#ecd79d';ctx.fillRect(8+attackLv,-15-attackLv,3,3)}
+ }else if(u.type==='spear'){
+  const len=19+attackLv*3;ctx.strokeStyle=attackLv>=3?'#fff0b0':attackLv===2?'#f0d280':'#e7dfb8';ctx.lineWidth=2.3+attackLv*.25;ctx.beginPath();ctx.moveTo(8,10);ctx.lineTo(8+len*0.58,-19-attackLv*1.5);ctx.stroke();if(attackLv>=1){ctx.fillStyle=attackLv>=2?'#ffd786':'#efe3b5';ctx.beginPath();ctx.moveTo(18+attackLv*2,-21-attackLv);ctx.lineTo(24+attackLv*2,-15-attackLv);ctx.lineTo(17+attackLv*2,-11-attackLv);ctx.closePath();ctx.fill()}if(attackLv>=3){ctx.fillStyle='#c7423b';ctx.fillRect(13,-6,2,8)}
+ }else if(u.type==='archer'){
+  ctx.strokeStyle=attackLv>=3?'#ffe79e':attackLv===2?'#f5d585':'#f6d78a';ctx.lineWidth=2.3+attackLv*.2;ctx.beginPath();ctx.arc(8,-2,8+attackLv*.6,-Math.PI*.45,Math.PI*.5);ctx.stroke();if(attackLv>=1){ctx.strokeStyle='#fff6ca';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(3,-8);ctx.lineTo(12,4);ctx.stroke()}if(attackLv>=2){ctx.strokeStyle='#ffe8a2';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(10,-8);ctx.lineTo(18,-16-attackLv);ctx.stroke()}if(attackLv>=3){ctx.fillStyle='#ffde92';ctx.fillRect(18,-20,5,2)}
+ }else{ctx.strokeStyle='#b18344';ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(7,3);ctx.lineTo(14,-10);ctx.stroke()}
+ ctx.fillStyle='#160e0db0';ctx.fillRect(-12,-21,24,4);ctx.fillStyle=owned?'#7ce2b7':'#ff8d7f';ctx.fillRect(-12,-21,24*u.hp/u.max,4);if(selected===u){ctx.strokeStyle='#ffdf66';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,17,0,Math.PI*2);ctx.stroke()}ctx.restore()}
+function render(){ctx.clearRect(0,0,W,H);ground();for(const r of resources){if(r.type==='food')drawFarm(r);else drawMine(r)}for(const b of buildings)drawCastle(b);
+ for(const u of units.filter(u=>u.type!=='ogre'))drawUnit(u);for(const u of units.filter(u=>u.type==='ogre'))drawUnit(u);
+ for(const p of fx){ctx.globalAlpha=clamp(p.t/(p.full||.55),0,1);if(p.kind==='arrow'){ctx.strokeStyle='#fff2a5';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x,p.y);let progress=1-p.t/p.full;ctx.lineTo(p.x+(p.tx-p.x)*progress,p.y+(p.ty-p.y)*progress);ctx.stroke()}else if(p.kind==='shock'){ctx.strokeStyle='#ff975e';ctx.lineWidth=4;ctx.beginPath();ctx.arc(p.x,p.y,49*(1-p.t/p.full),0,2*Math.PI);ctx.stroke()}else{ctx.font=p.kind==='gather'?'bold 13px system-ui':'bold 13px system-ui';ctx.textAlign='center';ctx.lineWidth=p.kind==='gather'?3:2.4;ctx.strokeStyle=p.kind==='gather'?'#143626':'#2a180c';ctx.strokeText(p.text,p.x,p.y-(.55-p.t)*25);ctx.fillStyle=p.kind==='hit'?'#ffe5ad':'#eeffb9';ctx.fillText(p.text,p.x,p.y-(.55-p.t)*25)}}ctx.globalAlpha=1;
+ if(queue.length){const q=queue[0],p=troops[q.type];ctx.fillStyle='#13201ce0';ctx.fillRect(12,H-34,208,22);ctx.fillStyle='#e4ce9b';ctx.font='bold 11px system-ui';ctx.textAlign='left';ctx.fillText('🏰 '+labels[q.type]+' · '+Math.ceil(q.remaining)+'s',19,H-19);ctx.fillStyle='#89cb87';ctx.fillRect(12,H-38,208*(1-clamp(q.remaining/p.train,0,1)),3)}}
+function pointer(e){let r=cv.getBoundingClientRect();return{x:clamp((e.clientX-r.left)*W/r.width,0,W),y:clamp((e.clientY-r.top)*H/r.height,0,H)}}
+function selectedAt(p){return [...units].reverse().find(u=>u.hp>0&&distance(p,u)<19)||null}
+function mapTap(p){if(gameOver||paused)return;const tapped=selectedAt(p);selected=tapped&&tapped.team===0?tapped:null;updateHUD()}
+// Compatible con Pointer Events (Safari actual) y Touch Events (Safari antiguos).
+// Solo instalamos UN mecanismo por navegador para evitar órdenes duplicadas.
+if('PointerEvent' in window){
+ cv.addEventListener('pointerup',function(e){if(e.button===2)return;e.preventDefault();mapTap(pointer(e))},{passive:false});
+}else if('ontouchstart' in window){
+ cv.addEventListener('touchend',function(e){if(!e.changedTouches||!e.changedTouches.length)return;const t=e.changedTouches[0];e.preventDefault();mapTap(pointer(t))},{passive:false});
+}else{
+ cv.addEventListener('click',function(e){mapTap(pointer(e))});
+}
+$('houseBtn').addEventListener('click',buyHouse);
+$('upgradesBtn').addEventListener('click',()=>openTech('age'));
+for(const tab of document.querySelectorAll('[data-hub-tab]'))tab.addEventListener('click',()=>selectHubTab(tab.dataset.hubTab));
+$('techOverlay').addEventListener('keydown',e=>{
+ if(e.key==='Escape'){closeTech();$('upgradesBtn').focus();return}
+ if(e.target.closest('.hubTabs')&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){
+  const available=['age',...(tech[0].age>=1?['forge']:[]),...(tech[0].age>=2?['uni']:[])];
+  const index=available.indexOf(techView),next=available[(index+(e.key==='ArrowRight'?1:available.length-1))%available.length];
+  selectHubTab(next);$('hubTab'+(next==='age'?'Age':next==='forge'?'Forge':'Uni')).focus();e.preventDefault();
+ }
+});
+$('techClose').addEventListener('click',closeTech);
+$('researchBadge').addEventListener('click',()=>{const r=research[0];if(r)openTech(r.type==='age'?'age':uniNames[r.type]?'uni':'forge')});
+$('techOverlay').addEventListener('click',e=>{if(e.target===$('techOverlay'))closeTech()});
+$('upgradeAge').addEventListener('click',()=>requestResearch('age'));
+$('upgradeAttack').addEventListener('click',()=>requestResearch('attack'));
+$('upgradeArmor').addEventListener('click',()=>requestResearch('armor'));
+for(const type of ['farm','mine','castle'])$('upgrade'+type[0].toUpperCase()+type.slice(1)).addEventListener('click',()=>requestResearch(type));
+for(const b of btns)b.addEventListener('click',()=>train(b.dataset.unit));
+function toggleMenu(state){if(state)closeTech();paused=state;$('menu').classList.toggle('show',state);last=performance.now()}
+$('menuBtn').addEventListener('click',()=>toggleMenu(true));$('resume').addEventListener('click',()=>toggleMenu(false));$('newGame').addEventListener('click',start);$('again').addEventListener('click',start);
+function resize(){
+ // Safari iPhone: la altura util puede cambiar cuando la barra de direcciones aparece.
+ const vh=window.visualViewport ? window.visualViewport.height : window.innerHeight;
+ if(vh>100)document.getElementById('app').style.height=Math.round(vh)+'px';
+ const a=$('arena').getBoundingClientRect();const scale=Math.max(.01,Math.min(a.width/W,a.height/H));
+ cv.style.width=Math.max(1,W*scale)+'px';cv.style.height=Math.max(1,H*scale)+'px';
+}
+window.addEventListener('resize',resize);window.addEventListener('orientationchange',resize);
+if(window.visualViewport)window.visualViewport.addEventListener('resize',resize);
+if(window.ResizeObserver)new ResizeObserver(resize).observe($('arena'));
+function frame(now){
+ let dt=Math.min(.06,Math.max(0,(now-last)/1000));last=now;
+ try{step(dt);render()}catch(err){showFatal(err);return}
+ requestAnimationFrame(frame)
+}
+function showFatal(err){const fallback=$('gameFallback');fallback.textContent='Error en el juego: '+(err&&err.message?err.message:String(err))+' · Actualiza la página o prueba Chrome.';fallback.style.display='block';console.error(err)}
+window.addEventListener('unhandledrejection',function(e){showFatal(e.reason)});
+window.addEventListener('error',e=>{notify('Error: '+e.message,10)});
+window.__ageDebug={state:()=>({food,gold,enemyFood,enemyGold,tech:tech.map(x=>({...x})),research:research.map(x=>x?{...x}:null),resources:resources.map(r=>({...r})),pop:occupiedPop(),popReserved:reservedPop(),popLimit,popMax:POP_MAX,castleStage:(popLimit-POP_START)/POP_STEP,enemies:alive(1).length,queue:queue.length,enemyQueue:enemyQueue.length,gameOver,paused,units:units.map(u=>({type:u.type,team:u.team,x:u.x,y:u.y,hp:u.hp,max:u.max})),wave,waveActive,waveTimer,pending:pendingSpawns.length,bossSpawned,castleHp:castle(0)?.hp,castleMaxHp:castle(0)?.maxHp,villagerCount:villagerCount(),nextAttackTotal}),wavePlan:buildWaveSpawns,train,buyHouse,start,finish,step,beginResearch,openTech,closeTech,beginWave,spawnInvader,spawnBoss,launchWave};
+try{
+ start();resize();render();
+ $('startupHelp').hidden=true;
+ requestAnimationFrame(frame);
+}catch(err){showFatal(err)}
+})();
+</script>
+<noscript><div style="position:fixed;z-index:100;inset:10%;background:#203528;color:#ffe4b0;padding:25px;border-radius:14px;text-align:center">Este juego necesita JavaScript. La vista previa de archivos de iPhone puede bloquearlo. Abre el juego como una página web en Safari.</div></noscript>
+<script>
+if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')) {
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(err=>console.warn('PWA offline:',err)));
+}
+</script>
+</body>
+</html>
