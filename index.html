@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Age of Piedras v2.6 · Hub de mejoras</title>
+<title>Age of Piedras v2.7 · Main Menu / Menú principal</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -110,20 +110,56 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
  .techSub{font-size:10px;margin:3px 0 5px}.techRow{min-height:51px}.techRows{gap:5px}.hubFeedback{margin-top:5px;padding-top:5px;font-size:10px}
 }
 @media(orientation:portrait) and (max-width:760px){#controls .actions{grid-template-columns:1fr 1.2fr}#hubLauncherLabel{font-size:8px}.hubTab{min-height:68px}}
+
+/* Full-screen pause menu, scrollable on small iPhones */
+#menu{position:fixed;touch-action:pan-y;overflow-y:auto}#menu .menuCard{max-height:calc(100dvh - 20px);overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch} 
+/* v2.7 — Start screen / language choice */
+#homeScreen{position:fixed;z-index:250;inset:0;display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) calc(15px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(15px + env(safe-area-inset-left));overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;background:radial-gradient(ellipse at 50% 35%,#496d49 0%,#1b3529 47%,#0a1814 100%)}
+#homeScreen[hidden]{display:none!important}
+#homeScreen:before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.45;background:repeating-linear-gradient(135deg,transparent 0 28px,#ffffff05 29px 30px);}
+.homeCard{position:relative;width:min(100%,455px);margin:auto;text-align:center;padding:clamp(16px,4vh,29px) clamp(17px,4vw,32px);border-radius:22px;background:linear-gradient(160deg,#264834f2,#14281ef7);border:2px solid #bda26c;box-shadow:0 16px 60px #000b,inset 0 1px #f6e4b544;touch-action:pan-y}
+.homeBadge{font-size:10px;letter-spacing:.19em;font-weight:900;color:#b9d6b0;margin-bottom:8px}
+.homeCastle{font-size:clamp(52px,11vh,80px);line-height:1.06;filter:drop-shadow(0 8px 8px #0008)}
+.homeCard h1{font-size:clamp(32px,7.6vw,54px);line-height:1.01;letter-spacing:.025em;color:#f6d784;text-shadow:0 3px #3a2b18,0 6px 15px #0008;margin:10px 0 4px}
+.homeSubtitle{font-size:clamp(12px,2.8vw,15px);font-weight:800;color:#e4e1bd;letter-spacing:.06em;margin:4px 0 12px}
+.homeIntro{font-size:clamp(11px,2.4vw,13px);line-height:1.4;color:#d6dfca;margin:0 0 17px}
+.homeLanguageLabel{font-size:11px;letter-spacing:.12em;color:#c8d8b6;font-weight:900;margin-bottom:7px}
+.langSelector{display:flex;justify-content:center;gap:7px;margin:0 auto 16px}
+.langChoice{border:1px solid #6a896d;border-radius:10px;background:#213a2c;color:#b6c8ae;padding:9px 13px;font-size:12px;font-weight:850;min-width:118px}
+.langChoice[aria-pressed="true"]{border-color:#ffe49a;background:linear-gradient(#735e35,#56472c);color:#ffe7aa;box-shadow:inset 0 0 0 1px #f8d27a7a}
+#homeStart{display:block;width:100%;border:2px solid #ffdc92;background:linear-gradient(#e5b965,#b6873e);border-radius:13px;font-size:clamp(17px,3.6vw,21px);font-weight:950;color:#252719;padding:13px 15px;box-shadow:0 6px 0 #694822,0 10px 17px #0007;letter-spacing:.02em}
+#homeStart:active{transform:translateY(3px);box-shadow:0 3px 0 #694822,0 6px 12px #0007}
+.homeFoot{font-size:10px;color:#b4c3aa;letter-spacing:.08em;margin:16px 0 0}
+.menuLang{margin:10px 0 0}.menuLang .langSelector{margin:8px auto}.menuLang .langChoice{width:50%;min-width:0}
+#homeFromPause{border-color:#af9260;background:#655036}
+@media (orientation:landscape) and (max-height:470px){.homeCard{width:min(92vw,660px);padding:9px 22px}.homeCastle{font-size:33px}.homeCard h1{font-size:29px;margin:2px 0}.homeBadge{margin-bottom:2px}.homeSubtitle{margin:0 0 4px;font-size:11px}.homeIntro{margin:0 0 7px;font-size:11px}.homeLanguageLabel{margin-bottom:3px}.langSelector{margin-bottom:8px}.langChoice{padding:5px 10px}#homeStart{padding:8px;font-size:16px;box-shadow:0 3px 0 #694822}.homeFoot{margin-top:7px}}
+@media (max-height:350px){.homeCastle{display:none}.homeIntro{display:none}.homeCard{padding:8px 18px}.homeCard h1{font-size:28px}.homeFoot{display:none}}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
 <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Age of Piedras">
-<meta name="application-name" content="Age of Piedras">
-<meta name="description" content="Defiende el castillo y sobrevive a cinco oleadas en Age of Piedras.">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Age of Piedras">
 </head>
 <body>
+<div id="homeScreen" role="dialog" aria-modal="true" aria-labelledby="homeTitle">
+  <div class="homeCard">
+    <div class="homeBadge" id="homeBadge">⚔️ UN PEQUEÑO GRAN RTS ⚔️</div>
+    <div class="homeCastle" aria-hidden="true">🏰</div>
+    <h1 id="homeTitle">AGE OF<br>PIEDRAS</h1>
+    <p class="homeSubtitle" id="homeSubtitle">EL ASEDIO DE LAS PIEDRAS</p>
+    <p class="homeIntro" id="homeIntro">Construye tu reino, protege a tus aldeanos y resiste cinco oleadas hasta derrotar al Gran Ogro del Garrote.</p>
+    <div class="homeLanguageLabel" id="homeLanguageLabel">IDIOMA / LANGUAGE</div>
+    <div class="langSelector" role="group" aria-label="Idioma / Language">
+      <button type="button" class="langChoice" data-lang-option="es" aria-pressed="true">🇲🇽 Español</button>
+      <button type="button" class="langChoice" data-lang-option="en" aria-pressed="false">🇺🇸 English</button>
+    </div>
+    <button id="homeStart" type="button">⚔️ Iniciar partida</button>
+    <p class="homeFoot" id="homeFoot">🌾 RECOLECTA · 🔨 MEJORA · 🛡️ DEFIENDE</p>
+  </div>
+</div>
 <div id="app">
 <header>
-  <div class="brand"><div class="logo">🏰</div><div class="brandText"><strong>AGE OF PIEDRAS</strong><small>RTS CONTINUO · v2.6</small></div></div>
+  <div class="brand"><div class="logo">🏰</div><div class="brandText"><strong>AGE OF PIEDRAS</strong><small>RTS · v2.7</small></div></div>
   <div class="stats" aria-label="Recursos">
     <div class="stat" title="Alimento">🌾 <span id="food">300</span></div>
     <div class="stat" title="Oro">🪙 <span id="gold">180</span></div>
@@ -138,27 +174,27 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
   <button id="researchBadge" type="button" aria-label="Ver investigación en curso" title="Ver progreso de la investigación"><span id="researchRing"><span id="researchCore"><span id="researchIcon">🏛️</span><span id="researchSeconds">9 s</span></span></span></button>
   <div id="brief"><span class="pill blue" id="friendly">🔵 0</span><span class="pill red" id="hostile">🔴 0</span></div>
   <div id="selectedInfo">⚔️ Defensa automática activada</div>
-  <div id="castleHUD" aria-label="Vida del castillo">🏰 <span id="castleHpText">1000 / 1000</span> PV <div class="castleTrack"><div id="castleHpBar"></div></div></div>
+  <div id="castleHUD" aria-label="Vida del castillo"><span aria-hidden="true">🏰</span> <span id="castleHpText">1000 / 1000</span> <span id="castleHpUnit">PV</span> <div class="castleTrack"><div id="castleHpBar"></div></div></div>
   <div id="waveHUD" aria-live="off"><span id="waveNumber">OLEADA 1/5</span><span id="waveMessage">Próximo ataque en 30s</span><div id="waveTimerTrack"><div id="waveTimerFill"></div></div></div>
-  <div id="bossHUD" style="display:none"><div>👹 <b>EL GRAN OGRO DEL GARROTE</b> <span id="bossHPText">900 PV</span></div><div class="bossTrack"><div id="bossBar"></div></div></div>
+  <div id="bossHUD" style="display:none"><div>👹 <b id="bossTitle">EL GRAN OGRO DEL GARROTE</b> <span id="bossHPText">900 PV</span></div><div class="bossTrack"><div id="bossBar"></div></div></div>
   <div id="toast" role="status" aria-live="polite"></div>
   <div id="techOverlay" role="dialog" aria-label="Tecnologías">
     <div class="techCard">
-      <div class="techHead"><div><div class="hubEyebrow">TU REINO · ÁRBOL TECNOLÓGICO</div><h2 id="techTitle">📜 Hub de Mejoras</h2></div><button id="techClose" aria-label="Cerrar hub de mejoras">✕</button></div>
+      <div class="techHead"><div><div class="hubEyebrow" id="hubEyebrow">TU REINO · ÁRBOL TECNOLÓGICO</div><h2 id="techTitle">📜 Hub de Mejoras</h2></div><button id="techClose" aria-label="Cerrar hub de mejoras">✕</button></div>
       <div class="hubWallet" aria-label="Recursos y edad actuales"><span id="hubAge">🪵 Oscurita</span><span>🌾 <b id="hubFood">0</b></span><span>🪙 <b id="hubGold">0</b></span></div>
       <div class="hubTabs" role="tablist" aria-label="Categorías de mejoras">
-        <button type="button" class="hubTab active" id="hubTabAge" role="tab" aria-controls="techRows" aria-selected="true" data-hub-tab="age"><span class="tabEmoji">🏛️</span><span>Centro</span><small>Edades</small></button>
-        <button type="button" class="hubTab" id="hubTabForge" role="tab" aria-controls="techRows" aria-selected="false" data-hub-tab="forge" disabled><span class="tabEmoji">🔨</span><span>Herrería</span><small id="forgeUnlock">🔒 Edad II</small></button>
-        <button type="button" class="hubTab" id="hubTabUni" role="tab" aria-controls="techRows" aria-selected="false" data-hub-tab="uni" disabled><span class="tabEmoji">🎓</span><span>Universidad</span><small id="universityUnlock">🔒 Edad III</small></button>
+        <button type="button" class="hubTab active" id="hubTabAge" role="tab" aria-controls="techRows" aria-selected="true" data-hub-tab="age"><span class="tabEmoji">🏛️</span><span id="tabCenterLabel">Centro</span><small id="tabCenterSub">Edades</small></button>
+        <button type="button" class="hubTab" id="hubTabForge" role="tab" aria-controls="techRows" aria-selected="false" data-hub-tab="forge" disabled><span class="tabEmoji">🔨</span><span id="tabForgeLabel">Herrería</span><small id="forgeUnlock">🔒 Edad II</small></button>
+        <button type="button" class="hubTab" id="hubTabUni" role="tab" aria-controls="techRows" aria-selected="false" data-hub-tab="uni" disabled><span class="tabEmoji">🎓</span><span id="tabUniLabel">Universidad</span><small id="universityUnlock">🔒 Edad III</small></button>
       </div>
       <p class="techSub" id="techSubtitle">Avanza de edad para desbloquear nuevas tecnologías.</p>
       <div class="techRows" id="techRows" role="tabpanel" aria-label="Mejoras disponibles">
-        <div class="techRow" id="ageRow"><div><strong id="nextAgeName"></strong><small id="nextAgeDesc"></small></div><button class="techBuy" id="upgradeAge"><span>Avanzar</span><small id="ageCost"></small></button></div>
-        <div class="techRow" id="attackRow"><div><strong id="attackLabel"></strong><small id="attackDesc"></small><div class="levelTrack" id="attackLevelTrack" role="img" aria-label="Nivel 0 de 3"><span class="levelEdge">0</span><div class="levelSegments" id="attackLevelSegments"></div><span class="levelEdge end">3 MÁX</span><span class="levelNow" id="attackLevelNow">0/3</span></div></div><button class="techBuy" id="upgradeAttack"><span>Investigar</span><small id="attackCost"></small></button></div>
-        <div class="techRow" id="armorRow"><div><strong id="armorLabel"></strong><small id="armorDesc"></small><div class="levelTrack" id="armorLevelTrack" role="img" aria-label="Nivel 0 de 3"><span class="levelEdge">0</span><div class="levelSegments" id="armorLevelSegments"></div><span class="levelEdge end">3 MÁX</span><span class="levelNow" id="armorLevelNow">0/3</span></div></div><button class="techBuy" id="upgradeArmor"><span>Investigar</span><small id="armorCost"></small></button></div>
-        <div class="techRow" id="farmRow"><div><strong id="farmLabel"></strong><small id="farmDesc"></small><div class="levelTrack" id="farmLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="farmLevelSegments"></div><span class="levelEdge end">2 MÁX</span><span class="levelNow" id="farmLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeFarm"><span>Investigar</span><small id="farmCost"></small></button></div>
-        <div class="techRow" id="mineRow"><div><strong id="mineLabel"></strong><small id="mineDesc"></small><div class="levelTrack" id="mineLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="mineLevelSegments"></div><span class="levelEdge end">2 MÁX</span><span class="levelNow" id="mineLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeMine"><span>Investigar</span><small id="mineCost"></small></button></div>
-        <div class="techRow" id="castleRow"><div><strong id="castleLabel"></strong><small id="castleDesc"></small><div class="levelTrack" id="castleLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="castleLevelSegments"></div><span class="levelEdge end">2 MÁX</span><span class="levelNow" id="castleLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeCastle"><span>Investigar</span><small id="castleCost"></small></button></div>
+        <div class="techRow" id="ageRow"><div><strong id="nextAgeName"></strong><small id="nextAgeDesc"></small></div><button class="techBuy" id="upgradeAge"><span id="buyAgeLabel">Avanzar</span><small id="ageCost"></small></button></div>
+        <div class="techRow" id="attackRow"><div><strong id="attackLabel"></strong><small id="attackDesc"></small><div class="levelTrack" id="attackLevelTrack" role="img" aria-label="Nivel 0 de 3"><span class="levelEdge">0</span><div class="levelSegments" id="attackLevelSegments"></div><span class="levelEdge end" data-max="3">3 MÁX</span><span class="levelNow" id="attackLevelNow">0/3</span></div></div><button class="techBuy" id="upgradeAttack"><span class="researchBuyText">Investigar</span><small id="attackCost"></small></button></div>
+        <div class="techRow" id="armorRow"><div><strong id="armorLabel"></strong><small id="armorDesc"></small><div class="levelTrack" id="armorLevelTrack" role="img" aria-label="Nivel 0 de 3"><span class="levelEdge">0</span><div class="levelSegments" id="armorLevelSegments"></div><span class="levelEdge end" data-max="3">3 MÁX</span><span class="levelNow" id="armorLevelNow">0/3</span></div></div><button class="techBuy" id="upgradeArmor"><span class="researchBuyText">Investigar</span><small id="armorCost"></small></button></div>
+        <div class="techRow" id="farmRow"><div><strong id="farmLabel"></strong><small id="farmDesc"></small><div class="levelTrack" id="farmLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="farmLevelSegments"></div><span class="levelEdge end" data-max="2">2 MÁX</span><span class="levelNow" id="farmLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeFarm"><span class="researchBuyText">Investigar</span><small id="farmCost"></small></button></div>
+        <div class="techRow" id="mineRow"><div><strong id="mineLabel"></strong><small id="mineDesc"></small><div class="levelTrack" id="mineLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="mineLevelSegments"></div><span class="levelEdge end" data-max="2">2 MÁX</span><span class="levelNow" id="mineLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeMine"><span class="researchBuyText">Investigar</span><small id="mineCost"></small></button></div>
+        <div class="techRow" id="castleRow"><div><strong id="castleLabel"></strong><small id="castleDesc"></small><div class="levelTrack" id="castleLevelTrack" role="img" aria-label="Nivel 0 de 2"><span class="levelEdge">0</span><div class="levelSegments" id="castleLevelSegments"></div><span class="levelEdge end" data-max="2">2 MÁX</span><span class="levelNow" id="castleLevelNow">0/2</span></div></div><button class="techBuy" id="upgradeCastle"><span class="researchBuyText">Investigar</span><small id="castleCost"></small></button></div>
       </div>
       <div class="hubFeedback" id="hubFeedback" role="status" aria-live="polite">⚡ Mejoras instantáneas. El combate sigue mientras investigas.</div>
       <div id="techResearchText" class="techSub hubResearchText" style="display:none"></div><div class="techProgress" style="display:none"><div id="techBar"></div></div>
@@ -166,7 +202,15 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
   </div>
   <div id="rotationTip">↻ Gira tu teléfono para ampliar el campo de batalla</div>
   <div id="endScreen"><div class="endCard"><h1 id="endTitle">¡VICTORIA!</h1><p id="endText">Has derrotado al enemigo.</p><button id="again">⚔️ Nueva partida</button></div></div>
-  <div id="menu"><div class="menuCard"><h2>🏰 El Asedio de las Piedras</h2><p>🌾 Empiezas con un castillo en el centro, una granja, una mina y <b>dos aldeanos vulnerables</b> (máximo 8). La recolección es automática durante la batalla. ¡Protege a tus aldeanos!</p><p>🎮 <b>RTS en tiempo real:</b> nunca se detienen la economía ni el combate. Recolecta alimento y oro, entrena tropas y compra mejoras mientras se acerca el siguiente ataque. El indicador superior muestra cuánto falta para la próxima oleada. 🌊 Sobrevive a <b>cinco oleadas</b>: norte, este, sur, oeste y luego los cuatro lados. Cada una contiene grupos progresivamente más difíciles y el último ataque culmina con el <b>Gran Ogro del Garrote</b>.</p><p>⚔️ Los soldados atacan solos, priorizando tropas enemigas y después a los aldeanos. Los aldeanos pueden morir. Espada &gt; lanza &gt; arco &gt; espada.</p><p>🏠 Amplía tu castillo con Casitas: +5 de capacidad por mejora, de 10 a 80. Aldeanos ocupan 1 espacio y soldados 2. No se coloca nada en el mapa: el castillo crece visualmente.</p><p>📜 El botón Mejoras abre un hub con pestañas. Centro está disponible desde el inicio; Herrería se desbloquea en Edad Feudalona y Universidad en Edad Castillosa. Todas las investigaciones son instantáneas, puedes comprar varias sin cerrar el hub. El juego continúa en tiempo real.</p><p>🏆 Ganas al derrotar al ogro. Pierdes si destruyen el castillo. La primera oleada es sencilla: las siguientes son más exigentes, y los enemigos ganan armadura por fases ocultas.</p><button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button></div></div>
+  <div id="menu"><div class="menuCard">
+ <h2 id="pauseTitle">🏰 El Asedio de las Piedras</h2>
+ <p id="howToPlay1">🌾 Empiezas con un castillo, una granja, una mina y dos aldeanos vulnerables. La recolección es automática: ¡protégelos!</p>
+ <p id="howToPlay2">🎮 RTS continuo: produce unidades y compra mejoras durante la batalla. Supera cinco oleadas hasta enfrentarte al Gran Ogro del Garrote.</p>
+ <p id="howToPlay3">⚔️ Combate automático: espada &gt; lanza &gt; arco &gt; espada. Los aldeanos pueden morir.</p>
+ <p id="howToPlay4">🏠 Casitas amplían la población. Usa el Hub de Mejoras para subir de edad, mejorar tropas y fortalecer la economía.</p>
+ <div class="menuLang"><div class="homeLanguageLabel" id="pauseLanguageLabel">IDIOMA / LANGUAGE</div><div class="langSelector" role="group" aria-label="Idioma / Language"><button type="button" class="langChoice" data-lang-option="es" aria-pressed="true">🇲🇽 Español</button><button type="button" class="langChoice" data-lang-option="en" aria-pressed="false">🇺🇸 English</button></div></div>
+ <button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button><button id="homeFromPause">⌂ Menú principal</button>
+ </div></div>
 </main>
 <footer id="controls">
  <div id="train">
@@ -177,17 +221,86 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
  </div>
  <div class="actions">
   <button id="houseBtn" class="actionBtn" aria-label="Ampliar castillo y añadir cinco espacios de población"><span class="symbol">🏠</span><span id="houseLabel">Casitas +5</span><small id="houseCost">100 🌾 · 60 🪙</small></button>
-  <button id="upgradesBtn" class="actionBtn hubLauncher" aria-label="Abrir Hub de Mejoras: Centro, Herrería y Universidad"><span class="symbol">📜</span><span>Mejoras</span><small id="hubLauncherLabel">Centro · Herrería · Uni</small></button>
+  <button id="upgradesBtn" class="actionBtn hubLauncher" aria-label="Abrir Hub de Mejoras: Centro, Herrería y Universidad"><span class="symbol">📜</span><span id="upgradesMainLabel">Mejoras</span><small id="hubLauncherLabel">Centro · Herrería · Uni</small></button>
  </div>
 </footer>
 </div>
 <script>
 (()=>{'use strict';
 const W=960,H=500,cv=document.getElementById('game'),ctx=cv.getContext('2d');
-if(!ctx){const e=document.getElementById('gameFallback');e.style.display='block';e.textContent='Safari no pudo iniciar el lienzo 2D. Prueba abrir esta página directamente en Safari.';return;}
+if(!ctx){const e=document.getElementById('gameFallback');e.style.display='block';e.textContent=localStorage.getItem('ageOfPiedrasLanguage')==='en'?'Safari could not initialize the 2D canvas. Open this page directly in Safari.':'Safari no pudo iniciar el lienzo 2D. Prueba abrir esta página directamente en Safari.';return;}
 const $=id=>document.getElementById(id),btns=[...document.querySelectorAll('[data-unit]')];
 // Panel de tecnologías por encima del tablero RTS.
-document.body.appendChild($('techOverlay'));
+document.body.appendChild($('techOverlay'));document.body.appendChild($('menu'));
+// Español e inglés: el idioma se recuerda solo en este navegador.
+function loadLanguage(){try{return localStorage.getItem('ageOfPiedrasLanguage')==='en'?'en':'es'}catch(e){return 'es'}}
+let language=loadLanguage();
+const tr=(es,en)=>language==='en'?en:es;
+const translated={
+ es:{
+  intro:'Construye tu reino, protege a tus aldeanos y resiste cinco oleadas hasta derrotar al Gran Ogro del Garrote.',
+  start:'⚔️ Iniciar partida',foot:'🌾 RECOLECTA · 🔨 MEJORA · 🛡️ DEFIENDE',subtitle:'EL ASEDIO DE LAS PIEDRAS',badge:'⚔️ UN PEQUEÑO GRAN RTS ⚔️',
+  hubTitle:'📜 Hub de Mejoras',hubEyebrow:'TU REINO · ÁRBOL TECNOLÓGICO',center:'Centro',agesTab:'Edades',forge:'Herrería',university:'Universidad',upgrade:'Mejoras',buyAge:'Avanzar',buyUpgrade:'Investigar',
+  resume:'▶ Continuar',restart:'↻ Reiniciar partida',home:'⌂ Menú principal',pauseTitle:'🏰 El Asedio de las Piedras',
+  how1:'🌾 Empiezas con un castillo, una granja, una mina y dos aldeanos vulnerables. La recolección es automática: ¡protégelos!',
+  how2:'🎮 RTS continuo: produce unidades y compra mejoras durante la batalla. Supera cinco oleadas hasta enfrentarte al Gran Ogro del Garrote.',
+  how3:'⚔️ Combate automático: espada > lanza > arco > espada. Los aldeanos pueden morir.',
+  how4:'🏠 Casitas amplían la población. Usa el Hub de Mejoras para subir de edad, mejorar tropas y fortalecer la economía.',
+  fightAgain:'⚔️ Nueva partida',rotation:'↻ Gira tu teléfono para ampliar el campo de batalla',max:'MÁX',full:'COMPLETO',
+  unitVillager:'Aldeano',unitSword:'Espada',unitSpear:'Lancero',unitArcher:'Arquero',pause:'Pausa y ayuda',
+  hubAria:'Abrir Hub de Mejoras: Centro, Herrería y Universidad',castleAria:'Ampliar castillo y añadir cinco espacios de población',closeHub:'Cerrar hub de mejoras',
+  dialogTitle:'Tecnologías',categories:'Categorías de mejoras',researchAvailable:'Mejoras disponibles',maxPop:'Máximo 80',houses:'Casitas +5',
+  level:'Nivel',done:'completado',available:'disponible',locked:'requiere avanzar de edad',levelLeft:'niveles desbloqueados pendientes',
+  bossTitle:'EL GRAN OGRO DEL GARROTE',playHelp:'🌾 Recolecta, 🔨 mejora, 🛡️ defiende',startup:'🏰 Iniciando Age of Piedras…',
+ },
+ en:{
+  intro:'Build your kingdom, protect your villagers, and survive five waves before facing the Great Club Ogre.',
+  start:'⚔️ Start Game',foot:'🌾 GATHER · 🔨 UPGRADE · 🛡️ DEFEND',subtitle:'THE SIEGE OF THE STONES',badge:'⚔️ A LITTLE BIG RTS ⚔️',
+  hubTitle:'📜 Upgrade Hub',hubEyebrow:'YOUR KINGDOM · TECH TREE',center:'Town Center',agesTab:'Ages',forge:'Blacksmith',university:'University',upgrade:'Upgrades',buyAge:'Advance',buyUpgrade:'Research',
+  resume:'▶ Continue',restart:'↻ Restart Game',home:'⌂ Main Menu',pauseTitle:'🏰 The Siege of the Stones',
+  how1:'🌾 You begin with a castle, a farm, a mine, and two vulnerable villagers. Gathering is automatic: keep them safe!',
+  how2:'🎮 Continuous RTS: train units and buy upgrades during battle. Survive five waves and defeat the Great Club Ogre.',
+  how3:'⚔️ Automatic combat: sword > spear > bow > sword. Villagers can be killed.',
+  how4:'🏠 Houses increase population. Open the Upgrade Hub to advance through ages, improve troops, and strengthen your economy.',
+  fightAgain:'⚔️ New Game',rotation:'↻ Rotate your phone for a larger battlefield',max:'MAX',full:'COMPLETE',
+  unitVillager:'Villager',unitSword:'Sword',unitSpear:'Spearman',unitArcher:'Archer',pause:'Pause and help',
+  hubAria:'Open Upgrade Hub: Town Center, Blacksmith, and University',castleAria:'Expand castle by five population slots',closeHub:'Close upgrade hub',
+  dialogTitle:'Technologies',categories:'Upgrade categories',researchAvailable:'Available upgrades',maxPop:'Max 80',houses:'Houses +5',
+  level:'Level',done:'completed',available:'available',locked:'requires a new age',levelLeft:'unlocked levels remaining',
+  bossTitle:'THE GREAT CLUB OGRE',playHelp:'🌾 Gather, 🔨 upgrade, 🛡️ defend',startup:'🏰 Starting Age of Piedras…',
+ }
+};
+const unitNames={es:{villager:'Aldeano',sword:'Espadachín',spear:'Lancero',archer:'Arquero',ogre:'Gran Ogro'},en:{villager:'Villager',sword:'Swordsman',spear:'Spearman',archer:'Archer',ogre:'Great Ogre'}};
+const ageTranslations={es:['Edad Oscurita','Edad Feudalona','Edad Castillosa','Edad Imperialísima'],en:['Dark-ish Age','Feudal Age','Castle Age','Imperial Age']};
+const ageShort={es:['🪵 Oscurita','🌾 Feudalona','🏰 Castillosa','👑 Imperialísima'],en:['🪵 Dark-ish','🌾 Feudal','🏰 Castle','👑 Imperial']};
+const smithTranslations={es:{attack:'Filo del Tío Beto',armor:'Chaleco Antiflechas'},en:{attack:"Uncle Beto’s Sharpening",armor:'Arrowproof Vest'}};
+const uniTranslations={es:{farm:'Granjas con doctorado',mine:'Picos con posgrado',castle:'Muros de tesis doctoral'},en:{farm:'PhD Farms',mine:'Graduate Pickaxes',castle:'Thesis Fortress Walls'}};
+const waveDirections={es:[null,'NORTE ↑','ESTE →','SUR ↓','OESTE ←','¡TODOS LOS FRENTES!'],en:[null,'NORTH ↑','EAST →','SOUTH ↓','WEST ←','ALL SIDES!']};
+const langText=key=>translated[language][key];
+const currentAgeName=n=>ageTranslations[language][n];
+const researchName=type=>smithTranslations[language][type]||uniTranslations[language][type];
+const unitName=type=>unitNames[language][type];
+function applyLanguage(){
+ document.documentElement.lang=language==='en'?'en':'es';
+ const ids={bossTitle:'bossTitle',homeBadge:'badge',homeSubtitle:'subtitle',homeIntro:'intro',homeStart:'start',homeFoot:'foot',techTitle:'hubTitle',hubEyebrow:'hubEyebrow',tabCenterLabel:'center',tabCenterSub:'agesTab',tabForgeLabel:'forge',tabUniLabel:'university',upgradesMainLabel:'upgrade',buyAgeLabel:'buyAge',resume:'resume',newGame:'restart',homeFromPause:'home',pauseTitle:'pauseTitle',howToPlay1:'how1',howToPlay2:'how2',howToPlay3:'how3',howToPlay4:'how4',again:'fightAgain',rotationTip:'rotation'};
+ for(const [id,key] of Object.entries(ids))$(id).textContent=langText(key);
+ for(const element of document.querySelectorAll('.researchBuyText'))element.textContent=langText('buyUpgrade');
+ for(const element of document.querySelectorAll('[data-max]'))element.textContent=element.dataset.max+' '+langText('max');
+ const names={villager:'unitVillager',sword:'unitSword',spear:'unitSpear',archer:'unitArcher'};
+ for(const [type,key] of Object.entries(names))document.querySelector('[data-unit="'+type+'"] .label').textContent=langText(key);
+ $('menuBtn').setAttribute('aria-label',langText('pause'));
+ $('upgradesBtn').setAttribute('aria-label',langText('hubAria'));
+ $('houseBtn').setAttribute('aria-label',langText('castleAria'));
+ $('techClose').setAttribute('aria-label',langText('closeHub'));
+ $('techOverlay').setAttribute('aria-label',langText('dialogTitle'));
+ $('techRows').setAttribute('aria-label',langText('researchAvailable'));
+ document.querySelector('.hubTabs').setAttribute('aria-label',langText('categories'));
+ for(const b of document.querySelectorAll('[data-lang-option]'))b.setAttribute('aria-pressed',String(b.dataset.langOption===language));
+ if(typeof updateHUD==='function'&&tech.length)updateHUD();
+ if(techView)selectHubTab(techView);
+}
+function setLanguage(value){if(value!=='es'&&value!=='en')return;language=value;try{localStorage.setItem('ageOfPiedrasLanguage',value)}catch(e){}applyLanguage()}
+
 const troops={ogre:{hp:2100,speed:29,attack:34,range:37,cooldown:1.65,counter:null,cost:{food:0,gold:0},train:0},villager:{hp:50,speed:53,attack:0,range:0,cooldown:0,cost:{food:50,gold:0},train:1.1},sword:{hp:120,speed:66,attack:19,range:22,cooldown:.75,counter:'spear',cost:{food:60,gold:25},train:1.8},spear:{hp:100,speed:64,attack:15,range:29,cooldown:.72,counter:'archer',cost:{food:65,gold:15},train:1.65},archer:{hp:74,speed:64,attack:14,range:132,cooldown:1.05,counter:'sword',cost:{food:45,gold:35},train:2.1}};
 const labels={villager:'Aldeano',sword:'Espadachín',spear:'Lancero',archer:'Arquero',ogre:'Gran Ogro'},icons={villager:'👨‍🌾',sword:'⚔️',spear:'🔱',archer:'🏹',ogre:'👹'};
 const ages=['Edad Oscurita','Edad Feudalona','Edad Castillosa','Edad Imperialísima'];
@@ -203,7 +316,7 @@ const reservedPop=()=>queue.reduce((sum,q)=>sum+popWeight(q.type),0);
 const villagerCount=()=>alive(0).filter(u=>u.type==='villager').length+queue.filter(q=>q.type==='villager').length;
 const villagerLimitReached=()=>villagerCount()>=VILLAGER_CAP;
 const forgeCost=(type,level)=>({food:(type==='attack'?95:80)+level*(type==='attack'?80:70),gold:(type==='attack'?60:55)+level*(type==='attack'?70:60),seconds:5+level*2});
-let tech=[],research=[],techView=null,popLimit=POP_START;
+let tech=[],research=[],techView=null,popLimit=POP_START,atHome=true;
 let units=[],buildings=[],resources=[],fx=[],queue=[],enemyQueue=[],selected=null,gameOver=false,victor=null,paused=false,time=0,enemyBrain=0,enemyFood=300,enemyGold=180,food=300,gold=180,nextId=1,last=0,toastTimer=0,statsTimer=0;
 const FIRST_ATTACK_DELAY=30;
 const NEXT_ATTACK_DELAY=[0,20,22,24,27];
@@ -213,42 +326,53 @@ const rand=(a,b)=>a+Math.random()*(b-a),distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b
 const alive=team=>units.filter(u=>u.team===team&&u.hp>0),castle=team=>buildings.find(b=>b.team===team),resource=(team,type)=>resources.find(r=>r.team===team&&r.type===type);
 function notify(text,seconds=2.4){$('toast').textContent=text;$('toast').classList.add('show');toastTimer=seconds}
 function createUnit(type,team,x,y){const p=troops[type],u={id:nextId++,type,team,x,y,hp:p.hp,max:p.hp,target:null,goal:null,mode:'idle',cooldown:rand(0,.2),retarget:0,work:0,carrying:0,resourceType:null,guard:{x,y},movingOrder:false};units.push(u);return u}
-function start(){popLimit=POP_START;tech=[{age:0,attack:0,armor:0,farm:0,mine:0,castle:0},{age:0,attack:0,armor:0,farm:0,mine:0,castle:0}];research=[null,null];techView=null;$('techOverlay').classList.remove('show');$('hubFeedback').textContent='⚡ Mejoras instantáneas. El combate sigue mientras investigas.';units=[];buildings=[];resources=[];fx=[];queue=[];enemyQueue=[];selected=null;gameOver=false;victor=null;paused=false;time=0;enemyBrain=0;enemyFood=300;enemyGold=180;food=320;gold=200;nextId=1;last=performance.now();toastTimer=0;statsTimer=0;wave=0;waveActive=false;waveTimer=FIRST_ATTACK_DELAY;nextAttackTotal=FIRST_ATTACK_DELAY;pendingSpawns=[];spawnClock=0;bossWaiting=false;bossSpawned=false;announcedBoss=false;
+function start(){popLimit=POP_START;tech=[{age:0,attack:0,armor:0,farm:0,mine:0,castle:0},{age:0,attack:0,armor:0,farm:0,mine:0,castle:0}];research=[null,null];techView=null;$('techOverlay').classList.remove('show');$('hubFeedback').textContent=tr('⚡ Mejoras instantáneas. El combate sigue mientras investigas.','⚡ Instant upgrades. Combat continues while you research.');units=[];buildings=[];resources=[];fx=[];queue=[];enemyQueue=[];selected=null;gameOver=false;victor=null;paused=false;time=0;enemyBrain=0;enemyFood=300;enemyGold=180;food=320;gold=200;nextId=1;last=performance.now();toastTimer=0;statsTimer=0;wave=0;waveActive=false;waveTimer=FIRST_ATTACK_DELAY;nextAttackTotal=FIRST_ATTACK_DELAY;pendingSpawns=[];spawnClock=0;bossWaiting=false;bossSpawned=false;announcedBoss=false;
  buildings.push({team:0,x:W/2,y:H/2,hp:castleBaseHp,maxHp:castleBaseHp,damageTimer:0});
  resources.push({team:0,type:'food',x:W/2-142,y:H/2+78},{team:0,type:'gold',x:W/2+142,y:H/2+78});
  createUnit('villager',0,W/2-110,H/2+120);createUnit('villager',0,W/2+110,H/2+120);
- $('endScreen').classList.remove('show');$('menu').classList.remove('show');$('bossHUD').style.display='none';updateResearchBadge();updateHUD();notify('🏰 ¡Construye tu defensa! El primer ataque llega en '+FIRST_ATTACK_DELAY+' segundos.',4)}
-function updateHUD(){let mine=alive(0).length,theirs=alive(1).length,occupied=occupiedPop(),reserved=reservedPop();$('food').textContent=Math.floor(food);$('gold').textContent=Math.floor(gold);$('pop').textContent=occupied;$('popCap').textContent='/'+popLimit;$('ageChip').textContent=['🪵 Oscurita','🌾 Feudalona','🏰 Castillosa','👑 Imperialísima'][tech[0].age];$('friendly').textContent='🔵 '+mine+' aliados';$('hostile').textContent='🔴 '+theirs+' invasores';
- $('waveNumber').textContent='🌊 OLEADA '+(waveActive?wave:Math.min(5,wave+1))+'/5';
+ $('endScreen').classList.remove('show');$('menu').classList.remove('show');$('bossHUD').style.display='none';atHome=false;$('homeScreen').hidden=true;updateResearchBadge();updateHUD();notify(tr('🏰 ¡Construye tu defensa! El primer ataque llega en ','🏰 Build your defenses! First attack in ')+FIRST_ATTACK_DELAY+tr(' segundos.',' seconds.'),4)}
+function updateHUD(){
+ let mine=alive(0).length,theirs=alive(1).length,occupied=occupiedPop(),reserved=reservedPop();
+ $('food').textContent=Math.floor(food);$('gold').textContent=Math.floor(gold);$('pop').textContent=occupied;$('popCap').textContent='/'+popLimit;
+ $('ageChip').textContent=ageShort[language][tech[0].age];
+ $('friendly').textContent='🔵 '+mine+tr(' aliados',' allies');$('hostile').textContent='🔴 '+theirs+tr(' invasores',' invaders');
+ $('waveNumber').textContent=tr('🌊 OLEADA ','🌊 WAVE ')+(waveActive?wave:Math.min(5,wave+1))+'/5';
  let msg='';
- if(gameOver)msg='Fin de la partida';
- else if(waveActive)msg=bossSpawned?'👹 ¡EL GRAN OGRO!':bossWaiting&&pendingSpawns.length===0?'💀 ¡EL OGRO SE ACERCA!':'⚔️ '+directions[wave]+' · '+(theirs+pendingSpawns.length)+' invasores restantes';
- else msg='📯 Próximo ataque en '+Math.ceil(waveTimer)+'s · '+directions[wave+1];
+ if(gameOver)msg=tr('Fin de la partida','Game over');
+ else if(waveActive)msg=bossSpawned?tr('👹 ¡EL GRAN OGRO!','👹 THE GREAT OGRE!'):bossWaiting&&pendingSpawns.length===0?tr('💀 ¡EL OGRO SE ACERCA!','💀 THE OGRE APPROACHES!'):'⚔️ '+waveDirections[language][wave]+tr(' · ',' · ')+(theirs+pendingSpawns.length)+tr(' invasores restantes',' invaders remaining');
+ else msg=tr('📯 Próximo ataque en ','📯 Next attack in ')+Math.ceil(waveTimer)+'s · '+waveDirections[language][wave+1];
  $('waveMessage').textContent=msg;
  $('waveTimerTrack').style.display=!waveActive&&!gameOver?'block':'none';
  $('waveTimerFill').style.width=(100*Math.max(0,waveTimer)/Math.max(1,nextAttackTotal)).toFixed(1)+'%';
- const boss=units.find(u=>u.type==='ogre'&&u.hp>0);$('bossHUD').style.display=boss?'block':'none';if(boss){$('bossHPText').textContent=Math.ceil(boss.hp)+' / '+Math.ceil(boss.max)+' PV';$('bossBar').style.width=(100*boss.hp/boss.max).toFixed(1)+'%'}
+ const boss=units.find(u=>u.type==='ogre'&&u.hp>0);$('bossHUD').style.display=boss?'block':'none';if(boss){$('bossHPText').textContent=Math.ceil(boss.hp)+' / '+Math.ceil(boss.max)+tr(' PV',' HP');$('bossBar').style.width=(100*boss.hp/boss.max).toFixed(1)+'%'}
+ $('castleHpUnit').textContent=tr('PV','HP');
  let here=selected&&units.includes(selected)&&selected.hp>0?selected:null;if(!here)selected=null;
- $('selectedInfo').textContent=here?icons[here.type]+' '+labels[here.type]+(here.team===0&&here.type!=='villager'?' · ⚔'+tech[0].attack+' 🛡'+tech[0].armor:here.team===1&&here.enemyTier!==undefined?' · Nv. '+(here.enemyTier+1):'')+' · '+Math.ceil(here.hp)+' PV':queue.length?'🏰 Entrenando: '+labels[queue[0].type]+' ('+Math.ceil(queue[0].remaining)+' s)':'👨‍🌾 '+villagerCount()+'/8 · Aldeanos en riesgo';
- for(const b of btns){const p=troops[b.dataset.unit];b.disabled=gameOver||food<p.cost.food||gold<p.cost.gold||occupied+reserved+popWeight(b.dataset.unit)>popLimit||(b.dataset.unit==='villager'&&villagerLimitReached());if(b.dataset.unit==='villager'){b.querySelector('.label').textContent='Aldeano '+villagerCount()+'/'+VILLAGER_CAP;b.querySelector('.cost').textContent=villagerLimitReached()?'MÁX. 8':'50 🌾';}const count=queue.filter(q=>q.type===b.dataset.unit).length;let n=b.querySelector('.queued');if(count){if(!n){n=document.createElement('span');n.className='queued';b.appendChild(n)}n.textContent=count}else if(n)n.remove()}const house=$('houseBtn');house.disabled=gameOver||popLimit>=POP_MAX||food<HOUSE_COST.food||gold<HOUSE_COST.gold;$('houseLabel').textContent=popLimit>=POP_MAX?'Máximo 80':'Casitas +5';$('houseCost').textContent=popLimit>=POP_MAX?'COMPLETO':HOUSE_COST.food+' 🌾 · '+HOUSE_COST.gold+' 🪙';house.title=popLimit>=POP_MAX?'Máximo poblacional conseguido':`Ampliar capacidad de ${popLimit} a ${popLimit+POP_STEP}`;
- $('hubLauncherLabel').textContent=tech[0].age>=2?'3 secciones disponibles':tech[0].age>=1?'Centro + Herrería':'Centro disponible';
+ $('selectedInfo').textContent=here?icons[here.type]+' '+unitName(here.type)+(here.team===0&&here.type!=='villager'?' · ⚔'+tech[0].attack+' 🛡'+tech[0].armor:here.team===1&&here.enemyTier!==undefined?tr(' · Nv. ',' · Lv. ')+(here.enemyTier+1):'')+' · '+Math.ceil(here.hp)+tr(' PV',' HP'):queue.length?'🏰 '+tr('Entrenando: ','Training: ')+unitName(queue[0].type)+' ('+Math.ceil(queue[0].remaining)+' s)':'👨‍🌾 '+villagerCount()+'/8 · '+tr('Aldeanos en riesgo','Villagers at risk');
+ for(const b of btns){const p=troops[b.dataset.unit];b.disabled=gameOver||food<p.cost.food||gold<p.cost.gold||occupied+reserved+popWeight(b.dataset.unit)>popLimit||(b.dataset.unit==='villager'&&villagerLimitReached());
+  if(b.dataset.unit==='villager'){b.querySelector('.label').textContent=unitName('villager')+' '+villagerCount()+'/'+VILLAGER_CAP;b.querySelector('.cost').textContent=villagerLimitReached()?tr('MÁX. 8','MAX 8'):'50 🌾'}
+  const count=queue.filter(q=>q.type===b.dataset.unit).length;let n=b.querySelector('.queued');if(count){if(!n){n=document.createElement('span');n.className='queued';b.appendChild(n)}n.textContent=count}else if(n)n.remove()}
+ const house=$('houseBtn');house.disabled=gameOver||popLimit>=POP_MAX||food<HOUSE_COST.food||gold<HOUSE_COST.gold;
+ $('houseLabel').textContent=popLimit>=POP_MAX?langText('maxPop'):langText('houses');$('houseCost').textContent=popLimit>=POP_MAX?langText('full'):HOUSE_COST.food+' 🌾 · '+HOUSE_COST.gold+' 🪙';
+ house.title=popLimit>=POP_MAX?tr('Máximo poblacional conseguido','Maximum population reached'):tr('Ampliar capacidad de ','Increase capacity from ')+popLimit+tr(' a ',' to ')+(popLimit+POP_STEP);
+ $('hubLauncherLabel').textContent=tech[0].age>=2?tr('3 secciones disponibles','3 sections available'):tech[0].age>=1?tr('Centro + Herrería','Center + Blacksmith'):tr('Centro disponible','Town Center available');
  const c=castle(0);if(c){$('castleHpText').textContent=Math.ceil(c.hp)+' / '+Math.ceil(c.maxHp);$('castleHpBar').style.width=(100*c.hp/c.maxHp).toFixed(1)+'%';$('castleHpBar').style.background=c.hp/c.maxHp<.3?'#ef7767':'#8bd39b'}
- if(techView)refreshTech();updateResearchBadge()}
+ if(techView)refreshTech();updateResearchBadge()
+}
 function train(type){
- if(gameOver||paused)return;
+ if(gameOver||paused||atHome)return;
  const p=troops[type];if(!p)return;
- if(type==='villager'&&villagerLimitReached()){notify('👨‍🌾 Límite de 8 aldeanos alcanzado');return}
- if(occupiedPop()+reservedPop()+popWeight(type)>popLimit){notify('🏠 Población llena: amplía el castillo con Casitas');return}
- if(food<p.cost.food||gold<p.cost.gold){notify('Necesitas más alimento u oro');return}
+ if(type==='villager'&&villagerLimitReached()){notify(tr('👨‍🌾 Límite de 8 aldeanos alcanzado','👨‍🌾 Maximum of 8 villagers reached'));return}
+ if(occupiedPop()+reservedPop()+popWeight(type)>popLimit){notify(tr('🏠 Población llena: amplía el castillo con Casitas','🏠 Population full: build Houses to expand'));return}
+ if(food<p.cost.food||gold<p.cost.gold){notify(tr('Necesitas más alimento u oro','You need more food or gold'));return}
  food-=p.cost.food;gold-=p.cost.gold;
  // Producción inmediata: los tiempos de 1–2 segundos interrumpían el ritmo táctil.
  const c=castle(0),a=rand(0,Math.PI*2),r=rand(64,87);
  const x=clamp(c.x+Math.cos(a)*r,15,W-15),y=clamp(c.y+Math.sin(a)*r,22,H-18);
  const u=createUnit(type,0,x,y);u.guard={x,y};
  fx.push({kind:'gather',x,y:y-18,t:.55,text:'+'+icons[type]});
- notify('✅ '+labels[type]+' listo',.8);updateHUD();
+ notify('✅ '+unitName(type)+tr(' listo',' ready'),.8);updateHUD();
 }
-function buyHouse(){if(gameOver||paused)return;if(popLimit>=POP_MAX){notify('🏰 ¡Capacidad máxima de 80!');return}if(food<HOUSE_COST.food||gold<HOUSE_COST.gold){notify('Necesitas más alimento u oro para ampliar el castillo');return}food-=HOUSE_COST.food;gold-=HOUSE_COST.gold;popLimit=Math.min(POP_MAX,popLimit+POP_STEP);fx.push({kind:'gather',x:W/2,y:H/2-83,t:1,text:'🏰 +5 población'});notify('🏠 Castillo ampliado: capacidad ' + popLimit + '/80',2.2);updateHUD()}
+function buyHouse(){if(gameOver||paused||atHome)return;if(popLimit>=POP_MAX){notify(tr('🏰 ¡Capacidad máxima de 80!','🏰 Maximum population is 80!'));return}if(food<HOUSE_COST.food||gold<HOUSE_COST.gold){notify(tr('Necesitas más alimento u oro para ampliar el castillo','You need more food or gold to expand the castle'));return}food-=HOUSE_COST.food;gold-=HOUSE_COST.gold;popLimit=Math.min(POP_MAX,popLimit+POP_STEP);fx.push({kind:'gather',x:W/2,y:H/2-83,t:1,text:tr('🏰 +5 población','🏰 +5 population')});notify(tr('🏠 Castillo ampliado: capacidad ','🏠 Castle expanded: capacity ')+popLimit+'/80',2.2);updateHUD()}
 function trainEnemy(type){const p=troops[type];if(!p||enemyQueue.length>=6||enemyFood<p.cost.food||enemyGold<p.cost.gold||alive(1).length+enemyQueue.length>=40)return false;enemyFood-=p.cost.food;enemyGold-=p.cost.gold;enemyQueue.push({type,remaining:p.train});return true}
 function resourcesFor(team){return team===0?{food,gold}:{food:enemyFood,gold:enemyGold}}
 function canResearch(team,type){const t=tech[team];if(gameOver||research[team])return false;if(type==='age')return t.age<3;
@@ -259,23 +383,23 @@ function updateResearchBadge(){
  const r=research[0],button=$('researchBadge'),arena=$('arena');
  if(!r||gameOver){button.classList.remove('active');arena.classList.remove('researchActive');button.setAttribute('aria-hidden','true');return}
  const icon=({age:'🏛️',attack:'⚔️',armor:'🛡️',farm:'🌾',mine:'🪙',castle:'🏰'})[r.type];
- const title=r.type==='age'?ages[tech[0].age+1]:(smithNames[r.type]||uniNames[r.type]);
+ const title=r.type==='age'?currentAgeName(tech[0].age+1):researchName(r.type);
  const progress=Math.max(0,Math.min(1,1-r.remaining/r.total));
  $('researchRing').style.background='conic-gradient(#f2cd78 '+(progress*360).toFixed(1)+'deg, #3b5547 0deg)';
  $('researchIcon').textContent=icon;
  $('researchSeconds').textContent=Math.max(0,Math.ceil(r.remaining))+'s';
- button.title='Investigando '+title+' · '+Math.round(progress*100)+'%';
- button.setAttribute('aria-label','Investigación '+title+', '+Math.round(progress*100)+' por ciento, '+Math.max(0,Math.ceil(r.remaining))+' segundos. Toca para ver detalles.');
+ button.title=tr('Investigando ','Researching ')+title+' · '+Math.round(progress*100)+'%';
+ button.setAttribute('aria-label',tr('Investigación ','Research ')+title+', '+Math.round(progress*100)+tr(' por ciento, ',' percent, ')+Math.max(0,Math.ceil(r.remaining))+tr(' segundos. Toca para ver detalles.',' seconds. Tap for details.'));
  button.removeAttribute('aria-hidden');button.classList.add('active');arena.classList.add('researchActive');
 }
 function requestResearch(type){
  if(beginResearch(0,type)){
-  const t=tech[0],name=type==='age'?ages[t.age]:(smithNames[type]||uniNames[type]);
-  $('hubFeedback').textContent='✅ '+name+(type==='age'?' desbloqueada.': ' · nivel '+t[type]+' conseguido.')+(type==='age'&&t.age===1?' ¡La Herrería está disponible!':type==='age'&&t.age===2?' ¡La Universidad está disponible!':'');
+  const t=tech[0],name=type==='age'?currentAgeName(t.age):researchName(type);
+  $('hubFeedback').textContent='✅ '+name+(type==='age'?tr(' desbloqueada.',' unlocked.'):tr(' · nivel ',' · level ')+t[type]+tr(' conseguido.',' reached.'))+(type==='age'&&t.age===1?tr(' ¡La Herrería está disponible!',' Blacksmith unlocked!'):type==='age'&&t.age===2?tr(' ¡La Universidad está disponible!',' University unlocked!'):'');
   refreshTech();updateResearchBadge();
  }else{
   const c=getCost(0,type);
-  const info=!canResearch(0,type)?'🔒 Requiere avanzar de edad':c&&(food<c.food||gold<c.gold)?'🌾🪙 Recursos insuficientes':'⚠️ No disponible ahora';
+  const info=!canResearch(0,type)?tr('🔒 Requiere avanzar de edad','🔒 Advance to a new age first'):c&&(food<c.food||gold<c.gold)?tr('🌾🪙 Recursos insuficientes','🌾🪙 Not enough resources'):tr('⚠️ No disponible ahora','⚠️ Not available yet');
   $('hubFeedback').textContent=info;refreshTech();
  }
 }
@@ -288,18 +412,18 @@ function beginResearch(team,type){if(!canResearch(team,type))return false;const 
 function processResearch(team,dt){const r=research[team];if(!r)return;r.remaining-=dt;if(r.remaining>0)return;const t=tech[team];if(r.type==='age')t.age=Math.min(3,t.age+1);else if(r.type==='attack'||r.type==='armor')t[r.type]=Math.min(3,t[r.type]+1);else t[r.type]=Math.min(2,t[r.type]+1);
  if(r.type==='castle'){const c=castle(team);if(c){c.maxHp=castleBaseHp+castleHpBonus*t.castle;c.hp=Math.min(c.maxHp,c.hp+castleHpBonus)}}
  research[team]=null;
- if(team===0){updateResearchBadge();notify(r.type==='age'?'🎉 ¡Bienvenidos a la '+ages[t.age]+'!':(smithNames[r.type]||uniNames[r.type])+' nivel '+t[r.type]+' completado',3.4);updateHUD()}}
+ if(team===0){updateResearchBadge();notify(r.type==='age'?tr('🎉 ¡Bienvenidos a la ','🎉 Welcome to the ')+currentAgeName(t.age)+'!':researchName(r.type)+tr(' nivel ',' level ')+t[r.type]+tr(' completado',' completed'),3.4);updateHUD()}}
 function techCostText(c){return c?c.food+' 🌾 · '+c.gold+' 🪙':''}
 function selectHubTab(which){
  if(which==='forge'&&tech[0].age<1)return;
  if(which==='uni'&&tech[0].age<2)return;
  techView=which;
  refreshHubTabs();
- $('techSubtitle').textContent=which==='age'?'🏛️ Desde la Edad Oscurita hasta la Imperialísima.':which==='forge'?'🔨 Mejora daño y armadura. Tus tropas cambian de apariencia.':'🎓 Fortalece la economía y la vida de tu castillo.';
+ $('techSubtitle').textContent=which==='age'?tr('🏛️ Desde la Edad Oscurita hasta la Imperialísima.','🏛️ From the Dark-ish Age to the Imperial Age.'):which==='forge'?tr('🔨 Mejora daño y armadura. Tus tropas cambian de apariencia.','🔨 Improve damage and armor. Your troops change appearance.'):tr('🎓 Fortalece la economía y la vida de tu castillo.','🎓 Improve production and castle health.');
  $('ageRow').style.display=which==='age'?'grid':'none';
  $('attackRow').style.display=which==='forge'?'grid':'none';$('armorRow').style.display=which==='forge'?'grid':'none';
  for(const type of ['farm','mine','castle'])$(type+'Row').style.display=which==='uni'?'grid':'none';
- $('techRows').setAttribute('aria-label',which==='age'?'Avanzar de edad':which==='forge'?'Mejoras de herrería':'Mejoras universitarias');
+ $('techRows').setAttribute('aria-label',which==='age'?tr('Avanzar de edad','Age advancement'):which==='forge'?tr('Mejoras de herrería','Blacksmith upgrades'):tr('Mejoras universitarias','University upgrades'));
  refreshTech();
 }
 function refreshHubTabs(){
@@ -307,8 +431,8 @@ function refreshHubTabs(){
  const age=tech[0].age;
  $('hubTabForge').disabled=age<1;
  $('hubTabUni').disabled=age<2;
- $('forgeUnlock').textContent=age<1?'🔒 Edad II':'Ataque y defensa';
- $('universityUnlock').textContent=age<2?'🔒 Edad III':'Economía y castillo';
+ $('forgeUnlock').textContent=age<1?tr('🔒 Edad II','🔒 Age II'):tr('Ataque y defensa','Attack & armor');
+ $('universityUnlock').textContent=age<2?tr('🔒 Edad III','🔒 Age III'):tr('Economía y castillo','Economy & castle');
  for(const kind of ['age','forge','uni']){
   const tab=$('hubTab'+(kind==='age'?'Age':kind==='forge'?'Forge':'Uni'));
   const active=techView===kind;
@@ -316,12 +440,12 @@ function refreshHubTabs(){
   tab.setAttribute('aria-selected',active?'true':'false');
   tab.tabIndex=active?0:-1;
  }
- $('hubAge').textContent=['🪵 Oscurita','🌾 Feudalona','🏰 Castillosa','👑 Imperialísima'][age];
+ $('hubAge').textContent=ageShort[language][age];
  $('hubFood').textContent=Math.floor(food);
  $('hubGold').textContent=Math.floor(gold);
 }
 function openTech(which='age'){
- if(gameOver||paused)return;
+ if(gameOver||paused||atHome)return;
  $('techOverlay').classList.add('show');
  selectHubTab(which==='forge'&&tech[0].age<1?'age':which==='uni'&&tech[0].age<2?'age':which);
  $('techClose').focus({preventScroll:true});
@@ -333,18 +457,31 @@ function updateLevelTrack(type){
  const segments=$(type+'LevelSegments');
  // Reutiliza los nodos para evitar parpadeos mientras el panel está abierto.
  if(segments.children.length!==max){segments.textContent='';for(let i=0;i<max;i++){const s=document.createElement('span');s.className='levelSegment';segments.appendChild(s)}}
- for(let i=0;i<max;i++){let s=segments.children[i];const state=i<level?'filled':i<unlockedMax?'available':'locked';s.className='levelSegment '+state;s.title='Nivel '+(i+1)+': '+(state==='filled'?'completado':state==='available'?'disponible':'requiere avanzar de edad')}
+ for(let i=0;i<max;i++){let s=segments.children[i];const state=i<level?'filled':i<unlockedMax?'available':'locked';s.className='levelSegment '+state;s.title=langText('level')+' '+(i+1)+': '+langText(state==='filled'?'done':state==='available'?'available':'locked')}
  $(type+'LevelNow').textContent=level+'/'+max;
- $(type+'LevelTrack').setAttribute('aria-label',type+' nivel '+level+' de '+max+'. '+Math.max(0,unlockedMax-level)+' niveles desbloqueados pendientes.');
+ $(type+'LevelTrack').setAttribute('aria-label',type+' '+langText('level')+' '+level+'/'+max+'. '+Math.max(0,unlockedMax-level)+' '+langText('levelLeft')+'.');
 }
 function refreshAllLevelTracks(){for(const type of Object.keys(levelMax))updateLevelTrack(type)}
-function refreshTech(){if(!techView)return;refreshHubTabs();const t=tech[0],r=research[0],wallet=resourcesFor(0);$('techResearchText').textContent=r?'⏳ Investigando '+(r.type==='age'?ages[t.age+1]:(smithNames[r.type]||uniNames[r.type]))+' · '+Math.ceil(r.remaining)+' s':'⚡ Mejoras instantáneas al pagar su costo.';$('techBar').style.width=r?(100*(1-r.remaining/r.total)).toFixed(1)+'%':'0%';
- const nxt=ageCosts[t.age+1];$('nextAgeName').textContent=t.age===3?'👑 ¡Edad Imperialísima alcanzada!':'➡️ '+ages[t.age+1];$('nextAgeDesc').textContent=t.age===3?'Ya conoces todos los secretos del garrote.':'Actual: '+ages[t.age]+' · mejora de ataque y defensa disponible después';$('ageCost').textContent=techCostText(nxt);$('upgradeAge').disabled=!canResearch(0,'age')||!nxt||wallet.food<nxt.food||wallet.gold<nxt.gold;
- for(const kind of ['attack','armor']){const lvl=t[kind],next=forgeCost(kind,lvl),unlocked=lvl<t.age,done=lvl>=3;$((kind==='attack'?'attackLabel':'armorLabel')).textContent=(kind==='attack'?'⚔️ ':'🛡️ ')+smithNames[kind]+' +'+lvl;$((kind==='attack'?'attackDesc':'armorDesc')).textContent=done?'Mejora máxima conseguida':unlocked?kind==='attack'?'+17% de daño por nivel, para soldados presentes y futuros':'-2.5 de daño recibido y -5% adicional por nivel':'Requiere avanzar de edad para investigar el nivel '+(lvl+1);$(kind+'Cost').textContent=done?'MÁXIMO':techCostText(next);$('upgrade'+(kind==='attack'?'Attack':'Armor')).disabled=!canResearch(0,kind)||wallet.food<next.food||wallet.gold<next.gold}
- for(const type of ['farm','mine','castle']){const level=t[type],done=level>=2,next=done?null:uniCosts[type][level],unlocked=t.age>=2&&level<t.age-1;
-  $(type+'Label').textContent=({farm:'🌾 ',mine:'🪙 ',castle:'🏰 '})[type]+uniNames[type]+' · Nv. '+level+'/2';
-  $(type+'Desc').textContent=done?'¡Investigación al máximo!':!unlocked?'Se requiere una edad superior para el siguiente nivel':type==='farm'?'Cada nivel aumenta +40% la producción de alimento':type==='mine'?'Cada nivel aumenta +40% la producción de oro':'Cada nivel aporta +450 PV máximos al castillo y repara 450 PV';
-  $(type+'Cost').textContent=done?'MÁXIMO':techCostText(next);
+function refreshTech(){
+ if(!techView)return;refreshHubTabs();const t=tech[0],r=research[0],wallet=resourcesFor(0);
+ $('techResearchText').textContent=r?tr('⏳ Investigando ','⏳ Researching ')+(r.type==='age'?currentAgeName(t.age+1):researchName(r.type))+' · '+Math.ceil(r.remaining)+' s':tr('⚡ Mejoras instantáneas al pagar su costo.','⚡ Upgrades apply instantly upon purchase.');
+ $('techBar').style.width=r?(100*(1-r.remaining/r.total)).toFixed(1)+'%':'0%';
+ const nxt=ageCosts[t.age+1];
+ $('nextAgeName').textContent=t.age===3?tr('👑 ¡Edad Imperialísima alcanzada!','👑 Imperial Age reached!'):'➡️ '+currentAgeName(t.age+1);
+ $('nextAgeDesc').textContent=t.age===3?tr('Ya conoces todos los secretos del garrote.','You have mastered every secret of the club.'):tr('Actual: ','Current: ')+currentAgeName(t.age)+tr(' · mejora de ataque y defensa disponible después',' · new attack and armor upgrades unlock next');
+ $('ageCost').textContent=techCostText(nxt);$('upgradeAge').disabled=!canResearch(0,'age')||!nxt||wallet.food<nxt.food||wallet.gold<nxt.gold;
+ for(const kind of ['attack','armor']){
+  const lvl=t[kind],next=forgeCost(kind,lvl),unlocked=lvl<t.age,done=lvl>=3;
+  $(kind+'Label').textContent=(kind==='attack'?'⚔️ ':'🛡️ ')+researchName(kind)+' +'+lvl;
+  $(kind+'Desc').textContent=done?tr('Mejora máxima conseguida','Maximum upgrade reached'):unlocked?kind==='attack'?tr('+17% de daño por nivel, para soldados presentes y futuros','+17% damage per level, for current and future soldiers'):tr('-2.5 de daño recibido y -5% adicional por nivel','-2.5 damage taken and an extra -5% per level'):tr('Requiere avanzar de edad para investigar el nivel ','Advance to a new age to research level ')+(lvl+1);
+  $(kind+'Cost').textContent=done?langText('max'):techCostText(next);
+  $('upgrade'+(kind==='attack'?'Attack':'Armor')).disabled=!canResearch(0,kind)||wallet.food<next.food||wallet.gold<next.gold;
+ }
+ for(const type of ['farm','mine','castle']){
+  const level=t[type],done=level>=2,next=done?null:uniCosts[type][level],unlocked=t.age>=2&&level<t.age-1;
+  $(type+'Label').textContent=({farm:'🌾 ',mine:'🪙 ',castle:'🏰 '})[type]+researchName(type)+tr(' · Nv. ',' · Lv. ')+level+'/2';
+  $(type+'Desc').textContent=done?tr('¡Investigación al máximo!','Research completed!'):!unlocked?tr('Se requiere una edad superior para el siguiente nivel','Advance to a higher age for the next level'):type==='farm'?tr('Cada nivel aumenta +40% la producción de alimento','Each level boosts food production by +40%'):type==='mine'?tr('Cada nivel aumenta +40% la producción de oro','Each level boosts gold production by +40%'):tr('Cada nivel aporta +450 PV máximos al castillo y repara 450 PV','Each level adds +450 castle max HP and restores 450 HP');
+  $(type+'Cost').textContent=done?langText('max'):techCostText(next);
   $('upgrade'+type[0].toUpperCase()+type.slice(1)).disabled=!canResearch(0,type)||!next||wallet.food<next.food||wallet.gold<next.gold;
  }
  refreshAllLevelTracks();
@@ -401,11 +538,11 @@ function launchWave(){
  waveActive=true;spawnClock=0;bossWaiting=wave===5;bossSpawned=false;
  pendingSpawns=buildWaveSpawns(wave);
  spawnClock=pendingSpawns.length?pendingSpawns[0].delayBefore:0;
- notify('🌊 ¡OLEADA '+wave+'/5! '+(wave===1?'Llegan los primeros reclutas.':wave===5?'¡Ataque por los cuatro frentes!':'¡Defiende tu castillo!'),4);
+ notify(tr('🌊 ¡OLEADA ','🌊 WAVE ')+wave+'/5! '+(wave===1?tr('Llegan los primeros reclutas.','The first recruits are here.'):wave===5?tr('¡Ataque por los cuatro frentes!','Attack from all four sides!'):tr('¡Defiende tu castillo!','Defend your castle!')),4);
  updateHUD();
 }
 function step(dt){
- if(paused||gameOver)return;
+ if(paused||gameOver||atHome)return;
  time+=dt;
  processResearch(0,dt);
  // RTS continuo: aldeanos recolectan, tropas combaten y el jugador puede mejorar siempre.
@@ -440,7 +577,7 @@ function step(dt){
    food+=rewardFood;gold+=rewardGold;
    nextAttackTotal=NEXT_ATTACK_DELAY[wave]||20;
    waveTimer=nextAttackTotal;
-   notify('🏆 Oleada '+wave+' superada · +'+rewardFood+' 🌾 +'+rewardGold+' 🪙. Próximo ataque en '+Math.ceil(waveTimer)+'s.',4);
+   notify(tr('🏆 Oleada ','🏆 Wave ')+wave+tr(' superada',' cleared')+' · +'+rewardFood+' 🌾 +'+rewardGold+tr(' 🪙. Próximo ataque en ',' 🪙. Next attack in ')+Math.ceil(waveTimer)+'s.',4);
   }
  }
  statsTimer+=dt;if(statsTimer>.12){statsTimer=0;updateHUD()}
@@ -464,8 +601,13 @@ function spawnInvader({type,side,tier=0}){
  u.max=Math.round(u.max*waveHp[wave]*(1+tier*.13));
  u.hp=u.max;u.guard={x:W/2,y:H/2};
 }
-function spawnBoss(){bossSpawned=true;bossWaiting=false;const u=createUnit('ogre',1,W/2,28);u.guard={x:W/2,y:H/2};notify('👹 ¡LLEGÓ EL GRAN OGRO DEL GARROTE! ¡DERROTALO!',6);updateHUD()}
-function finish(w){if(gameOver)return;gameOver=true;victor=w;$('endTitle').textContent=w===0?'🏆 ¡VICTORIA!':w===1?'💀 EL CASTILLO HA CAÍDO':'⚖️ EMPATE';$('endText').textContent=w===0?'¡Sobreviviste a las cinco oleadas y derrotaste al Gran Ogro del Garrote! La aldea entera canta WOLOLO.':w===1?'El enemigo derribó tu castillo. Invierte en soldados y mejoras de la Universidad.':'Fin del asedio.';$('endScreen').classList.add('show');updateResearchBadge();updateHUD()}
+function spawnBoss(){bossSpawned=true;bossWaiting=false;const u=createUnit('ogre',1,W/2,28);u.guard={x:W/2,y:H/2};notify(tr('👹 ¡LLEGÓ EL GRAN OGRO DEL GARROTE! ¡DERROTALO!','👹 THE GREAT CLUB OGRE IS HERE! DEFEAT HIM!'),6);updateHUD()}
+function finish(w){
+ if(gameOver)return;gameOver=true;victor=w;
+ $('endTitle').textContent=w===0?tr('🏆 ¡VICTORIA!','🏆 VICTORY!'):w===1?tr('💀 EL CASTILLO HA CAÍDO','💀 THE CASTLE HAS FALLEN'):tr('⚖️ EMPATE','⚖️ DRAW');
+ $('endText').textContent=w===0?tr('¡Sobreviviste a las cinco oleadas y derrotaste al Gran Ogro del Garrote! La aldea entera canta WOLOLO.','You survived all five waves and defeated the Great Club Ogre! The entire village chants WOLOLO.'):w===1?tr('El enemigo derribó tu castillo. Invierte en soldados y mejoras de la Universidad.','The enemy destroyed your castle. Invest in soldiers and University upgrades.'):tr('Fin del asedio.','The siege is over.');
+ $('endScreen').classList.add('show');updateResearchBadge();updateHUD();
+}
 function ground(){ctx.fillStyle='#68894f';ctx.fillRect(0,0,W,H);for(let y=0;y<H;y+=34)for(let x=0;x<W;x+=34){ctx.fillStyle=((Math.floor(x/34)+Math.floor(y/34))%3===0)?'#709253':'#66854b';ctx.fillRect(x,y,33,33)}
  ctx.strokeStyle='#a1a26a40';ctx.lineWidth=28;ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.strokeStyle='#d0ba8060';ctx.lineWidth=2;ctx.setLineDash([8,9]);ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.setLineDash([]);
  for(let i=0;i<70;i++){let xx=(i*131+46)%W,yy=(i*97+57)%H;ctx.fillStyle=i%3===0?'#3d7440':'#a2a75e';ctx.fillRect(xx,yy,3,4)}
@@ -485,7 +627,7 @@ function drawCastle(b){const age=(tech[b.team]&&tech[b.team].age)||0;const base=
  else if(age===1){ctx.fillStyle='#6b6860';ctx.fillRect(-48,-24,96,54);ctx.fillStyle='#8e8c84';ctx.fillRect(-56,-6,16,36);ctx.fillRect(40,-6,16,36);ctx.fillStyle=base;ctx.fillRect(-42,-23,84,40);ctx.fillStyle='#4b5052';ctx.fillRect(-35,-35,70,12);for(let i=-35;i<36;i+=17){ctx.fillStyle='#b6b3a3';ctx.fillRect(i,-41,10,10)}for(const xx of [-48,48]){ctx.fillStyle='#5e5f5d';ctx.fillRect(xx-10,-41,20,55);ctx.fillStyle=light;ctx.fillRect(xx-9,-47,18,14)}ctx.fillStyle='#1f241f';ctx.beginPath();ctx.arc(0,19,13,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-13,18,26,12);ctx.fillStyle=light;ctx.fillRect(-3,-60,6,22);ctx.beginPath();ctx.moveTo(3,-60);ctx.lineTo(23,-52);ctx.lineTo(3,-44);ctx.fill()}
  else if(age===2){ctx.fillStyle='#676d71';ctx.fillRect(-57,2,114,24);ctx.fillStyle='#828987';ctx.fillRect(-62,-12,24,40);ctx.fillRect(38,-12,24,40);ctx.fillStyle='#676d71';ctx.fillRect(-46,-24,92,48);ctx.fillStyle=base;ctx.fillRect(-41,-23,82,42);ctx.fillStyle='#4d5458';ctx.fillRect(-34,-37,68,12);for(let i=-34;i<35;i+=17){ctx.fillStyle='#c2c2b4';ctx.fillRect(i,-43,10,11)}for(const xx of [-47,47]){ctx.fillStyle='#565e61';ctx.fillRect(xx-12,-46,24,61);ctx.fillStyle=light;ctx.fillRect(xx-11,-52,22,15);ctx.fillStyle='#d9ccb3';ctx.fillRect(xx-11,-57,6,8);ctx.fillRect(xx+5,-57,6,8)}ctx.fillStyle='#1c231e';ctx.beginPath();ctx.arc(0,17,15,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-15,16,30,15);ctx.fillStyle=light;ctx.fillRect(-3,-72,6,23);ctx.beginPath();ctx.moveTo(3,-72);ctx.lineTo(26,-64);ctx.lineTo(3,-56);ctx.fill();ctx.fillStyle='#ddc272';ctx.fillRect(-22,-58,9,18);ctx.fillRect(13,-58,9,18)}
  else {ctx.fillStyle='#71777b';ctx.fillRect(-63,2,126,24);ctx.fillStyle='#919894';ctx.fillRect(-69,-15,27,43);ctx.fillRect(42,-15,27,43);ctx.fillStyle='#71777b';ctx.fillRect(-48,-29,96,53);ctx.fillStyle=base;ctx.fillRect(-43,-28,86,46);ctx.fillStyle='#535a5f';ctx.fillRect(-36,-41,72,12);for(let i=-36;i<37;i+=16){ctx.fillStyle='#cbcabf';ctx.fillRect(i,-47,10,11)}for(const xx of [-52,52]){ctx.fillStyle='#5e666b';ctx.fillRect(xx-13,-49,26,66);ctx.fillStyle=light;ctx.fillRect(xx-12,-55,24,15);ctx.fillStyle='#e4d9c0';ctx.fillRect(xx-12,-60,7,9);ctx.fillRect(xx+4,-60,7,9)}ctx.fillStyle='#202823';ctx.beginPath();ctx.arc(0,18,16,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(-16,17,32,15);ctx.fillStyle='#ddb968';ctx.fillRect(-49,-70,12,28);ctx.fillRect(37,-70,12,28);ctx.fillStyle=light;ctx.fillRect(-3,-77,6,26);ctx.beginPath();ctx.moveTo(3,-77);ctx.lineTo(29,-68);ctx.lineTo(3,-59);ctx.fill();ctx.fillStyle='#be613e';ctx.beginPath();ctx.moveTo(-37,-69);ctx.lineTo(-18,-62);ctx.lineTo(-37,-55);ctx.moveTo(49,-69);ctx.lineTo(68,-62);ctx.lineTo(49,-55);ctx.fill()}ctx.restore()}
-function drawOgre(u){ctx.save();ctx.translate(u.x,u.y);const s=1.35+Math.sin(time*3)*.018;ctx.scale(s,s);ctx.fillStyle='#0006';ctx.beginPath();ctx.ellipse(0,25,33,11,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#553d2d';ctx.fillRect(-17,14,14,18);ctx.fillRect(8,14,14,18);ctx.fillStyle='#718a4e';ctx.beginPath();ctx.ellipse(0,0,28,31,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#526b3b';ctx.beginPath();ctx.ellipse(-26,1,12,19,0,0,Math.PI*2);ctx.ellipse(26,1,12,19,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#4c311d';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(28,-2);ctx.lineTo(38,-34);ctx.stroke();ctx.strokeStyle='#a37b4f';ctx.lineWidth=17;ctx.beginPath();ctx.moveTo(39,-34);ctx.lineTo(44,-60);ctx.stroke();ctx.strokeStyle='#563420';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(36,-35);ctx.lineTo(50,-34);ctx.stroke();ctx.fillStyle='#82985a';ctx.beginPath();ctx.arc(0,-16,20,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e3d0a1';ctx.beginPath();ctx.moveTo(-14,-29);ctx.lineTo(-24,-49);ctx.lineTo(-5,-35);ctx.moveTo(13,-29);ctx.lineTo(24,-49);ctx.lineTo(5,-35);ctx.fill();ctx.fillStyle='#ff6c55';ctx.fillRect(-12,-19,8,5);ctx.fillRect(5,-19,8,5);ctx.fillStyle='#2b261e';ctx.fillRect(-3,-7,7,8);ctx.fillStyle='#ffffff';ctx.fillRect(-9,0,5,7);ctx.fillRect(7,0,5,7);ctx.fillStyle='#220f0ed0';ctx.fillRect(-34,-74,68,7);ctx.fillStyle='#ff7862';ctx.fillRect(-34,-74,68*u.hp/u.max,7);ctx.fillStyle='#ffdfb4';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText('👹 OGRO',0,-80);ctx.restore()}
+function drawOgre(u){ctx.save();ctx.translate(u.x,u.y);const s=1.35+Math.sin(time*3)*.018;ctx.scale(s,s);ctx.fillStyle='#0006';ctx.beginPath();ctx.ellipse(0,25,33,11,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#553d2d';ctx.fillRect(-17,14,14,18);ctx.fillRect(8,14,14,18);ctx.fillStyle='#718a4e';ctx.beginPath();ctx.ellipse(0,0,28,31,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#526b3b';ctx.beginPath();ctx.ellipse(-26,1,12,19,0,0,Math.PI*2);ctx.ellipse(26,1,12,19,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#4c311d';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(28,-2);ctx.lineTo(38,-34);ctx.stroke();ctx.strokeStyle='#a37b4f';ctx.lineWidth=17;ctx.beginPath();ctx.moveTo(39,-34);ctx.lineTo(44,-60);ctx.stroke();ctx.strokeStyle='#563420';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(36,-35);ctx.lineTo(50,-34);ctx.stroke();ctx.fillStyle='#82985a';ctx.beginPath();ctx.arc(0,-16,20,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e3d0a1';ctx.beginPath();ctx.moveTo(-14,-29);ctx.lineTo(-24,-49);ctx.lineTo(-5,-35);ctx.moveTo(13,-29);ctx.lineTo(24,-49);ctx.lineTo(5,-35);ctx.fill();ctx.fillStyle='#ff6c55';ctx.fillRect(-12,-19,8,5);ctx.fillRect(5,-19,8,5);ctx.fillStyle='#2b261e';ctx.fillRect(-3,-7,7,8);ctx.fillStyle='#ffffff';ctx.fillRect(-9,0,5,7);ctx.fillRect(7,0,5,7);ctx.fillStyle='#220f0ed0';ctx.fillRect(-34,-74,68,7);ctx.fillStyle='#ff7862';ctx.fillRect(-34,-74,68*u.hp/u.max,7);ctx.fillStyle='#ffdfb4';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText(tr('👹 OGRO','👹 OGRE'),0,-80);ctx.restore()}
 function drawUnit(u){if(u.type==='ogre'){drawOgre(u);return}ctx.save();ctx.translate(u.x,u.y);const owned=u.team===0;const isVillager=u.type==='villager';const attackLv=owned?tech[0].attack:0;const defenseLv=owned?tech[0].armor:(u.enemyTier!==undefined?Math.min(3,u.enemyTier+1):0);ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(0,9,11,4,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=owned?'#2c679f':'#a43e3c';ctx.beginPath();ctx.arc(0,2,isVillager?8.5:10.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=isVillager?'#d6ad69':u.type==='spear'?'#d0bd85':u.type==='archer'?'#7cc38d':'#a7bedb';ctx.fillRect(-6,-1,12,9);
  if(owned&&!isVillager){
   const armorPal=['','#95a9b1','#c8d5d9','#f0d17d'][defenseLv];
@@ -512,7 +654,7 @@ function render(){ctx.clearRect(0,0,W,H);ground();for(const r of resources){if(r
  if(queue.length){const q=queue[0],p=troops[q.type];ctx.fillStyle='#13201ce0';ctx.fillRect(12,H-34,208,22);ctx.fillStyle='#e4ce9b';ctx.font='bold 11px system-ui';ctx.textAlign='left';ctx.fillText('🏰 '+labels[q.type]+' · '+Math.ceil(q.remaining)+'s',19,H-19);ctx.fillStyle='#89cb87';ctx.fillRect(12,H-38,208*(1-clamp(q.remaining/p.train,0,1)),3)}}
 function pointer(e){let r=cv.getBoundingClientRect();return{x:clamp((e.clientX-r.left)*W/r.width,0,W),y:clamp((e.clientY-r.top)*H/r.height,0,H)}}
 function selectedAt(p){return [...units].reverse().find(u=>u.hp>0&&distance(p,u)<19)||null}
-function mapTap(p){if(gameOver||paused)return;const tapped=selectedAt(p);selected=tapped&&tapped.team===0?tapped:null;updateHUD()}
+function mapTap(p){if(gameOver||paused||atHome)return;const tapped=selectedAt(p);selected=tapped&&tapped.team===0?tapped:null;updateHUD()}
 // Compatible con Pointer Events (Safari actual) y Touch Events (Safari antiguos).
 // Solo instalamos UN mecanismo por navegador para evitar órdenes duplicadas.
 if('PointerEvent' in window){
@@ -542,7 +684,12 @@ $('upgradeArmor').addEventListener('click',()=>requestResearch('armor'));
 for(const type of ['farm','mine','castle'])$('upgrade'+type[0].toUpperCase()+type.slice(1)).addEventListener('click',()=>requestResearch(type));
 for(const b of btns)b.addEventListener('click',()=>train(b.dataset.unit));
 function toggleMenu(state){if(state)closeTech();paused=state;$('menu').classList.toggle('show',state);last=performance.now()}
-$('menuBtn').addEventListener('click',()=>toggleMenu(true));$('resume').addEventListener('click',()=>toggleMenu(false));$('newGame').addEventListener('click',start);$('again').addEventListener('click',start);
+$('menuBtn').addEventListener('click',()=>{if(!atHome)toggleMenu(true)});
+$('resume').addEventListener('click',()=>toggleMenu(false));
+$('newGame').addEventListener('click',start);$('again').addEventListener('click',start);
+$('homeStart').addEventListener('click',()=>{start();$('homeStart').blur()});
+$('homeFromPause').addEventListener('click',()=>{closeTech();paused=true;atHome=true;$('menu').classList.remove('show');$('homeScreen').hidden=false;last=performance.now()});
+for(const langBtn of document.querySelectorAll('[data-lang-option]'))langBtn.addEventListener('click',()=>setLanguage(langBtn.dataset.langOption));
 function resize(){
  // Safari iPhone: la altura util puede cambiar cuando la barra de direcciones aparece.
  const vh=window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -558,12 +705,12 @@ function frame(now){
  try{step(dt);render()}catch(err){showFatal(err);return}
  requestAnimationFrame(frame)
 }
-function showFatal(err){const fallback=$('gameFallback');fallback.textContent='Error en el juego: '+(err&&err.message?err.message:String(err))+' · Actualiza la página o prueba Chrome.';fallback.style.display='block';console.error(err)}
+function showFatal(err){const fallback=$('gameFallback');fallback.textContent=tr('Error en el juego: ','Game error: ')+(err&&err.message?err.message:String(err))+tr(' · Actualiza la página o prueba Chrome.',' · Refresh the page or try Chrome.');fallback.style.display='block';console.error(err)}
 window.addEventListener('unhandledrejection',function(e){showFatal(e.reason)});
 window.addEventListener('error',e=>{notify('Error: '+e.message,10)});
-window.__ageDebug={state:()=>({food,gold,enemyFood,enemyGold,tech:tech.map(x=>({...x})),research:research.map(x=>x?{...x}:null),resources:resources.map(r=>({...r})),pop:occupiedPop(),popReserved:reservedPop(),popLimit,popMax:POP_MAX,castleStage:(popLimit-POP_START)/POP_STEP,enemies:alive(1).length,queue:queue.length,enemyQueue:enemyQueue.length,gameOver,paused,units:units.map(u=>({type:u.type,team:u.team,x:u.x,y:u.y,hp:u.hp,max:u.max})),wave,waveActive,waveTimer,pending:pendingSpawns.length,bossSpawned,castleHp:castle(0)?.hp,castleMaxHp:castle(0)?.maxHp,villagerCount:villagerCount(),nextAttackTotal}),wavePlan:buildWaveSpawns,train,buyHouse,start,finish,step,beginResearch,openTech,closeTech,beginWave,spawnInvader,spawnBoss,launchWave};
+window.__ageDebug={language:()=>language,setLanguage,home:()=>atHome,goHome:()=>{$('homeFromPause').click()},state:()=>({food,gold,enemyFood,enemyGold,tech:tech.map(x=>({...x})),research:research.map(x=>x?{...x}:null),resources:resources.map(r=>({...r})),pop:occupiedPop(),popReserved:reservedPop(),popLimit,popMax:POP_MAX,castleStage:(popLimit-POP_START)/POP_STEP,enemies:alive(1).length,queue:queue.length,enemyQueue:enemyQueue.length,gameOver,paused,units:units.map(u=>({type:u.type,team:u.team,x:u.x,y:u.y,hp:u.hp,max:u.max})),wave,waveActive,waveTimer,pending:pendingSpawns.length,bossSpawned,castleHp:castle(0)?.hp,castleMaxHp:castle(0)?.maxHp,villagerCount:villagerCount(),nextAttackTotal}),wavePlan:buildWaveSpawns,train,buyHouse,start,finish,step,beginResearch,openTech,closeTech,beginWave,spawnInvader,spawnBoss,launchWave};
 try{
- start();resize();render();
+ start();paused=true;atHome=true;$('homeScreen').hidden=false;applyLanguage();resize();render();
  $('startupHelp').hidden=true;
  requestAnimationFrame(frame);
 }catch(err){showFatal(err)}
@@ -571,8 +718,8 @@ try{
 </script>
 <noscript><div style="position:fixed;z-index:100;inset:10%;background:#203528;color:#ffe4b0;padding:25px;border-radius:14px;text-align:center">Este juego necesita JavaScript. La vista previa de archivos de iPhone puede bloquearlo. Abre el juego como una página web en Safari.</div></noscript>
 <script>
-if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')) {
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(err=>console.warn('PWA offline:',err)));
+if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){
+window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('PWA offline:',e)));
 }
 </script>
 </body>
