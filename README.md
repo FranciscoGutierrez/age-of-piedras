@@ -1,7 +1,7 @@
 # Age of Piedras 🏰⚔️
-Juego RTS HTML5/Canvas, versión **2.6**.
+Juego RTS HTML5/Canvas, versión **2.7**.
 
-- Juego en `index.html` con mejoras en el Hub de Centro, Herrería y Universidad.
+- Juego en `index.html` con pantalla de inicio, opción **Español / English**, mejoras en el Hub de Centro, Herrería y Universidad.\n- Menú principal y menú de pausa para volver al inicio o cambiar idioma. La preferencia se guarda en el dispositivo.
 - `manifest.webmanifest`: instalable como PWA.
 - `sw.js`: cachea recursos para jugar sin internet después de la primera carga.
 - `icons/`: íconos para iPhone, Android y navegador.
