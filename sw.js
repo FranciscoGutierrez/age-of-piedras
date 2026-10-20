@@ -1,5 +1,5 @@
-/* Age of Piedras v2.6 - caché offline, alcance limitado a este repositorio */
-const CACHE = 'age-of-piedras-v26-launch-1';
+/* Age of Piedras v2.7 - caché offline, alcance limitado a este repositorio */
+const CACHE = 'age-of-piedras-v27-bilingual-1';
 const ASSETS = [
  './', './index.html', './manifest.webmanifest',
  './icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png',
