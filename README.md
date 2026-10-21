@@ -1,11 +1,12 @@
 # Age of Piedras 🏰⚔️
-Juego RTS HTML5/Canvas, versión **2.8.1**.
+Juego RTS HTML5/Canvas, versión **2.9**.
 
 - Juego en `index.html` con pantalla de inicio, opción **Español / English**, seis civilizaciones (Celtas, Franceses, Ingleses, Nórdicos, Italianos, Españoles) y seis dificultades (Muy fácil, Fácil, Estándar, Difícil, Muy difícil, Extremo).
 - Cada civilización aplica bonificaciones y penalizaciones reales; cada dificultad ajusta HP, daño, número de invasores y temporizadores. **Estándar** conserva el balance de v2.7.
 - Hub de Centro, Herrería y Universidad, con progreso de investigación instantáneo.
 - El encabezado durante la partida muestra el emblema y nombre traducido de la civilización activa.
 - Menú principal y menú de pausa para volver al inicio o cambiar idioma. La preferencia se guarda en el dispositivo.
+- 🎶 Banda sonora medieval original generada con Web Audio: ambiente tranquilo durante la preparación, ritmo más intenso en las oleadas y música especial para el ogro. Control de sonido en el menú inicial, la barra de juego y el menú de pausa; elección guardada en el dispositivo. Funciona sin descargas ni conexión.
 - `manifest.webmanifest`: instalable como PWA.
 - `sw.js`: cachea recursos para jugar sin internet después de la primera carga.
 - `icons/`: íconos para iPhone, Android y navegador.
