@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Tiny Kingdoms: Under Siege · v2.12</title>
+<title>Tiny Kingdoms: Under Siege · v2.13</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -433,12 +433,11 @@ const smithNames={attack:'Filo del Tío Beto',armor:'Chaleco Antiflechas'};
 const uniNames={farm:'Granjas con doctorado',mine:'Picos con posgrado',castle:'Muros de tesis doctoral'};
 const uniCosts={farm:[{food:210,gold:155,seconds:8},{food:350,gold:255,seconds:11}],mine:[{food:175,gold:220,seconds:8},{food:285,gold:360,seconds:11}],castle:[{food:260,gold:225,seconds:10},{food:400,gold:355,seconds:13}]};
 const castleBaseHp=1000,castleHpBonus=450,uniProductionBonus=.40;
-const POP_START=10,POP_MAX=80,POP_STEP=5,VILLAGER_CAP=8,HOUSE_COST={food:100,gold:60};
+const POP_START=10,POP_MAX=80,POP_STEP=5,HOUSE_COST={food:100,gold:60};
 const popWeight=type=>type==='villager'?1:type==='ogre'?0:2;
 const occupiedPop=()=>alive(0).reduce((sum,u)=>sum+popWeight(u.type),0);
 const reservedPop=()=>queue.reduce((sum,q)=>sum+popWeight(q.type),0);
 const villagerCount=()=>alive(0).filter(u=>u.type==='villager').length+queue.filter(q=>q.type==='villager').length;
-const villagerLimitReached=()=>villagerCount()>=VILLAGER_CAP;
 const forgeCost=(type,level)=>({food:(type==='attack'?95:80)+level*(type==='attack'?80:70),gold:(type==='attack'?60:55)+level*(type==='attack'?70:60),seconds:5+level*2});
 let tech=[],research=[],techView=null,popLimit=POP_START,atHome=true;
 let units=[],buildings=[],resources=[],fx=[],queue=[],enemyQueue=[],selected=null,gameOver=false,victor=null,paused=false,time=0,enemyBrain=0,enemyFood=300,enemyGold=180,food=300,gold=180,nextId=1,last=0,toastTimer=0,statsTimer=0;
@@ -700,9 +699,9 @@ function updateHUD(){
  const boss=units.find(u=>u.type==='ogre'&&u.hp>0);$('bossHUD').style.display=boss?'block':'none';if(boss){$('bossHPText').textContent=Math.ceil(boss.hp)+' / '+Math.ceil(boss.max)+tr(' PV',' HP');$('bossBar').style.width=(100*boss.hp/boss.max).toFixed(1)+'%'}
  $('castleHpUnit').textContent=tr('PV','HP');
  let here=selected&&units.includes(selected)&&selected.hp>0?selected:null;if(!here)selected=null;
- $('selectedInfo').textContent=here?icons[here.type]+' '+unitName(here.type)+(here.team===0&&here.type!=='villager'?' · ⚔'+tech[0].attack+' 🛡'+tech[0].armor:here.team===1&&here.enemyTier!==undefined?tr(' · Nv. ',' · Lv. ')+(here.enemyTier+1):'')+' · '+Math.ceil(here.hp)+tr(' PV',' HP'):queue.length?'🏰 '+tr('Entrenando: ','Training: ')+unitName(queue[0].type)+' ('+Math.ceil(queue[0].remaining)+' s)':'👨‍🌾 '+villagerCount()+'/8 · '+tr('Aldeanos en riesgo','Villagers at risk');
- for(const b of btns){const p=troops[b.dataset.unit];b.disabled=gameOver||food<p.cost.food||gold<p.cost.gold||occupied+reserved+popWeight(b.dataset.unit)>popLimit||(b.dataset.unit==='villager'&&villagerLimitReached());
-  if(b.dataset.unit==='villager'){b.querySelector('.label').textContent=unitName('villager')+' '+villagerCount()+'/'+VILLAGER_CAP;b.querySelector('.cost').textContent=villagerLimitReached()?tr('MÁX. 8','MAX 8'):'50 🌾'}
+ $('selectedInfo').textContent=here?icons[here.type]+' '+unitName(here.type)+(here.team===0&&here.type!=='villager'?' · ⚔'+tech[0].attack+' 🛡'+tech[0].armor:here.team===1&&here.enemyTier!==undefined?tr(' · Nv. ',' · Lv. ')+(here.enemyTier+1):'')+' · '+Math.ceil(here.hp)+tr(' PV',' HP'):queue.length?'🏰 '+tr('Entrenando: ','Training: ')+unitName(queue[0].type)+' ('+Math.ceil(queue[0].remaining)+' s)':'👨‍🌾 '+villagerCount()+' · '+tr('Aldeanos en riesgo','Villagers at risk');
+ for(const b of btns){const p=troops[b.dataset.unit];b.disabled=gameOver||food<p.cost.food||gold<p.cost.gold||occupied+reserved+popWeight(b.dataset.unit)>popLimit;
+  if(b.dataset.unit==='villager'){b.querySelector('.label').textContent=unitName('villager')+' '+villagerCount();b.querySelector('.cost').textContent='50 🌾'}
   const count=queue.filter(q=>q.type===b.dataset.unit).length;let n=b.querySelector('.queued');if(count){if(!n){n=document.createElement('span');n.className='queued';b.appendChild(n)}n.textContent=count}else if(n)n.remove()}
  const house=$('houseBtn');house.disabled=gameOver||popLimit>=POP_MAX||food<HOUSE_COST.food||gold<HOUSE_COST.gold;
  $('houseLabel').textContent=popLimit>=POP_MAX?langText('maxPop'):langText('houses');$('houseCost').textContent=popLimit>=POP_MAX?langText('full'):HOUSE_COST.food+' 🌾 · '+HOUSE_COST.gold+' 🪙';
@@ -714,7 +713,6 @@ function updateHUD(){
 function train(type){
  if(gameOver||paused||atHome)return;
  const p=troops[type];if(!p)return;
- if(type==='villager'&&villagerLimitReached()){notify(tr('👨‍🌾 Límite de 8 aldeanos alcanzado','👨‍🌾 Maximum of 8 villagers reached'));return}
  if(occupiedPop()+reservedPop()+popWeight(type)>popLimit){notify(tr('🏠 Población llena: amplía el castillo con Casitas','🏠 Population full: build Houses to expand'));return}
  if(food<p.cost.food||gold<p.cost.gold){notify(tr('Necesitas más alimento u oro','You need more food or gold'));return}
  food-=p.cost.food;gold-=p.cost.gold;
