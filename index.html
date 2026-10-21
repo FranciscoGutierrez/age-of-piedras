@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Age of Piedras v2.9 · Original Soundtrack</title>
+<title>Age of Piedras v2.10 · Music & Sound Effects</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -189,7 +189,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
 #soundBtn{font-size:16px;flex-shrink:0}
 .homeLanguageLabel:has(.homeSoundBtn){position:relative;display:flex;align-items:center;justify-content:center;min-height:22px}
 .homeSoundBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);border:1px solid #6a896d;background:#213a2c;border-radius:7px;min-width:36px;min-height:25px;font-size:14px;letter-spacing:0}
-#pauseSoundBtn{background:#2f5144!important;border-color:#86a989!important}
+#pauseSoundBtn,.pauseEffectsBtn{background:#2f5144!important;border-color:#86a989!important}
+.audioControls{display:flex;gap:6px;align-items:stretch;margin-top:8px}.menuCard .audioControls button{flex:1;min-width:0;width:50%;margin:0;padding:8px 4px;font-size:11px;line-height:1.15}
 @media(orientation:portrait) and (max-width:760px){#soundBtn{width:27px;height:29px;font-size:13px}header{gap:4px}}
 @media(orientation:landscape) and (max-height:460px){#soundBtn{width:27px;height:27px;font-size:13px}}
 </style>
@@ -295,7 +296,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
  <p id="howToPlay3">⚔️ Combate automático: espada &gt; lanza &gt; arco &gt; espada. Los aldeanos pueden morir.</p>
  <p id="howToPlay4">🏠 Casitas amplían la población. Usa el Hub de Mejoras para subir de edad, mejorar tropas y fortalecer la economía.</p>
  <div class="menuLang"><div class="homeLanguageLabel" id="pauseLanguageLabel">IDIOMA / LANGUAGE</div><div class="langSelector" role="group" aria-label="Idioma / Language"><button type="button" class="langChoice" data-lang-option="es" aria-pressed="true">🇲🇽 Español</button><button type="button" class="langChoice" data-lang-option="en" aria-pressed="false">🇺🇸 English</button></div></div>
- <button type="button" id="pauseSoundBtn" aria-label="Silenciar música" aria-pressed="true">🔊 Música: activada</button><button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button><button id="homeFromPause">⌂ Menú principal</button>
+ <div class="audioControls"><button type="button" id="pauseSoundBtn" aria-label="Silenciar música" aria-pressed="true">🔊 Música: activada</button><button type="button" id="pauseEffectsBtn" class="pauseEffectsBtn" aria-label="Silenciar efectos" aria-pressed="true">⚔️ Efectos: activados</button></div><button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button><button id="homeFromPause">⌂ Menú principal</button>
  </div></div>
 </main>
 <footer id="controls">
@@ -445,9 +446,10 @@ let units=[],buildings=[],resources=[],fx=[],queue=[],enemyQueue=[],selected=nul
 // One musical score, two arrangements: pastoral lute/horn during peace,
 // percussion and quicker harmonies during enemy waves. No external downloads.
 const soundtrack=(()=>{
- const KEY='agePiedrasMusicEnabled';
+ const KEY='agePiedrasMusicEnabled',FX_KEY='agePiedrasEffectsEnabled';
  let enabled=true,ctx=null,master=null,step=0,nextTime=0,mode=null,noise=null;
- try{enabled=localStorage.getItem(KEY)!=='off'}catch(e){}
+ let effectsOn=true,fxOut=null,fxVoices=0,fxLast=Object.create(null);
+ try{enabled=localStorage.getItem(KEY)!=='off';effectsOn=localStorage.getItem(FX_KEY)!=='off'}catch(e){}
  const peaceful=[
   69,72,74,null,76,74,72,69, 67,null,69,72,74,72,69,null,
   65,67,69,72,69,null,67,65, 64,65,67,69,62,null,69,null
@@ -470,6 +472,7 @@ const soundtrack=(()=>{
   try{
    ctx=new C();master=ctx.createGain();master.gain.value=0;
    master.connect(ctx.destination);
+   fxOut=ctx.createGain();fxOut.gain.value=.70;fxOut.connect(ctx.destination);
    noise=ctx.createBuffer(1,Math.round(ctx.sampleRate*.18),ctx.sampleRate);
    const samples=noise.getChannelData(0);let seed=1234567;
    for(let i=0;i<samples.length;i++){
@@ -545,6 +548,87 @@ const soundtrack=(()=>{
   if(enabled&&active())begin();else pause();
   updateUI();
  }
+
+ // v2.10 · Short original sound effects; Web Audio shared with the music engine.
+ // Independent controls, short envelopes, global rate limits, and no external assets.
+ function effect(kind,allowMenu=false){
+  if(!effectsOn||(!allowMenu&&(atHome||paused||gameOver)))return;
+  if(!makeContext()||!fxOut||ctx.state==='closed')return;
+  if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+  const now=ctx.currentTime;
+  const gaps={tap:.065,select:.10,sword:.10,spear:.12,arrow:.10,club:.23,castle:.18,roar:3};
+  if(now-(fxLast[kind]??-100)<(gaps[kind]||.09))return;
+  fxLast[kind]=now;
+  const t=now+.008,random=(a,b)=>a+Math.random()*(b-a);
+  function tone(from,to,duration,type,volume,delay=0){
+   if(fxVoices>22)return;
+   fxVoices++;
+   const begin=t+delay,end=begin+duration,osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+   osc.type=type;osc.frequency.setValueAtTime(Math.max(22,from),begin);
+   osc.frequency.exponentialRampToValueAtTime(Math.max(22,to),end);
+   filter.type='lowpass';filter.frequency.value=type==='sawtooth'?850:3100;
+   gain.gain.setValueAtTime(.0001,begin);
+   gain.gain.exponentialRampToValueAtTime(volume,begin+Math.min(.032,duration*.20));
+   gain.gain.exponentialRampToValueAtTime(.0001,end);
+   osc.connect(filter);filter.connect(gain);gain.connect(fxOut);
+   osc.start(begin);osc.stop(end+.018);
+   osc.onended=()=>{osc.disconnect();filter.disconnect();gain.disconnect();fxVoices=Math.max(0,fxVoices-1)};
+  }
+  function noiseHit(duration,volume,frequency,highpass=false,delay=0){
+   if(!noise||fxVoices>22)return;
+   fxVoices++;
+   const begin=t+delay,end=begin+duration,n=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+   n.buffer=noise;n.loop=duration>.17;
+   f.type=highpass?'highpass':'lowpass';f.frequency.setValueAtTime(frequency,begin);
+   if(!highpass)f.frequency.exponentialRampToValueAtTime(Math.max(120,frequency*.48),end);
+   g.gain.setValueAtTime(.0001,begin);
+   g.gain.exponentialRampToValueAtTime(volume,begin+.012);
+   g.gain.exponentialRampToValueAtTime(.0001,end);
+   n.connect(f);f.connect(g);g.connect(fxOut);
+   n.start(begin);n.stop(end+.014);
+   n.onended=()=>{n.disconnect();f.disconnect();g.disconnect();fxVoices=Math.max(0,fxVoices-1)};
+  }
+  switch(kind){
+   case 'tap':
+    tone(720,1000,.058,'sine',.043);break;
+   case 'select':
+    tone(600,920,.09,'triangle',.055);break;
+   case 'sword':
+    tone(random(780,1030),random(240,380),.13,'triangle',.068);
+    noiseHit(.085,.082,1650,true);break;
+   case 'spear':
+    tone(random(180,240),75,.14,'triangle',.082);
+    noiseHit(.075,.053,2400,true);break;
+   case 'arrow':
+    tone(random(1350,1850),410,.115,'sine',.055);
+    noiseHit(.038,.047,2300,true);break;
+   case 'castle':
+    tone(150,52,.23,'triangle',.105);
+    noiseHit(.17,.097,820);break;
+   case 'club':
+    tone(115,38,.31,'sawtooth',.115);
+    tone(71,36,.26,'sine',.12,.018);
+    noiseHit(.19,.115,750);break;
+   case 'roar':
+    // A layered detuned descending growl and rumble, with a deliberate swell.
+    tone(155,62,1.65,'sawtooth',.16);
+    tone(113,43,1.7,'sawtooth',.11,.04);
+    tone(78,30,1.88,'triangle',.125,.03);
+    noiseHit(1.72,.13,980,false,.04);
+    if(enabled&&active()&&master){
+     const level=master.gain,t0=ctx.currentTime;
+     level.cancelScheduledValues(t0);
+     level.setTargetAtTime(.12,t0,.08);level.setTargetAtTime(.30,t0+1.56,.19);
+    }
+    break;
+  }
+ }
+ function toggleEffects(){
+  effectsOn=!effectsOn;
+  try{localStorage.setItem(FX_KEY,effectsOn?'on':'off')}catch(e){}
+  updateUI();
+  if(effectsOn)effect('select',true);
+ }
  function updateUI(){
   const icon=enabled?'🔊':'🔇';
   const label=enabled?tr('Silenciar música','Mute music'):tr('Activar música','Enable music');
@@ -553,8 +637,14 @@ const soundtrack=(()=>{
    button.textContent=id==='pauseSoundBtn'?(enabled?tr('🔊 Música: activada','🔊 Music: on'):tr('🔇 Música: desactivada','🔇 Music: off')):icon;
    button.setAttribute('aria-label',label);button.title=label;button.setAttribute('aria-pressed',String(enabled));
   }
+  const fxButton=$('pauseEffectsBtn');
+  if(fxButton){
+   fxButton.textContent=effectsOn?tr('⚔️ Efectos: activados','⚔️ Sound effects: on'):tr('🔇 Efectos: desactivados','🔇 Sound effects: off');
+   fxButton.title=effectsOn?tr('Silenciar efectos','Mute sound effects'):tr('Activar efectos','Enable sound effects');
+   fxButton.setAttribute('aria-label',fxButton.title);fxButton.setAttribute('aria-pressed',String(effectsOn));
+  }
  }
- return {begin,pause,tick,toggle,updateUI,enabled:()=>enabled,state:()=>ctx?ctx.state:'not-created'};
+ return {begin,pause,tick,toggle,updateUI,effect,toggleEffects,enabled:()=>enabled,effectsEnabled:()=>effectsOn,state:()=>ctx?ctx.state:'not-created'};
 })();
 
 const FIRST_ATTACK_DELAY=30;
@@ -736,12 +826,12 @@ function chooseTarget(u){const foes=alive(1-u.team);if(!foes.length)return null;
  if(!nearby.length)return null;
  const soldiers=nearby.filter(a=>a.type!=='villager');const candidates=soldiers.length?soldiers:nearby;
  candidates.sort((a,b)=>{const score=v=>distance(u,v)-(troops[u.type].counter===v.type?75:0)-(v.type==='ogre'?40:0);return score(a)-score(b)});return candidates[0]}
-function shot(u,target,damage){if(u.type==='archer')fx.push({kind:'arrow',x:u.x,y:u.y,tx:target.x,ty:target.y,t:.2,full:.2});const armor=target.team===0?tech[0].armor:(target.enemyArmor||0);const reduced=Math.max(1,damage*(1-armor*.05)-armor*2.5);target.hp=Math.max(0,target.hp-reduced);fx.push({kind:'hit',x:target.x+rand(-6,6),y:target.y-11,t:.55,text:'-'+Math.ceil(reduced)});
+function shot(u,target,damage){soundtrack.effect(u.type==='ogre'?'club':u.type==='archer'?'arrow':u.type==='spear'?'spear':'sword');if(u.type==='archer')fx.push({kind:'arrow',x:u.x,y:u.y,tx:target.x,ty:target.y,t:.2,full:.2});const armor=target.team===0?tech[0].armor:(target.enemyArmor||0);const reduced=Math.max(1,damage*(1-armor*.05)-armor*2.5);target.hp=Math.max(0,target.hp-reduced);if(target.type==='ogre'&&target.hp<=target.max*.5&&!target.roaredHalf){target.roaredHalf=true;soundtrack.effect('roar')}fx.push({kind:'hit',x:target.x+rand(-6,6),y:target.y-11,t:.55,text:'-'+Math.ceil(reduced)});
  if(u.type==='ogre'){fx.push({kind:'shock',x:target.x,y:target.y,t:.55,full:.55});for(const ally of alive(0)){if(ally!==target&&distance(ally,target)<49){const splash=Math.max(1,reduced*.36);ally.hp=Math.max(0,ally.hp-splash);fx.push({kind:'hit',x:ally.x,y:ally.y-14,t:.55,text:'-'+Math.ceil(splash)})}}}}
 function combat(u,dt){u.cooldown=Math.max(0,u.cooldown-dt);u.retarget-=dt;
  if(!u.target||u.target.hp<=0||!units.includes(u.target)||u.target.team===u.team||u.retarget<=0){u.target=chooseTarget(u);u.retarget=.35}
  if(u.target){const enemy=u.target;if(walk(u,enemy,dt,troops[u.type].range*(u.team===0?civRange(u.type):1))){if(u.cooldown<=0){let d=troops[u.type].attack*(u.team===0?(1+tech[0].attack*.17)*civDamage(u.type):(u.attackMul||1));if(troops[u.type].counter===enemy.type)d*=2.25;shot(u,enemy,d);u.cooldown=troops[u.type].cooldown}}}
- else if(u.team===0&&distance(u,u.guard)>10){walk(u,u.guard,dt,8)}else if(u.team===1){const c=castle(0);if(c&&walk(u,c,dt,52)){if(u.cooldown<=0){const damage=troops[u.type].attack*(u.attackMul||1);c.hp=Math.max(0,c.hp-damage);u.cooldown=troops[u.type].cooldown;fx.push({kind:'hit',x:c.x+rand(-18,18),y:c.y-37,t:.55,text:'🏰 -'+Math.ceil(damage)})}}}}
+ else if(u.team===0&&distance(u,u.guard)>10){walk(u,u.guard,dt,8)}else if(u.team===1){const c=castle(0);if(c&&walk(u,c,dt,52)){if(u.cooldown<=0){const damage=troops[u.type].attack*(u.attackMul||1);c.hp=Math.max(0,c.hp-damage);soundtrack.effect(u.type==='ogre'?'club':'castle');u.cooldown=troops[u.type].cooldown;fx.push({kind:'hit',x:c.x+rand(-18,18),y:c.y-37,t:.55,text:'🏰 -'+Math.ceil(damage)})}}}}
 // Curva incremental: las fases son deliberadamente invisibles para el jugador.
 // La primera oleada NO puede crear enemigos blindados.
 const ENEMY_PHASE_TIERS={1:[0,0,0],2:[0,0,1],3:[0,1,1,2],4:[0,1,2,2],5:[1,1,2,3,3]};
@@ -842,7 +932,7 @@ function spawnInvader({type,side,tier=0}){
  u.max=Math.max(1,Math.round(u.max*waveHp[wave]*(1+tier*.13)*difficulty().hp));
  u.hp=u.max;u.guard={x:W/2,y:H/2};
 }
-function spawnBoss(){bossSpawned=true;bossWaiting=false;const u=createUnit('ogre',1,W/2,28);u.max=Math.round(u.max*difficulty().hp);u.hp=u.max;u.attackMul=difficulty().damage;u.guard={x:W/2,y:H/2};notify(tr('👹 ¡LLEGÓ EL GRAN OGRO DEL GARROTE! ¡DERROTALO!','👹 THE GREAT CLUB OGRE IS HERE! DEFEAT HIM!'),6);updateHUD()}
+function spawnBoss(){bossSpawned=true;bossWaiting=false;const u=createUnit('ogre',1,W/2,28);u.max=Math.round(u.max*difficulty().hp);u.hp=u.max;u.attackMul=difficulty().damage;u.guard={x:W/2,y:H/2};soundtrack.effect('roar');notify(tr('👹 ¡LLEGÓ EL GRAN OGRO DEL GARROTE! ¡DERROTALO!','👹 THE GREAT CLUB OGRE IS HERE! DEFEAT HIM!'),6);updateHUD()}
 function finish(w){
  if(gameOver)return;gameOver=true;victor=w;soundtrack.pause();
  $('endTitle').textContent=w===0?tr('🏆 ¡VICTORIA!','🏆 VICTORY!'):w===1?tr('💀 EL CASTILLO HA CAÍDO','💀 THE CASTLE HAS FALLEN'):tr('⚖️ EMPATE','⚖️ DRAW');
@@ -904,7 +994,7 @@ function render(){ctx.clearRect(0,0,W,H);ground();for(const r of resources){if(r
  if(queue.length){const q=queue[0],p=troops[q.type];ctx.fillStyle='#13201ce0';ctx.fillRect(12,H-34,208,22);ctx.fillStyle='#e4ce9b';ctx.font='bold 11px system-ui';ctx.textAlign='left';ctx.fillText('🏰 '+labels[q.type]+' · '+Math.ceil(q.remaining)+'s',19,H-19);ctx.fillStyle='#89cb87';ctx.fillRect(12,H-38,208*(1-clamp(q.remaining/p.train,0,1)),3)}}
 function pointer(e){let r=cv.getBoundingClientRect();return{x:clamp((e.clientX-r.left)*W/r.width,0,W),y:clamp((e.clientY-r.top)*H/r.height,0,H)}}
 function selectedAt(p){return [...units].reverse().find(u=>u.hp>0&&distance(p,u)<19)||null}
-function mapTap(p){if(gameOver||paused||atHome)return;const tapped=selectedAt(p);selected=tapped&&tapped.team===0?tapped:null;updateHUD()}
+function mapTap(p){if(gameOver||paused||atHome)return;const tapped=selectedAt(p);selected=tapped&&tapped.team===0?tapped:null;soundtrack.effect(selected?'select':'tap');updateHUD()}
 // Compatible con Pointer Events (Safari actual) y Touch Events (Safari antiguos).
 // Solo instalamos UN mecanismo por navegador para evitar órdenes duplicadas.
 if('PointerEvent' in window){
@@ -940,6 +1030,9 @@ $('newGame').addEventListener('click',()=>{start();soundtrack.begin()});$('again
 $('homeStart').addEventListener('click',()=>{start();soundtrack.begin();$('homeStart').blur()});
 $('homeFromPause').addEventListener('click',()=>{soundtrack.pause();closeTech();paused=true;atHome=true;$('menu').classList.remove('show');$('homeScreen').hidden=false;last=performance.now()});
 for(const b of ['soundBtn','homeSoundBtn','pauseSoundBtn'])$(b).addEventListener('click',()=>soundtrack.toggle());
+$('pauseEffectsBtn').addEventListener('click',()=>soundtrack.toggleEffects());
+// Button feedback also runs in the home screen and paused menu (captured on user click for iOS).
+document.addEventListener('click',e=>{if(e.target.closest('button'))soundtrack.effect('tap',true)},true);
 for(const langBtn of document.querySelectorAll('[data-lang-option]'))langBtn.addEventListener('click',()=>setLanguage(langBtn.dataset.langOption));
 for(const button of document.querySelectorAll('[data-civ]'))button.addEventListener('click',()=>{if(!atHome)return;selectedCiv=button.dataset.civ;persistSetup();renderSetupChoices()});
 for(const button of document.querySelectorAll('[data-difficulty]'))button.addEventListener('click',()=>{if(!atHome)return;selectedDifficulty=button.dataset.difficulty;persistSetup();renderSetupChoices()});
@@ -961,7 +1054,7 @@ function frame(now){
 function showFatal(err){const fallback=$('gameFallback');fallback.textContent=tr('Error en el juego: ','Game error: ')+(err&&err.message?err.message:String(err))+tr(' · Actualiza la página o prueba Chrome.',' · Refresh the page or try Chrome.');fallback.style.display='block';console.error(err)}
 window.addEventListener('unhandledrejection',function(e){showFatal(e.reason)});
 window.addEventListener('error',e=>{notify('Error: '+e.message,10)});
-window.__ageDebug={music:{enabled:soundtrack.enabled,state:soundtrack.state},language:()=>language,setLanguage,home:()=>atHome,civilization:()=>activeCiv,difficulty:()=>activeDifficulty,selectCiv:key=>{if(CIVS[key]){selectedCiv=key;renderSetupChoices()}},selectDifficulty:key=>{if(DIFFICULTIES[key]){selectedDifficulty=key;renderSetupChoices()}},goHome:()=>{$('homeFromPause').click()},state:()=>({food,gold,enemyFood,enemyGold,civ:activeCiv,difficulty:activeDifficulty,modifier:difficulty(),tech:tech.map(x=>({...x})),research:research.map(x=>x?{...x}:null),resources:resources.map(r=>({...r})),pop:occupiedPop(),popReserved:reservedPop(),popLimit,popMax:POP_MAX,castleStage:(popLimit-POP_START)/POP_STEP,enemies:alive(1).length,queue:queue.length,enemyQueue:enemyQueue.length,gameOver,paused,units:units.map(u=>({type:u.type,team:u.team,x:u.x,y:u.y,hp:u.hp,max:u.max})),wave,waveActive,waveTimer,pending:pendingSpawns.length,bossSpawned,castleHp:castle(0)?.hp,castleMaxHp:castle(0)?.maxHp,villagerCount:villagerCount(),nextAttackTotal}),wavePlan:buildWaveSpawns,train,buyHouse,start,finish,step,beginResearch,openTech,closeTech,beginWave,spawnInvader,spawnBoss,launchWave};
+window.__ageDebug={music:{enabled:soundtrack.enabled,state:soundtrack.state},soundEffects:{enabled:soundtrack.effectsEnabled,play:soundtrack.effect,toggle:soundtrack.toggleEffects},language:()=>language,setLanguage,home:()=>atHome,civilization:()=>activeCiv,difficulty:()=>activeDifficulty,selectCiv:key=>{if(CIVS[key]){selectedCiv=key;renderSetupChoices()}},selectDifficulty:key=>{if(DIFFICULTIES[key]){selectedDifficulty=key;renderSetupChoices()}},goHome:()=>{$('homeFromPause').click()},state:()=>({food,gold,enemyFood,enemyGold,civ:activeCiv,difficulty:activeDifficulty,modifier:difficulty(),tech:tech.map(x=>({...x})),research:research.map(x=>x?{...x}:null),resources:resources.map(r=>({...r})),pop:occupiedPop(),popReserved:reservedPop(),popLimit,popMax:POP_MAX,castleStage:(popLimit-POP_START)/POP_STEP,enemies:alive(1).length,queue:queue.length,enemyQueue:enemyQueue.length,gameOver,paused,units:units.map(u=>({type:u.type,team:u.team,x:u.x,y:u.y,hp:u.hp,max:u.max})),wave,waveActive,waveTimer,pending:pendingSpawns.length,bossSpawned,castleHp:castle(0)?.hp,castleMaxHp:castle(0)?.maxHp,villagerCount:villagerCount(),nextAttackTotal}),wavePlan:buildWaveSpawns,train,buyHouse,start,finish,step,beginResearch,openTech,closeTech,beginWave,spawnInvader,spawnBoss,launchWave};
 try{
  start();paused=true;atHome=true;$('homeScreen').hidden=false;applyLanguage();resize();render();
  $('startupHelp').hidden=true;
