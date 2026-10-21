@@ -1,7 +1,7 @@
 # Tiny Kingdoms: Under Siege 🏰⚔️
 **Little Kingdoms. Big Trouble.**
 
-Juego RTS HTML5/Canvas, versión **2.11**.
+Juego RTS HTML5/Canvas, versión **2.12**.
 
 - Juego en `index.html` con pantalla de inicio, opción **Español / English**, seis civilizaciones (Celtas, Franceses, Ingleses, Nórdicos, Italianos, Españoles) y seis dificultades (Muy fácil, Fácil, Estándar, Difícil, Muy difícil, Extremo).
 - Cada civilización aplica bonificaciones y penalizaciones reales; cada dificultad ajusta HP, daño, número de invasores y temporizadores. **Estándar** conserva el balance de v2.7.
@@ -9,7 +9,7 @@ Juego RTS HTML5/Canvas, versión **2.11**.
 - El encabezado durante la partida muestra el emblema y nombre traducido de la civilización activa.
 - Menú principal y menú de pausa para volver al inicio o cambiar idioma. La preferencia se guarda en el dispositivo.
 - 🎶 Banda sonora medieval original generada con Web Audio: ambiente tranquilo durante la preparación, ritmo más intenso en las oleadas y música especial para el ogro. Control de sonido en el menú inicial, la barra de juego y el menú de pausa; elección guardada en el dispositivo. Funciona sin descargas ni conexión.
-- 🔉 Efectos sintetizados mediante Web Audio (sin archivos externos): taps, selección de unidades, golpes de espada, lanzas, flechas, impactos al castillo y garrotazos. Rugido del Gran Ogro al aparecer y al bajar a la mitad de vida. Efectos y música cuentan con controles independientes, disponibles en pausa y persistidos en el dispositivo.
+- 🔉 Efectos sintetizados mediante Web Audio (sin archivos externos): taps, selección de unidades, golpes de espada, lanzas, flechas, impactos al castillo y garrotazos. Rugido del Gran Ogro al aparecer y al bajar a la mitad de vida. Incluye fanfarria al ganar y melodía de derrota cuando cae el castillo. Efectos y música cuentan con controles independientes, disponibles en pausa y persistidos en el dispositivo.
 - `manifest.webmanifest`: instalable como PWA.
 - `sw.js`: cachea recursos para jugar sin internet después de la primera carga.
 - `icons/`: íconos para iPhone, Android y navegador.
