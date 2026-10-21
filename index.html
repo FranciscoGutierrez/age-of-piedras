@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Tiny Kingdoms: Under Siege · v2.13</title>
+<title>Tiny Kingdoms: Under Siege · v2.14</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -25,7 +25,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
 #controls{background:linear-gradient(180deg,#273a2d,#1b2921);border-top:1px solid #53694c;padding:6px 9px max(7px,env(safe-area-inset-bottom));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;min-height:82px;align-items:center}
 #train{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;min-width:0}
 .unitBtn{min-height:65px;display:grid;grid-template-rows:auto auto auto;align-items:center;justify-items:center;gap:1px;padding:5px 2px 4px;border-radius:9px;border:1px solid #7b8058;background:linear-gradient(#45583c,#303e30);position:relative;box-shadow:inset 0 1px #ffffff1c,0 2px #0004}
-.unitBtn:active:not(:disabled){transform:translateY(1px);background:#68794e}.unitBtn:disabled{opacity:.43;filter:saturate(.5)}.unitBtn .symbol{font-size:21px;line-height:1}.unitBtn .label{font-size:10px;font-weight:800;line-height:1.05;white-space:nowrap}.unitBtn .cost{font-size:10px;color:#ebd999;white-space:nowrap;line-height:1.2}.unitBtn .queued{position:absolute;right:3px;top:2px;font-size:10px;border-radius:5px;background:#143f3a;color:#c4f7dc;min-width:15px;font-weight:800;padding:1px 3px}
+.unitBtn:active:not(:disabled){transform:translateY(1px);background:#68794e}.unitBtn:disabled{opacity:.43;filter:saturate(.5)}.unitBtn .symbol{font-size:21px;line-height:1}.unitBtn .label{font-size:clamp(8px,2.4vw,10px);font-weight:800;line-height:1.05;letter-spacing:-.02em;white-space:nowrap}.unitBtn .cost{font-size:10px;color:#ebd999;white-space:nowrap;line-height:1.2}.unitBtn .queued{position:absolute;right:3px;top:2px;font-size:10px;border-radius:5px;background:#143f3a;color:#c4f7dc;min-width:15px;font-weight:800;padding:1px 3px}
 .actions{display:flex;align-items:stretch;gap:5px}.actionBtn{min-height:65px;min-width:62px;padding:5px 7px;border:1px solid #587762;border-radius:9px;background:#345c50;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.actionBtn .symbol{font-size:20px}.actionBtn.on{background:#b18b49;border-color:#f4dc87;color:#1c2016}.actionBtn:disabled{opacity:.45}#houseBtn{border-color:#ab8d58;background:#6b5132}#houseBtn small{font-size:9px;font-weight:650;color:#f7dfab;white-space:nowrap}#houseBtn:disabled{opacity:.6}
 #techOverlay{position:fixed;inset:0;background:#07150cee;z-index:100;display:none;align-items:center;justify-content:center;padding:7px 12px}#techOverlay.show{display:flex}
 .techCard{touch-action:pan-y;-webkit-overflow-scrolling:touch;width:min(100%,450px);max-height:100%;overflow:auto;overscroll-behavior:contain;background:linear-gradient(155deg,#304a37,#172b22);border:1.5px solid #aabb7e;border-radius:16px;padding:12px 15px;box-shadow:0 12px 45px #000b}
@@ -684,7 +684,10 @@ function start(){activeCiv=selectedCiv;activeDifficulty=selectedDifficulty;persi
  createUnit('villager',0,W/2-110,H/2+120);createUnit('villager',0,W/2+110,H/2+120);
  $('endScreen').classList.remove('show');$('menu').classList.remove('show');$('bossHUD').style.display='none';atHome=false;$('homeScreen').hidden=true;updateResearchBadge();updateHUD();notify(tr('🏰 ¡Construye tu defensa! El primer ataque llega en ','🏰 Build your defenses! First attack in ')+Math.ceil(waveTimer)+tr(' segundos.',' seconds.'),4)}
 function updateHUD(){
- let mine=alive(0).length,theirs=alive(1).length,occupied=occupiedPop(),reserved=reservedPop();
+ // Live counts for every friendly unit type; queued units have a separate badge.
+ const friendlyUnits=alive(0),unitCounts={villager:0,sword:0,spear:0,archer:0};
+ for(const u of friendlyUnits)if(Object.prototype.hasOwnProperty.call(unitCounts,u.type))unitCounts[u.type]++;
+ let mine=friendlyUnits.length,theirs=alive(1).length,occupied=occupiedPop(),reserved=reservedPop();
  $('food').textContent=Math.floor(food);$('gold').textContent=Math.floor(gold);$('pop').textContent=occupied;$('popCap').textContent='/'+popLimit;
  $('ageChip').textContent=ageShort[language][tech[0].age];$('civHUDIcon').textContent=civ().mark;$('civHUDName').textContent=civ().name[language];$('civSignature').style.setProperty('--civ-color',civ().light);$('gameModeSummary').textContent=' · '+difficulty().name[language];
  $('friendly').textContent='🔵 '+mine+tr(' aliados',' allies');$('hostile').textContent='🔴 '+theirs+tr(' invasores',' invaders');
@@ -700,9 +703,9 @@ function updateHUD(){
  $('castleHpUnit').textContent=tr('PV','HP');
  let here=selected&&units.includes(selected)&&selected.hp>0?selected:null;if(!here)selected=null;
  $('selectedInfo').textContent=here?icons[here.type]+' '+unitName(here.type)+(here.team===0&&here.type!=='villager'?' · ⚔'+tech[0].attack+' 🛡'+tech[0].armor:here.team===1&&here.enemyTier!==undefined?tr(' · Nv. ',' · Lv. ')+(here.enemyTier+1):'')+' · '+Math.ceil(here.hp)+tr(' PV',' HP'):queue.length?'🏰 '+tr('Entrenando: ','Training: ')+unitName(queue[0].type)+' ('+Math.ceil(queue[0].remaining)+' s)':'👨‍🌾 '+villagerCount()+' · '+tr('Aldeanos en riesgo','Villagers at risk');
- for(const b of btns){const p=troops[b.dataset.unit];b.disabled=gameOver||food<p.cost.food||gold<p.cost.gold||occupied+reserved+popWeight(b.dataset.unit)>popLimit;
-  if(b.dataset.unit==='villager'){b.querySelector('.label').textContent=unitName('villager')+' '+villagerCount();b.querySelector('.cost').textContent='50 🌾'}
-  const count=queue.filter(q=>q.type===b.dataset.unit).length;let n=b.querySelector('.queued');if(count){if(!n){n=document.createElement('span');n.className='queued';b.appendChild(n)}n.textContent=count}else if(n)n.remove()}
+ for(const b of btns){const type=b.dataset.unit,p=troops[type];b.disabled=gameOver||food<p.cost.food||gold<p.cost.gold||occupied+reserved+popWeight(type)>popLimit;
+  b.querySelector('.label').textContent=unitName(type)+' ('+unitCounts[type]+')';
+  const count=queue.filter(q=>q.type===type).length;let n=b.querySelector('.queued');if(count){if(!n){n=document.createElement('span');n.className='queued';b.appendChild(n)}n.textContent=count}else if(n)n.remove()}
  const house=$('houseBtn');house.disabled=gameOver||popLimit>=POP_MAX||food<HOUSE_COST.food||gold<HOUSE_COST.gold;
  $('houseLabel').textContent=popLimit>=POP_MAX?langText('maxPop'):langText('houses');$('houseCost').textContent=popLimit>=POP_MAX?langText('full'):HOUSE_COST.food+' 🌾 · '+HOUSE_COST.gold+' 🪙';
  house.title=popLimit>=POP_MAX?tr('Máximo poblacional conseguido','Maximum population reached'):tr('Ampliar capacidad de ','Increase capacity from ')+popLimit+tr(' a ',' to ')+(popLimit+POP_STEP);
