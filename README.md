@@ -1,5 +1,7 @@
-# Age of Piedras 🏰⚔️
-Juego RTS HTML5/Canvas, versión **2.10**.
+# Tiny Kingdoms: Under Siege 🏰⚔️
+**Little Kingdoms. Big Trouble.**
+
+Juego RTS HTML5/Canvas, versión **2.11**.
 
 - Juego en `index.html` con pantalla de inicio, opción **Español / English**, seis civilizaciones (Celtas, Franceses, Ingleses, Nórdicos, Italianos, Españoles) y seis dificultades (Muy fácil, Fácil, Estándar, Difícil, Muy difícil, Extremo).
 - Cada civilización aplica bonificaciones y penalizaciones reales; cada dificultad ajusta HP, daño, número de invasores y temporizadores. **Estándar** conserva el balance de v2.7.
@@ -15,7 +17,9 @@ Juego RTS HTML5/Canvas, versión **2.10**.
 ## Publicar gratis con GitHub Pages
 En GitHub entra a **Settings → Pages**, elige **Deploy from a branch**, rama **main**, carpeta **/(root)** y pulsa **Save**.
 
-La URL pública es: **https://franciscogutierrez.github.io/age-of-piedras/**
+Comparte este enlace para jugar: **https://franciscogutierrez.github.io/age-of-piedras/**
+
+> El enlace conserva el nombre técnico anterior del repositorio para no romper vínculos ni instalaciones existentes; el título mostrado al jugador es **Tiny Kingdoms: Under Siege**.
 
 Abre la URL con **Safari** en un iPhone, pulsa **Compartir → Agregar a inicio** y después abre el juego desde su ícono.
 
