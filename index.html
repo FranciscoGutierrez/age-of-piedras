@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Tiny Kingdoms: Under Siege · v2.15</title>
+<title>Tiny Kingdoms: Under Siege · v2.16</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -130,6 +130,9 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
 #homeStart{display:block;width:100%;border:2px solid #ffdc92;background:linear-gradient(#e5b965,#b6873e);border-radius:13px;font-size:clamp(17px,3.6vw,21px);font-weight:950;color:#252719;padding:13px 15px;box-shadow:0 6px 0 #694822,0 10px 17px #0007;letter-spacing:.02em}
 #homeStart:active{transform:translateY(3px);box-shadow:0 3px 0 #694822,0 6px 12px #0007}
 .homeFoot{font-size:10px;color:#b4c3aa;letter-spacing:.08em;margin:16px 0 0}
+/* Low-key version stamp: present on home and pause, unobtrusive on mobile. */
+.gameVersion{display:block;text-align:center;font:500 9px/1.2 system-ui,-apple-system,sans-serif;color:#9cad91;opacity:.65;letter-spacing:.06em;margin-top:6px;user-select:text}
+.pauseVersion{margin-top:11px;font-size:9px}
 /* Civ choices: small enough for mobile, tactile and easy to scan. */
 .homeCard{width:min(100%,545px);padding:clamp(12px,2.8vh,23px) clamp(13px,3vw,26px)}
 .homeCastle{font-size:clamp(32px,7vh,60px)}.homeCard h1{font-size:clamp(29px,6vw,46px);margin:5px 0 3px}
@@ -241,6 +244,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
     </section>
     <button id="homeStart" type="button">⚔️ Iniciar partida</button>
     <p class="homeFoot" id="homeFoot">🌾 RECOLECTA · 🔨 MEJORA · 🛡️ DEFIENDE</p>
+    <small class="gameVersion" aria-label="Game version">v2.16</small>
   </div>
 </div>
 <div id="app">
@@ -296,7 +300,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
  <p id="howToPlay3">⚔️ Combate automático: espada &gt; lanza &gt; arco &gt; espada. Los aldeanos pueden morir.</p>
  <p id="howToPlay4">🏠 Casitas amplían la población. Usa el Hub de Mejoras para subir de edad, mejorar tropas y fortalecer la economía.</p>
  <div class="menuLang"><div class="homeLanguageLabel" id="pauseLanguageLabel">IDIOMA / LANGUAGE</div><div class="langSelector" role="group" aria-label="Idioma / Language"><button type="button" class="langChoice" data-lang-option="es" aria-pressed="true">🇲🇽 Español</button><button type="button" class="langChoice" data-lang-option="en" aria-pressed="false">🇺🇸 English</button></div></div>
- <div class="audioControls"><button type="button" id="pauseSoundBtn" aria-label="Silenciar música" aria-pressed="true">🔊 Música: activada</button><button type="button" id="pauseEffectsBtn" class="pauseEffectsBtn" aria-label="Silenciar efectos" aria-pressed="true">⚔️ Efectos: activados</button></div><button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button><button id="homeFromPause">⌂ Menú principal</button>
+ <div class="audioControls"><button type="button" id="pauseSoundBtn" aria-label="Silenciar música" aria-pressed="true">🔊 Música: activada</button><button type="button" id="pauseEffectsBtn" class="pauseEffectsBtn" aria-label="Silenciar efectos" aria-pressed="true">⚔️ Efectos: activados</button></div><button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button><button id="homeFromPause">⌂ Menú principal</button><small class="gameVersion pauseVersion" aria-label="Game version">v2.16</small>
  </div></div>
 </main>
 <footer id="controls">
