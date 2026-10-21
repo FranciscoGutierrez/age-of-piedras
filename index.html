@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Tiny Kingdoms: Under Siege · v2.11</title>
+<title>Tiny Kingdoms: Under Siege · v2.12</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -549,7 +549,7 @@ const soundtrack=(()=>{
   updateUI();
  }
 
- // v2.10 · Short original sound effects; Web Audio shared with the music engine.
+ // v2.12 · Original action and ending sound effects; Web Audio shared with the music engine.
  // Independent controls, short envelopes, global rate limits, and no external assets.
  function effect(kind,allowMenu=false){
   if(!effectsOn||(!allowMenu&&(atHome||paused||gameOver)))return;
@@ -609,6 +609,30 @@ const soundtrack=(()=>{
     tone(115,38,.31,'sawtooth',.115);
     tone(71,36,.26,'sine',.12,.018);
     noiseHit(.19,.115,750);break;
+   case 'victory': {
+    // A short, bright major-key fanfare for the surviving little kingdom.
+    // Self-contained notes, no audio files: works offline and obeys effects mute.
+    const fanfare=[[62,0,.21],[66,.19,.21],[69,.38,.25],[74,.64,.41],[73,1.06,.17],[74,1.24,.77]];
+    for(const [m,delay,duration] of fanfare){
+     const hz=frequency(m);
+     tone(hz,hz,duration,'triangle',.112,delay);
+     tone(hz*2,hz*2,Math.min(.19,duration*.78),'sine',.037,delay);
+    }
+    for(const m of [50,57,62,66]){const hz=frequency(m);tone(hz,hz,1.06,'triangle',.053,1.24)}
+    break;
+   }
+   case 'defeat': {
+    // A slower, descending minor-key lament as the castle falls.
+    const lament=[[69,0,.39],[67,.35,.40],[65,.72,.50],[62,1.17,1.14]];
+    for(const [m,delay,duration] of lament){
+     const hz=frequency(m);
+     tone(hz,hz*.985,duration,'triangle',.086,delay);
+     tone(hz/2,hz/2,Math.min(duration,.44),'sine',.036,delay);
+    }
+    for(const m of [50,53,57]){const hz=frequency(m);tone(hz,hz*.98,.90,'sine',.039,1.17)}
+    noiseHit(.16,.030,580,false,1.20);
+    break;
+   }
    case 'roar':
     // A layered detuned descending growl and rumble, with a deliberate swell.
     tone(155,62,1.65,'sawtooth',.16);
@@ -935,6 +959,8 @@ function spawnInvader({type,side,tier=0}){
 function spawnBoss(){bossSpawned=true;bossWaiting=false;const u=createUnit('ogre',1,W/2,28);u.max=Math.round(u.max*difficulty().hp);u.hp=u.max;u.attackMul=difficulty().damage;u.guard={x:W/2,y:H/2};soundtrack.effect('roar');notify(tr('👹 ¡LLEGÓ EL GRAN OGRO DEL GARROTE! ¡DERROTALO!','👹 THE GREAT CLUB OGRE IS HERE! DEFEAT HIM!'),6);updateHUD()}
 function finish(w){
  if(gameOver)return;gameOver=true;victor=w;soundtrack.pause();
+ // End-game cues are allowed on the result screen; effects mute still applies.
+ if(w===0||w===1)soundtrack.effect(w===0?'victory':'defeat',true);
  $('endTitle').textContent=w===0?tr('🏆 ¡VICTORIA!','🏆 VICTORY!'):w===1?tr('💀 EL CASTILLO HA CAÍDO','💀 THE CASTLE HAS FALLEN'):tr('⚖️ EMPATE','⚖️ DRAW');
  $('endText').textContent=w===0?tr('¡Sobreviviste a las cinco oleadas y derrotaste al Gran Ogro del Garrote! La aldea entera canta WOLOLO.','You survived all five waves and defeated the Great Club Ogre! The entire village chants WOLOLO.'):w===1?tr('El enemigo derribó tu castillo. Invierte en soldados y mejoras de la Universidad.','The enemy destroyed your castle. Invest in soldiers and University upgrades.'):tr('Fin del asedio.','The siege is over.');
  $('endMode').textContent=civ().mark+' '+civ().name[language]+' · '+difficulty().name[language];$('endScreen').classList.add('show');updateResearchBadge();updateHUD();
