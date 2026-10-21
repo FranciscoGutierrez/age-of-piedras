@@ -1,7 +1,7 @@
 # Tiny Kingdoms: Under Siege 🏰⚔️
 **Little Kingdoms. Big Trouble.**
 
-Juego RTS HTML5/Canvas, versión **2.15**.
+Juego RTS HTML5/Canvas, versión **2.16**.
 
 - Juego en `index.html` con pantalla de inicio, opción **Español / English**, seis civilizaciones (Celtas, Franceses, Ingleses, Nórdicos, Italianos, Españoles) y seis dificultades (Muy fácil, Fácil, Estándar, Difícil, Muy difícil, Extremo).
 - Cada civilización aplica bonificaciones y penalizaciones reales; cada dificultad ajusta HP, daño, número de invasores y temporizadores. **Estándar** conserva el balance de v2.7.
@@ -9,6 +9,7 @@ Juego RTS HTML5/Canvas, versión **2.15**.
 - Los cuatro botones de entrenamiento muestran el número de unidades vivas por tipo en formato `Aldeano (12)` / `Villager (12)`; el conteo se actualiza al crear unidades, sufrir bajas y cambiar de idioma. Las unidades en cola se muestran por separado.
 - ⚖️ **Balance v2.15:** recursos iniciales 260 🌾 / 160 🪙 (antes 320/200). Recolección base de 2 recursos cada 0.80 s (antes 0.55 s); a partir del quinto aldeano asignado al mismo recurso, rendimiento decreciente suave. Sin límite especial de aldeanos; las mejoras económicas siguen aumentando la producción.
 - 🏹 Arqueros: daño 13 (antes 14), alcance 110 (antes 132), recarga 1.20 s (antes 1.05 s) y ventaja contra espadachines ×1.90 (antes ×2.25); costos intactos.
+- La versión del juego se muestra discretamente al pie de la pantalla de inicio y del menú de pausa.
 - Hub de Centro, Herrería y Universidad, con progreso de investigación instantáneo.
 - El encabezado durante la partida muestra el emblema y nombre traducido de la civilización activa.
 - Menú principal y menú de pausa para volver al inicio o cambiar idioma. La preferencia se guarda en el dispositivo.
