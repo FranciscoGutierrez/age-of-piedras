@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Age of Piedras v2.10 · Music & Sound Effects</title>
+<title>Tiny Kingdoms: Under Siege · v2.11</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -197,15 +197,15 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
 <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Age of Piedras">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Tiny Kingdoms">
 </head>
 <body>
 <div id="homeScreen" role="dialog" aria-modal="true" aria-labelledby="homeTitle">
   <div class="homeCard">
-    <div class="homeBadge" id="homeBadge">⚔️ UN PEQUEÑO GRAN RTS ⚔️</div>
+    <div class="homeBadge" id="homeBadge">🏰 LITTLE KINGDOMS. BIG TROUBLE. ⚔️</div>
     <div class="homeCastle" aria-hidden="true">🏰</div>
-    <h1 id="homeTitle">AGE OF<br>PIEDRAS</h1>
-    <p class="homeSubtitle" id="homeSubtitle">EL ASEDIO DE LAS PIEDRAS</p>
+    <h1 id="homeTitle">TINY<br>KINGDOMS</h1>
+    <p class="homeSubtitle" id="homeSubtitle">UNDER SIEGE</p>
     <p class="homeIntro" id="homeIntro">Construye tu reino, protege a tus aldeanos y resiste cinco oleadas hasta derrotar al Gran Ogro del Garrote.</p>
     <div class="homeLanguageLabel" id="homeLanguageLabel">IDIOMA / LANGUAGE <button type="button" id="homeSoundBtn" class="homeSoundBtn" aria-label="Silenciar música" aria-pressed="true">🔊</button></div>
     <div class="langSelector" role="group" aria-label="Idioma / Language">
@@ -237,7 +237,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
         <button type="button" data-difficulty="veryHard" aria-pressed="false" class="difficultyChoice">Muy difícil</button>
         <button type="button" data-difficulty="extreme" aria-pressed="false" class="difficultyChoice">Extremo</button>
       </div>
-      <p class="difficultyInfo" id="difficultyInfo" aria-live="polite">⚖️ La experiencia clásica de Age of Piedras.</p>
+      <p class="difficultyInfo" id="difficultyInfo" aria-live="polite">⚖️ La experiencia clásica de Tiny Kingdoms: Under Siege.</p>
     </section>
     <button id="homeStart" type="button">⚔️ Iniciar partida</button>
     <p class="homeFoot" id="homeFoot">🌾 RECOLECTA · 🔨 MEJORA · 🛡️ DEFIENDE</p>
@@ -245,7 +245,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
 </div>
 <div id="app">
 <header>
-  <div class="brand"><div class="logo">🏰</div><div class="brandText"><strong>AGE OF PIEDRAS</strong><small><span class="civSignature" id="civSignature"><span id="civHUDIcon" aria-hidden="true">🛡️</span><span id="civHUDName">Celtas</span></span><span class="gameDifficulty" id="gameModeSummary"> · Estándar</span></small></div></div>
+  <div class="brand"><div class="logo">🏰</div><div class="brandText"><strong>TINY KINGDOMS</strong><small><span class="civSignature" id="civSignature"><span id="civHUDIcon" aria-hidden="true">🛡️</span><span id="civHUDName">Celtas</span></span><span class="gameDifficulty" id="gameModeSummary"> · Estándar</span></small></div></div>
   <div class="stats" aria-label="Recursos">
     <div class="stat" title="Alimento">🌾 <span id="food">300</span></div>
     <div class="stat" title="Oro">🪙 <span id="gold">180</span></div>
@@ -255,8 +255,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
   <button class="roundBtn" id="menuBtn" aria-label="Pausa y ayuda">☰</button>
 </header>
 <main id="arena">
-  <canvas id="game" width="960" height="500" aria-label="Mapa interactivo de Age of Piedras"></canvas>
-  <div id="startupHelp" role="status"><strong>🏰 Iniciando Age of Piedras…</strong>Si el juego no aparece, es posible que estés en la vista previa de archivos, que no ejecuta el JavaScript del juego.<small>Para jugar en iPhone, abre esta página en Safari desde una dirección web normal.</small></div>
+  <canvas id="game" width="960" height="500" aria-label="Mapa interactivo de Tiny Kingdoms: Under Siege"></canvas>
+  <div id="startupHelp" role="status"><strong>🏰 Iniciando Tiny Kingdoms: Under Siege…</strong>Si el juego no aparece, es posible que estés en la vista previa de archivos, que no ejecuta el JavaScript del juego.<small>Para jugar en iPhone, abre esta página en Safari desde una dirección web normal.</small></div>
   <div id="gameFallback" role="alert"></div>
   <button id="researchBadge" type="button" aria-label="Ver investigación en curso" title="Ver progreso de la investigación"><span id="researchRing"><span id="researchCore"><span id="researchIcon">🏛️</span><span id="researchSeconds">9 s</span></span></span></button>
   <div id="brief"><span class="pill blue" id="friendly">🔵 0</span><span class="pill red" id="hostile">🔴 0</span></div>
@@ -290,7 +290,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
   <div id="rotationTip">↻ Gira tu teléfono para ampliar el campo de batalla</div>
   <div id="endScreen"><div class="endCard"><div class="endMode" id="endMode"></div><h1 id="endTitle">¡VICTORIA!</h1><p id="endText">Has derrotado al enemigo.</p><button id="again">⚔️ Nueva partida</button></div></div>
   <div id="menu"><div class="menuCard">
- <h2 id="pauseTitle">🏰 El Asedio de las Piedras</h2>
+ <h2 id="pauseTitle">🏰 Tiny Kingdoms: Under Siege</h2>
  <p id="howToPlay1">🌾 Empiezas con un castillo, una granja, una mina y dos aldeanos vulnerables. La recolección es automática: ¡protégelos!</p>
  <p id="howToPlay2">🎮 RTS continuo: produce unidades y compra mejoras durante la batalla. Supera cinco oleadas hasta enfrentarte al Gran Ogro del Garrote.</p>
  <p id="howToPlay3">⚔️ Combate automático: espada &gt; lanza &gt; arco &gt; espada. Los aldeanos pueden morir.</p>
@@ -326,9 +326,9 @@ const tr=(es,en)=>language==='en'?en:es;
 const translated={
  es:{
   intro:'Construye tu reino, protege a tus aldeanos y resiste cinco oleadas hasta derrotar al Gran Ogro del Garrote.',
-  start:'⚔️ Iniciar partida',foot:'🌾 RECOLECTA · 🔨 MEJORA · 🛡️ DEFIENDE',subtitle:'EL ASEDIO DE LAS PIEDRAS',badge:'⚔️ UN PEQUEÑO GRAN RTS ⚔️',
+  start:'⚔️ Iniciar partida',foot:'🌾 RECOLECTA · 🔨 MEJORA · 🛡️ DEFIENDE',subtitle:'UNDER SIEGE',badge:'🏰 LITTLE KINGDOMS. BIG TROUBLE. ⚔️',
   hubTitle:'📜 Hub de Mejoras',hubEyebrow:'TU REINO · ÁRBOL TECNOLÓGICO',center:'Centro',agesTab:'Edades',forge:'Herrería',university:'Universidad',upgrade:'Mejoras',buyAge:'Avanzar',buyUpgrade:'Investigar',
-  resume:'▶ Continuar',restart:'↻ Reiniciar partida',home:'⌂ Menú principal',pauseTitle:'🏰 El Asedio de las Piedras',
+  resume:'▶ Continuar',restart:'↻ Reiniciar partida',home:'⌂ Menú principal',pauseTitle:'🏰 Tiny Kingdoms: Under Siege',
   how1:'🌾 Empiezas con un castillo, una granja, una mina y dos aldeanos vulnerables. La recolección es automática: ¡protégelos!',
   how2:'🎮 RTS continuo: produce unidades y compra mejoras durante la batalla. Supera cinco oleadas hasta enfrentarte al Gran Ogro del Garrote.',
   how3:'⚔️ Combate automático: espada > lanza > arco > espada. Los aldeanos pueden morir.',
@@ -338,13 +338,13 @@ const translated={
   hubAria:'Abrir Hub de Mejoras: Centro, Herrería y Universidad',castleAria:'Ampliar castillo y añadir cinco espacios de población',closeHub:'Cerrar hub de mejoras',
   dialogTitle:'Tecnologías',categories:'Categorías de mejoras',researchAvailable:'Mejoras disponibles',maxPop:'Máximo 80',houses:'Casitas +5',
   level:'Nivel',done:'completado',available:'disponible',locked:'requiere avanzar de edad',levelLeft:'niveles desbloqueados pendientes',
-  bossTitle:'EL GRAN OGRO DEL GARROTE',playHelp:'🌾 Recolecta, 🔨 mejora, 🛡️ defiende',startup:'🏰 Iniciando Age of Piedras…',
+  bossTitle:'EL GRAN OGRO DEL GARROTE',playHelp:'🌾 Recolecta, 🔨 mejora, 🛡️ defiende',startup:'🏰 Iniciando Tiny Kingdoms: Under Siege…',
  },
  en:{
   intro:'Build your kingdom, protect your villagers, and survive five waves before facing the Great Club Ogre.',
-  start:'⚔️ Start Game',foot:'🌾 GATHER · 🔨 UPGRADE · 🛡️ DEFEND',subtitle:'THE SIEGE OF THE STONES',badge:'⚔️ A LITTLE BIG RTS ⚔️',
+  start:'⚔️ Start Game',foot:'🌾 GATHER · 🔨 UPGRADE · 🛡️ DEFEND',subtitle:'UNDER SIEGE',badge:'🏰 LITTLE KINGDOMS. BIG TROUBLE. ⚔️',
   hubTitle:'📜 Upgrade Hub',hubEyebrow:'YOUR KINGDOM · TECH TREE',center:'Town Center',agesTab:'Ages',forge:'Blacksmith',university:'University',upgrade:'Upgrades',buyAge:'Advance',buyUpgrade:'Research',
-  resume:'▶ Continue',restart:'↻ Restart Game',home:'⌂ Main Menu',pauseTitle:'🏰 The Siege of the Stones',
+  resume:'▶ Continue',restart:'↻ Restart Game',home:'⌂ Main Menu',pauseTitle:'🏰 Tiny Kingdoms: Under Siege',
   how1:'🌾 You begin with a castle, a farm, a mine, and two vulnerable villagers. Gathering is automatic: keep them safe!',
   how2:'🎮 Continuous RTS: train units and buy upgrades during battle. Survive five waves and defeat the Great Club Ogre.',
   how3:'⚔️ Automatic combat: sword > spear > bow > sword. Villagers can be killed.',
@@ -354,7 +354,7 @@ const translated={
   hubAria:'Open Upgrade Hub: Town Center, Blacksmith, and University',castleAria:'Expand castle by five population slots',closeHub:'Close upgrade hub',
   dialogTitle:'Technologies',categories:'Upgrade categories',researchAvailable:'Available upgrades',maxPop:'Max 80',houses:'Houses +5',
   level:'Level',done:'completed',available:'available',locked:'requires a new age',levelLeft:'unlocked levels remaining',
-  bossTitle:'THE GREAT CLUB OGRE',playHelp:'🌾 Gather, 🔨 upgrade, 🛡️ defend',startup:'🏰 Starting Age of Piedras…',
+  bossTitle:'THE GREAT CLUB OGRE',playHelp:'🌾 Gather, 🔨 upgrade, 🛡️ defend',startup:'🏰 Starting Tiny Kingdoms: Under Siege…',
  }
 };
 const unitNames={es:{villager:'Aldeano',sword:'Espadachín',spear:'Lancero',archer:'Arquero',ogre:'Gran Ogro'},en:{villager:'Villager',sword:'Swordsman',spear:'Spearman',archer:'Archer',ogre:'Great Ogre'}};
@@ -402,7 +402,7 @@ const CIVS={
 const DIFFICULTIES={
  veryEasy:{name:{es:'Muy fácil',en:'Very Easy'},info:{es:'🌿 Invasores menos numerosos y más débiles. Mucho tiempo para prepararte.',en:'🌿 Fewer, weaker invaders. Plenty of time to prepare.'},hp:.60,damage:.60,count:.70,first:42,interval:1.30},
  easy:{name:{es:'Fácil',en:'Easy'},info:{es:'🛡️ Menos enemigos, ligeramente más débiles y más preparación.',en:'🛡️ Fewer, slightly weaker enemies and more preparation time.'},hp:.80,damage:.82,count:.85,first:36,interval:1.13},
- standard:{name:{es:'Estándar',en:'Standard'},info:{es:'⚖️ La experiencia clásica de Age of Piedras.',en:'⚖️ The classic Age of Piedras experience.'},hp:1,damage:1,count:1,first:30,interval:1},
+ standard:{name:{es:'Estándar',en:'Standard'},info:{es:'⚖️ La experiencia clásica de Tiny Kingdoms: Under Siege.',en:'⚖️ The classic Tiny Kingdoms: Under Siege experience.'},hp:1,damage:1,count:1,first:30,interval:1},
  hard:{name:{es:'Difícil',en:'Hard'},info:{es:'⚔️ Más enemigos y golpes más fuertes. Menos tiempo para defenderte.',en:'⚔️ More enemies, harder hits, and less time to prepare.'},hp:1.20,damage:1.17,count:1.20,first:27,interval:.90},
  veryHard:{name:{es:'Muy difícil',en:'Very Hard'},info:{es:'🔥 Oleadas numerosas y resistentes; tendrás que optimizar tu economía.',en:'🔥 Large, sturdy waves; optimize your economy to survive.'},hp:1.42,damage:1.34,count:1.40,first:24,interval:.80},
  extreme:{name:{es:'Extremo',en:'Extreme'},info:{es:'💀 El ogro no perdona: máximo asedio y preparación mínima.',en:'💀 The ogre shows no mercy: relentless siege, minimum preparation.'},hp:1.72,damage:1.60,count:1.60,first:21,interval:.72}
