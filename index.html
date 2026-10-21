@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Tiny Kingdoms: Under Siege · v2.14</title>
+<title>Tiny Kingdoms: Under Siege · v2.15</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -329,7 +329,7 @@ const translated={
   start:'⚔️ Iniciar partida',foot:'🌾 RECOLECTA · 🔨 MEJORA · 🛡️ DEFIENDE',subtitle:'UNDER SIEGE',badge:'🏰 LITTLE KINGDOMS. BIG TROUBLE. ⚔️',
   hubTitle:'📜 Hub de Mejoras',hubEyebrow:'TU REINO · ÁRBOL TECNOLÓGICO',center:'Centro',agesTab:'Edades',forge:'Herrería',university:'Universidad',upgrade:'Mejoras',buyAge:'Avanzar',buyUpgrade:'Investigar',
   resume:'▶ Continuar',restart:'↻ Reiniciar partida',home:'⌂ Menú principal',pauseTitle:'🏰 Tiny Kingdoms: Under Siege',
-  how1:'🌾 Empiezas con un castillo, una granja, una mina y dos aldeanos vulnerables. La recolección es automática: ¡protégelos!',
+  how1:'🌾 Empiezas con un castillo, una granja, una mina y dos aldeanos. La recolección es automática. Después de 4 trabajadores por recurso, cada aldeano adicional rinde un poco menos.',
   how2:'🎮 RTS continuo: produce unidades y compra mejoras durante la batalla. Supera cinco oleadas hasta enfrentarte al Gran Ogro del Garrote.',
   how3:'⚔️ Combate automático: espada > lanza > arco > espada. Los aldeanos pueden morir.',
   how4:'🏠 Casitas amplían la población. Usa el Hub de Mejoras para subir de edad, mejorar tropas y fortalecer la economía.',
@@ -345,7 +345,7 @@ const translated={
   start:'⚔️ Start Game',foot:'🌾 GATHER · 🔨 UPGRADE · 🛡️ DEFEND',subtitle:'UNDER SIEGE',badge:'🏰 LITTLE KINGDOMS. BIG TROUBLE. ⚔️',
   hubTitle:'📜 Upgrade Hub',hubEyebrow:'YOUR KINGDOM · TECH TREE',center:'Town Center',agesTab:'Ages',forge:'Blacksmith',university:'University',upgrade:'Upgrades',buyAge:'Advance',buyUpgrade:'Research',
   resume:'▶ Continue',restart:'↻ Restart Game',home:'⌂ Main Menu',pauseTitle:'🏰 Tiny Kingdoms: Under Siege',
-  how1:'🌾 You begin with a castle, a farm, a mine, and two vulnerable villagers. Gathering is automatic: keep them safe!',
+  how1:'🌾 Start with a castle, a farm, a mine, and two villagers. Gathering is automatic. Beyond 4 workers per resource, each extra villager is a little less efficient.',
   how2:'🎮 Continuous RTS: train units and buy upgrades during battle. Survive five waves and defeat the Great Club Ogre.',
   how3:'⚔️ Automatic combat: sword > spear > bow > sword. Villagers can be killed.',
   how4:'🏠 Houses increase population. Open the Upgrade Hub to advance through ages, improve troops, and strengthen your economy.',
@@ -425,7 +425,7 @@ function renderSetupChoices(){
  $('civilizationGrid').setAttribute('aria-label',tr('Civilizaciones','Civilizations'));
  $('difficultyGrid').setAttribute('aria-label',tr('Dificultad','Difficulty'));
 }
-const troops={ogre:{hp:2100,speed:29,attack:34,range:37,cooldown:1.65,counter:null,cost:{food:0,gold:0},train:0},villager:{hp:50,speed:53,attack:0,range:0,cooldown:0,cost:{food:50,gold:0},train:1.1},sword:{hp:120,speed:66,attack:19,range:22,cooldown:.75,counter:'spear',cost:{food:60,gold:25},train:1.8},spear:{hp:100,speed:64,attack:15,range:29,cooldown:.72,counter:'archer',cost:{food:65,gold:15},train:1.65},archer:{hp:74,speed:64,attack:14,range:132,cooldown:1.05,counter:'sword',cost:{food:45,gold:35},train:2.1}};
+const troops={ogre:{hp:2100,speed:29,attack:34,range:37,cooldown:1.65,counter:null,cost:{food:0,gold:0},train:0},villager:{hp:50,speed:53,attack:0,range:0,cooldown:0,cost:{food:50,gold:0},train:1.1},sword:{hp:120,speed:66,attack:19,range:22,cooldown:.75,counter:'spear',cost:{food:60,gold:25},train:1.8},spear:{hp:100,speed:64,attack:15,range:29,cooldown:.72,counter:'archer',cost:{food:65,gold:15},train:1.65},archer:{hp:74,speed:64,attack:13,range:110,cooldown:1.20,counter:'sword',cost:{food:45,gold:35},train:2.1}};
 const labels={villager:'Aldeano',sword:'Espadachín',spear:'Lancero',archer:'Arquero',ogre:'Gran Ogro'},icons={villager:'👨‍🌾',sword:'⚔️',spear:'🔱',archer:'🏹',ogre:'👹'};
 const ages=['Edad Oscurita','Edad Feudalona','Edad Castillosa','Edad Imperialísima'];
 const ageCosts=[null,{food:320,gold:180,seconds:9},{food:460,gold:300,seconds:13},{food:730,gold:510,seconds:18}];
@@ -678,7 +678,7 @@ const rand=(a,b)=>a+Math.random()*(b-a),distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b
 const alive=team=>units.filter(u=>u.team===team&&u.hp>0),castle=team=>buildings.find(b=>b.team===team),resource=(team,type)=>resources.find(r=>r.team===team&&r.type===type);
 function notify(text,seconds=2.4){$('toast').textContent=text;$('toast').classList.add('show');toastTimer=seconds}
 function createUnit(type,team,x,y){const p=troops[type],baseHp=Math.round(p.hp*(team===0?civHP(type):1)),u={id:nextId++,type,team,x,y,hp:baseHp,max:baseHp,target:null,goal:null,mode:'idle',cooldown:rand(0,.2),retarget:0,work:0,carrying:0,resourceType:null,guard:{x,y},movingOrder:false};units.push(u);return u}
-function start(){activeCiv=selectedCiv;activeDifficulty=selectedDifficulty;persistSetup();popLimit=POP_START;tech=[{age:0,attack:0,armor:0,farm:0,mine:0,castle:0},{age:0,attack:0,armor:0,farm:0,mine:0,castle:0}];research=[null,null];techView=null;$('techOverlay').classList.remove('show');$('hubFeedback').textContent=tr('⚡ Mejoras instantáneas. El combate sigue mientras investigas.','⚡ Instant upgrades. Combat continues while you research.');units=[];buildings=[];resources=[];fx=[];queue=[];enemyQueue=[];selected=null;gameOver=false;victor=null;paused=false;time=0;enemyBrain=0;enemyFood=300;enemyGold=180;food=320;gold=200;nextId=1;last=performance.now();toastTimer=0;statsTimer=0;wave=0;waveActive=false;waveTimer=difficulty().first;nextAttackTotal=difficulty().first;pendingSpawns=[];spawnClock=0;bossWaiting=false;bossSpawned=false;announcedBoss=false;
+function start(){activeCiv=selectedCiv;activeDifficulty=selectedDifficulty;persistSetup();popLimit=POP_START;tech=[{age:0,attack:0,armor:0,farm:0,mine:0,castle:0},{age:0,attack:0,armor:0,farm:0,mine:0,castle:0}];research=[null,null];techView=null;$('techOverlay').classList.remove('show');$('hubFeedback').textContent=tr('⚡ Mejoras instantáneas. El combate sigue mientras investigas.','⚡ Instant upgrades. Combat continues while you research.');units=[];buildings=[];resources=[];fx=[];queue=[];enemyQueue=[];selected=null;gameOver=false;victor=null;paused=false;time=0;enemyBrain=0;enemyFood=300;enemyGold=180;food=260;gold=160;nextId=1;last=performance.now();toastTimer=0;statsTimer=0;wave=0;waveActive=false;waveTimer=difficulty().first;nextAttackTotal=difficulty().first;pendingSpawns=[];spawnClock=0;bossWaiting=false;bossSpawned=false;announcedBoss=false;
  buildings.push({team:0,x:W/2,y:H/2,hp:castleBaseForCiv(),maxHp:castleBaseForCiv(),damageTimer:0});
  resources.push({team:0,type:'food',x:W/2-142,y:H/2+78},{team:0,type:'gold',x:W/2+142,y:H/2+78});
  createUnit('villager',0,W/2-110,H/2+120);createUnit('villager',0,W/2+110,H/2+120);
@@ -841,9 +841,27 @@ function refreshTech(){
  }
  refreshAllLevelTracks();
 }
-function assignWork(u,dt){const foodNode=resource(u.team,'food'),goldNode=resource(u.team,'gold');if(!u.resourceType){const others=alive(u.team).filter(v=>v.type==='villager'&&v!==u);const f=others.filter(v=>v.resourceType==='food').length,g=others.filter(v=>v.resourceType==='gold').length;u.resourceType=f<=g?'food':'gold'}
+// Player economy: gentler early output and soft congestion beyond 4 workers per resource.
+// Counts are shared across villagers each frame to avoid per-villager O(n²) scans.
+function assignWork(u,dt,workers){
+ const foodNode=resource(u.team,'food'),goldNode=resource(u.team,'gold');
+ if(!u.resourceType){
+  u.resourceType=workers.food<=workers.gold?'food':'gold';
+  workers[u.resourceType]++;
+ }
  const node=u.resourceType==='food'?foodNode:goldNode;if(!node)return;
- const d=distance(u,node);if(d>29.5){walk(u,node,dt,29)}else{u.work+=dt;while(u.work>=.55){u.work-=.55;const value=2*(1+uniProductionBonus*(tech[u.team][node.type==='food'?'farm':'mine']||0))*(u.team===0?civGather(node.type):1);if(u.team===0){if(node.type==='food')food+=value;else gold+=value}else{if(node.type==='food')enemyFood+=value;else enemyGold+=value}if(Math.random()<.18)fx.push({x:u.x+rand(-6,6),y:u.y-16,t:.58,full:.58,kind:'gather',text:(node.type==='food'?'🌾':'🪙')+' +'+Math.round(value)})}}}
+ const d=distance(u,node);
+ if(d>29.5){walk(u,node,dt,29);return}
+ u.work+=dt;
+ while(u.work>=.80){
+  u.work-=.80;
+  const crowding=u.team===0?1/(1+.10*Math.max(0,workers[u.resourceType]-4)):1;
+  const value=2*crowding*(1+uniProductionBonus*(tech[u.team][node.type==='food'?'farm':'mine']||0))*(u.team===0?civGather(node.type):1);
+  if(u.team===0){if(node.type==='food')food+=value;else gold+=value}
+  else{if(node.type==='food')enemyFood+=value;else enemyGold+=value}
+  if(Math.random()<.18)fx.push({x:u.x+rand(-6,6),y:u.y-16,t:.58,full:.58,kind:'gather',text:(node.type==='food'?'🌾':'🪙')+' +'+value.toFixed(1)})
+ }
+}
 function walk(u,p,dt,stop=0){let d=distance(u,p);if(d<=stop+.1)return true;const speed=(u.speedMul||1)*troops[u.type].speed;const n=Math.min(d-stop,speed*dt);if(n>0){u.x=clamp(u.x+(p.x-u.x)/d*n,13,W-13);u.y=clamp(u.y+(p.y-u.y)/d*n,22,H-16)}return false}
 function chooseTarget(u){const foes=alive(1-u.team);if(!foes.length)return null;
  // Los invasores dan prioridad a defensores próximos; si el camino está libre, asedian el castillo.
@@ -855,7 +873,7 @@ function shot(u,target,damage){soundtrack.effect(u.type==='ogre'?'club':u.type==
  if(u.type==='ogre'){fx.push({kind:'shock',x:target.x,y:target.y,t:.55,full:.55});for(const ally of alive(0)){if(ally!==target&&distance(ally,target)<49){const splash=Math.max(1,reduced*.36);ally.hp=Math.max(0,ally.hp-splash);fx.push({kind:'hit',x:ally.x,y:ally.y-14,t:.55,text:'-'+Math.ceil(splash)})}}}}
 function combat(u,dt){u.cooldown=Math.max(0,u.cooldown-dt);u.retarget-=dt;
  if(!u.target||u.target.hp<=0||!units.includes(u.target)||u.target.team===u.team||u.retarget<=0){u.target=chooseTarget(u);u.retarget=.35}
- if(u.target){const enemy=u.target;if(walk(u,enemy,dt,troops[u.type].range*(u.team===0?civRange(u.type):1))){if(u.cooldown<=0){let d=troops[u.type].attack*(u.team===0?(1+tech[0].attack*.17)*civDamage(u.type):(u.attackMul||1));if(troops[u.type].counter===enemy.type)d*=2.25;shot(u,enemy,d);u.cooldown=troops[u.type].cooldown}}}
+ if(u.target){const enemy=u.target;if(walk(u,enemy,dt,troops[u.type].range*(u.team===0?civRange(u.type):1))){if(u.cooldown<=0){let d=troops[u.type].attack*(u.team===0?(1+tech[0].attack*.17)*civDamage(u.type):(u.attackMul||1));if(troops[u.type].counter===enemy.type)d*=u.type==='archer'?1.90:2.25;shot(u,enemy,d);u.cooldown=troops[u.type].cooldown}}}
  else if(u.team===0&&distance(u,u.guard)>10){walk(u,u.guard,dt,8)}else if(u.team===1){const c=castle(0);if(c&&walk(u,c,dt,52)){if(u.cooldown<=0){const damage=troops[u.type].attack*(u.attackMul||1);c.hp=Math.max(0,c.hp-damage);soundtrack.effect(u.type==='ogre'?'club':'castle');u.cooldown=troops[u.type].cooldown;fx.push({kind:'hit',x:c.x+rand(-18,18),y:c.y-37,t:.55,text:'🏰 -'+Math.ceil(damage)})}}}}
 // Curva incremental: las fases son deliberadamente invisibles para el jugador.
 // La primera oleada NO puede crear enemigos blindados.
@@ -913,9 +931,12 @@ function step(dt){
    spawnClock=pendingSpawns.length?pendingSpawns[0].delayBefore:0;
   }
  }
+ // Count gatherers once per tick; new villagers are distributed across food and gold.
+ const workers={0:{food:0,gold:0},1:{food:0,gold:0}};
+ for(const u of units)if(u.hp>0&&u.type==='villager'&&u.resourceType)workers[u.team][u.resourceType]++;
  for(const u of [...units]){
   if(u.hp<=0)continue;
-  if(u.type==='villager')assignWork(u,dt);
+  if(u.type==='villager')assignWork(u,dt,workers[u.team]);
   else combat(u,dt);
  }
  units=units.filter(u=>u.hp>0);
