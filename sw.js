@@ -1,5 +1,5 @@
-/* Tiny Kingdoms: Under Siege v2.11 - caché offline, alcance limitado a este repositorio */
-const CACHE = 'age-of-piedras-v211-tiny-kingdoms-1';
+/* Tiny Kingdoms: Under Siege v2.12 - caché offline, alcance limitado a este repositorio */
+const CACHE = 'age-of-piedras-v212-endgame-fanfare-1';
 const ASSETS = [
  './', './index.html', './manifest.webmanifest',
  './icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png',
