@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#111c18">
-<title>Age of Piedras v2.8.1 · Civilizations & Difficulty</title>
+<title>Age of Piedras v2.9 · Original Soundtrack</title>
 <style>
 :root{color-scheme:dark;--ink:#f6e9c8;--muted:#bbbcaa;--bg:#111c18;--panel:#243329;--line:#526448;--gold:#f4c75e;--accent:#8fbd82;--danger:#df7771}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -185,6 +185,13 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
   .brand .gameDifficulty{display:none}
 }
 @media (max-width:355px){.brand .logo{display:none}}
+/* v2.9 · Audio controls unobtrusive; accessible also before entering the game. */
+#soundBtn{font-size:16px;flex-shrink:0}
+.homeLanguageLabel:has(.homeSoundBtn){position:relative;display:flex;align-items:center;justify-content:center;min-height:22px}
+.homeSoundBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);border:1px solid #6a896d;background:#213a2c;border-radius:7px;min-width:36px;min-height:25px;font-size:14px;letter-spacing:0}
+#pauseSoundBtn{background:#2f5144!important;border-color:#86a989!important}
+@media(orientation:portrait) and (max-width:760px){#soundBtn{width:27px;height:29px;font-size:13px}header{gap:4px}}
+@media(orientation:landscape) and (max-height:460px){#soundBtn{width:27px;height:27px;font-size:13px}}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
@@ -199,7 +206,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
     <h1 id="homeTitle">AGE OF<br>PIEDRAS</h1>
     <p class="homeSubtitle" id="homeSubtitle">EL ASEDIO DE LAS PIEDRAS</p>
     <p class="homeIntro" id="homeIntro">Construye tu reino, protege a tus aldeanos y resiste cinco oleadas hasta derrotar al Gran Ogro del Garrote.</p>
-    <div class="homeLanguageLabel" id="homeLanguageLabel">IDIOMA / LANGUAGE</div>
+    <div class="homeLanguageLabel" id="homeLanguageLabel">IDIOMA / LANGUAGE <button type="button" id="homeSoundBtn" class="homeSoundBtn" aria-label="Silenciar música" aria-pressed="true">🔊</button></div>
     <div class="langSelector" role="group" aria-label="Idioma / Language">
       <button type="button" class="langChoice" data-lang-option="es" aria-pressed="true">🇲🇽 Español</button>
       <button type="button" class="langChoice" data-lang-option="en" aria-pressed="false">🇺🇸 English</button>
@@ -243,6 +250,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
     <div class="stat" title="Oro">🪙 <span id="gold">180</span></div>
     <div class="stat" title="Población propia">👥 <span id="pop">0</span><small id="popCap">/10</small></div><span class="ageChip" id="ageChip" title="Edad actual">🪵 Oscurita</span>
   </div>
+  <button type="button" class="roundBtn" id="soundBtn" aria-label="Silenciar música" aria-pressed="true">🔊</button>
   <button class="roundBtn" id="menuBtn" aria-label="Pausa y ayuda">☰</button>
 </header>
 <main id="arena">
@@ -287,7 +295,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:8px;min
  <p id="howToPlay3">⚔️ Combate automático: espada &gt; lanza &gt; arco &gt; espada. Los aldeanos pueden morir.</p>
  <p id="howToPlay4">🏠 Casitas amplían la población. Usa el Hub de Mejoras para subir de edad, mejorar tropas y fortalecer la economía.</p>
  <div class="menuLang"><div class="homeLanguageLabel" id="pauseLanguageLabel">IDIOMA / LANGUAGE</div><div class="langSelector" role="group" aria-label="Idioma / Language"><button type="button" class="langChoice" data-lang-option="es" aria-pressed="true">🇲🇽 Español</button><button type="button" class="langChoice" data-lang-option="en" aria-pressed="false">🇺🇸 English</button></div></div>
- <button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button><button id="homeFromPause">⌂ Menú principal</button>
+ <button type="button" id="pauseSoundBtn" aria-label="Silenciar música" aria-pressed="true">🔊 Música: activada</button><button id="resume">▶ Continuar</button><button id="newGame">↻ Reiniciar partida</button><button id="homeFromPause">⌂ Menú principal</button>
  </div></div>
 </main>
 <footer id="controls">
@@ -377,6 +385,7 @@ function applyLanguage(){
  if(typeof updateHUD==='function'&&tech.length)updateHUD();
  if(techView)selectHubTab(techView);
  renderSetupChoices();
+ soundtrack.updateUI();
 }
 function setLanguage(value){if(value!=='es'&&value!=='en')return;language=value;try{localStorage.setItem('ageOfPiedrasLanguage',value)}catch(e){}applyLanguage()}
 
@@ -432,6 +441,122 @@ const villagerLimitReached=()=>villagerCount()>=VILLAGER_CAP;
 const forgeCost=(type,level)=>({food:(type==='attack'?95:80)+level*(type==='attack'?80:70),gold:(type==='attack'?60:55)+level*(type==='attack'?70:60),seconds:5+level*2});
 let tech=[],research=[],techView=null,popLimit=POP_START,atHome=true;
 let units=[],buildings=[],resources=[],fx=[],queue=[],enemyQueue=[],selected=null,gameOver=false,victor=null,paused=false,time=0,enemyBrain=0,enemyFood=300,enemyGold=180,food=300,gold=180,nextId=1,last=0,toastTimer=0,statsTimer=0;
+// v2.9 · Original, self-contained procedural medieval soundtrack (Web Audio).
+// One musical score, two arrangements: pastoral lute/horn during peace,
+// percussion and quicker harmonies during enemy waves. No external downloads.
+const soundtrack=(()=>{
+ const KEY='agePiedrasMusicEnabled';
+ let enabled=true,ctx=null,master=null,step=0,nextTime=0,mode=null,noise=null;
+ try{enabled=localStorage.getItem(KEY)!=='off'}catch(e){}
+ const peaceful=[
+  69,72,74,null,76,74,72,69, 67,null,69,72,74,72,69,null,
+  65,67,69,72,69,null,67,65, 64,65,67,69,62,null,69,null
+ ];
+ const battle=[
+  74,74,77,76,74,72,69,72, 74,76,77,79,77,76,74,72,
+  69,72,74,76,77,76,74,72, 73,76,74,73,69,72,74,null
+ ];
+ const chords=[
+  [50,57,62,65], // Dm
+  [48,55,60,64], // C
+  [46,53,58,62], // Bb
+  [45,52,57,61]  // A7
+ ];
+ const frequency=n=>440*Math.pow(2,(n-69)/12);
+ function makeContext(){
+  if(ctx)return true;
+  const C=window.AudioContext||window.webkitAudioContext;
+  if(!C)return false;
+  try{
+   ctx=new C();master=ctx.createGain();master.gain.value=0;
+   master.connect(ctx.destination);
+   noise=ctx.createBuffer(1,Math.round(ctx.sampleRate*.18),ctx.sampleRate);
+   const samples=noise.getChannelData(0);let seed=1234567;
+   for(let i=0;i<samples.length;i++){
+    seed=(seed*1664525+1013904223)>>>0;
+    samples[i]=(seed/2147483648-1)*Math.pow(1-i/samples.length,1.5);
+   }
+   return true;
+  }catch(e){console.warn('Soundtrack unavailable',e);ctx=null;return false}
+ }
+ function gainTo(v){if(!ctx||!master)return;const t=ctx.currentTime;master.gain.cancelScheduledValues(t);master.gain.setTargetAtTime(v,t,.04)}
+ function note(midi,at,length,instrument,level){
+  if(!ctx)return;
+  const start=Math.max(at,ctx.currentTime+.006),duration=Math.max(.13,length);
+  const amp=ctx.createGain(),osc=ctx.createOscillator(),filter=ctx.createBiquadFilter();
+  const lead=instrument==='lute',pad=instrument==='pad';
+  osc.type=lead?'triangle':pad?'sine':'triangle';
+  osc.frequency.setValueAtTime(frequency(midi),start);
+  filter.type='lowpass';filter.frequency.value=lead?2200:pad?840:1250;
+  amp.gain.setValueAtTime(.0001,start);
+  amp.gain.exponentialRampToValueAtTime(Math.max(.0002,level),start+(pad?.17:.012));
+  if(lead){amp.gain.exponentialRampToValueAtTime(Math.max(.0001,level*.38),start+Math.min(duration*.47,.26))}
+  amp.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  osc.connect(filter);filter.connect(amp);amp.connect(master);
+  osc.start(start);osc.stop(start+duration+.025);
+  osc.onended=()=>{osc.disconnect();filter.disconnect();amp.disconnect()};
+ }
+ function drum(at,accent){
+  const start=Math.max(at,ctx.currentTime+.006),dur=accent?.23:.14;
+  const osc=ctx.createOscillator(),g=ctx.createGain();
+  osc.type='sine';osc.frequency.setValueAtTime(accent?135:90,start);osc.frequency.exponentialRampToValueAtTime(accent?52:62,start+dur);
+  g.gain.setValueAtTime(accent?.16:.09,start);g.gain.exponentialRampToValueAtTime(.0001,start+dur);
+  osc.connect(g);g.connect(master);osc.start(start);osc.stop(start+dur+.02);
+  osc.onended=()=>{osc.disconnect();g.disconnect()};
+  if(noise&&accent){const n=ctx.createBufferSource(),f=ctx.createBiquadFilter(),v=ctx.createGain();n.buffer=noise;f.type='lowpass';f.frequency.value=650;v.gain.value=.026;n.connect(f);f.connect(v);v.connect(master);n.start(start);n.stop(start+.16);n.onended=()=>{n.disconnect();f.disconnect();v.disconnect()}}
+ }
+ function beat(at,s,track){
+  const fight=track!=='peace',chord=chords[Math.floor(s/8)%4],melody=(fight?battle:peaceful)[s%32];
+  const halfBeat=60/(fight?126:96)/2;
+  const transpose=track==='boss'?-12:0;
+  if(melody!=null)note(melody+transpose,at,halfBeat*(fight?1.18:1.7),'lute',fight?.20:.17);
+  if(s%2===0){const arp=[0,2,1,3,0,2,3,1][Math.floor(s/2)%8];note(chord[arp]+12,at,halfBeat*1.5,'lute',fight?.077:.087)}
+  if(s%4===0)note(chord[0]-12,at,halfBeat*(fight?4.2:5.5),'bass',fight?.13:.12);
+  if(s%8===0){note(chord[0],at,halfBeat*7.3,'pad',fight?.048:.065);note(chord[2],at,halfBeat*7.3,'pad',fight?.032:.045)}
+  if(fight){if(s%4===0)drum(at,s%8===0);else if(s%4===2)drum(at,false)}
+  else if(s%8===0)drum(at,false);
+ }
+ function active(){return enabled&&!atHome&&!paused&&!gameOver}
+ function begin(){
+  if(!enabled){updateUI();return}
+  if(!makeContext()){updateUI();return}
+  const activate=()=>{
+   if(!ctx||!enabled)return;
+   gainTo(active()?.30:0);
+   nextTime=ctx.currentTime+.06;step=0;mode=null;
+  };
+  if(ctx.state==='suspended')ctx.resume().then(activate).catch(()=>{});
+  else activate();
+  updateUI();
+ }
+ function pause(){gainTo(0);nextTime=0;mode=null}
+ function tick(){
+  if(!active()||!ctx||ctx.state!=='running')return;
+  const currentMode=bossSpawned?'boss':waveActive?'battle':'peace';
+  if(mode!==currentMode){mode=currentMode;step=0;nextTime=Math.max(ctx.currentTime+.035,nextTime&&nextTime<ctx.currentTime+.15?nextTime:0)}
+  const duration=60/(currentMode==='peace'?96:126)/2;
+  if(nextTime<ctx.currentTime-.12){nextTime=ctx.currentTime+.025;step=0}
+  let count=0;
+  while(nextTime<ctx.currentTime+.23&&count++<4){beat(nextTime,step,currentMode);step=(step+1)%32;nextTime+=duration}
+ }
+ function toggle(){
+  enabled=!enabled;
+  try{localStorage.setItem(KEY,enabled?'on':'off')}catch(e){}
+  if(enabled&&active())begin();else pause();
+  updateUI();
+ }
+ function updateUI(){
+  const icon=enabled?'🔊':'🔇';
+  const label=enabled?tr('Silenciar música','Mute music'):tr('Activar música','Enable music');
+  for(const id of ['soundBtn','homeSoundBtn','pauseSoundBtn']){
+   const button=$(id);if(!button)continue;
+   button.textContent=id==='pauseSoundBtn'?(enabled?tr('🔊 Música: activada','🔊 Music: on'):tr('🔇 Música: desactivada','🔇 Music: off')):icon;
+   button.setAttribute('aria-label',label);button.title=label;button.setAttribute('aria-pressed',String(enabled));
+  }
+ }
+ return {begin,pause,tick,toggle,updateUI,enabled:()=>enabled,state:()=>ctx?ctx.state:'not-created'};
+})();
+
 const FIRST_ATTACK_DELAY=30;
 const NEXT_ATTACK_DELAY=[0,20,22,24,27];
 let wave=0,waveActive=false,waveTimer=FIRST_ATTACK_DELAY,nextAttackTotal=FIRST_ATTACK_DELAY,pendingSpawns=[],spawnClock=0,bossWaiting=false,bossSpawned=false,announcedBoss=false;
@@ -719,7 +844,7 @@ function spawnInvader({type,side,tier=0}){
 }
 function spawnBoss(){bossSpawned=true;bossWaiting=false;const u=createUnit('ogre',1,W/2,28);u.max=Math.round(u.max*difficulty().hp);u.hp=u.max;u.attackMul=difficulty().damage;u.guard={x:W/2,y:H/2};notify(tr('👹 ¡LLEGÓ EL GRAN OGRO DEL GARROTE! ¡DERROTALO!','👹 THE GREAT CLUB OGRE IS HERE! DEFEAT HIM!'),6);updateHUD()}
 function finish(w){
- if(gameOver)return;gameOver=true;victor=w;
+ if(gameOver)return;gameOver=true;victor=w;soundtrack.pause();
  $('endTitle').textContent=w===0?tr('🏆 ¡VICTORIA!','🏆 VICTORY!'):w===1?tr('💀 EL CASTILLO HA CAÍDO','💀 THE CASTLE HAS FALLEN'):tr('⚖️ EMPATE','⚖️ DRAW');
  $('endText').textContent=w===0?tr('¡Sobreviviste a las cinco oleadas y derrotaste al Gran Ogro del Garrote! La aldea entera canta WOLOLO.','You survived all five waves and defeated the Great Club Ogre! The entire village chants WOLOLO.'):w===1?tr('El enemigo derribó tu castillo. Invierte en soldados y mejoras de la Universidad.','The enemy destroyed your castle. Invest in soldiers and University upgrades.'):tr('Fin del asedio.','The siege is over.');
  $('endMode').textContent=civ().mark+' '+civ().name[language]+' · '+difficulty().name[language];$('endScreen').classList.add('show');updateResearchBadge();updateHUD();
@@ -808,12 +933,13 @@ $('upgradeAttack').addEventListener('click',()=>requestResearch('attack'));
 $('upgradeArmor').addEventListener('click',()=>requestResearch('armor'));
 for(const type of ['farm','mine','castle'])$('upgrade'+type[0].toUpperCase()+type.slice(1)).addEventListener('click',()=>requestResearch(type));
 for(const b of btns)b.addEventListener('click',()=>train(b.dataset.unit));
-function toggleMenu(state){if(state)closeTech();paused=state;$('menu').classList.toggle('show',state);last=performance.now()}
+function toggleMenu(state){if(state)closeTech();paused=state;$('menu').classList.toggle('show',state);if(state)soundtrack.pause();else soundtrack.begin();last=performance.now()}
 $('menuBtn').addEventListener('click',()=>{if(!atHome)toggleMenu(true)});
 $('resume').addEventListener('click',()=>toggleMenu(false));
-$('newGame').addEventListener('click',start);$('again').addEventListener('click',start);
-$('homeStart').addEventListener('click',()=>{start();$('homeStart').blur()});
-$('homeFromPause').addEventListener('click',()=>{closeTech();paused=true;atHome=true;$('menu').classList.remove('show');$('homeScreen').hidden=false;last=performance.now()});
+$('newGame').addEventListener('click',()=>{start();soundtrack.begin()});$('again').addEventListener('click',()=>{start();soundtrack.begin()});
+$('homeStart').addEventListener('click',()=>{start();soundtrack.begin();$('homeStart').blur()});
+$('homeFromPause').addEventListener('click',()=>{soundtrack.pause();closeTech();paused=true;atHome=true;$('menu').classList.remove('show');$('homeScreen').hidden=false;last=performance.now()});
+for(const b of ['soundBtn','homeSoundBtn','pauseSoundBtn'])$(b).addEventListener('click',()=>soundtrack.toggle());
 for(const langBtn of document.querySelectorAll('[data-lang-option]'))langBtn.addEventListener('click',()=>setLanguage(langBtn.dataset.langOption));
 for(const button of document.querySelectorAll('[data-civ]'))button.addEventListener('click',()=>{if(!atHome)return;selectedCiv=button.dataset.civ;persistSetup();renderSetupChoices()});
 for(const button of document.querySelectorAll('[data-difficulty]'))button.addEventListener('click',()=>{if(!atHome)return;selectedDifficulty=button.dataset.difficulty;persistSetup();renderSetupChoices()});
@@ -829,13 +955,13 @@ if(window.visualViewport)window.visualViewport.addEventListener('resize',resize)
 if(window.ResizeObserver)new ResizeObserver(resize).observe($('arena'));
 function frame(now){
  let dt=Math.min(.06,Math.max(0,(now-last)/1000));last=now;
- try{step(dt);render()}catch(err){showFatal(err);return}
+ try{step(dt);soundtrack.tick();render()}catch(err){showFatal(err);return}
  requestAnimationFrame(frame)
 }
 function showFatal(err){const fallback=$('gameFallback');fallback.textContent=tr('Error en el juego: ','Game error: ')+(err&&err.message?err.message:String(err))+tr(' · Actualiza la página o prueba Chrome.',' · Refresh the page or try Chrome.');fallback.style.display='block';console.error(err)}
 window.addEventListener('unhandledrejection',function(e){showFatal(e.reason)});
 window.addEventListener('error',e=>{notify('Error: '+e.message,10)});
-window.__ageDebug={language:()=>language,setLanguage,home:()=>atHome,civilization:()=>activeCiv,difficulty:()=>activeDifficulty,selectCiv:key=>{if(CIVS[key]){selectedCiv=key;renderSetupChoices()}},selectDifficulty:key=>{if(DIFFICULTIES[key]){selectedDifficulty=key;renderSetupChoices()}},goHome:()=>{$('homeFromPause').click()},state:()=>({food,gold,enemyFood,enemyGold,civ:activeCiv,difficulty:activeDifficulty,modifier:difficulty(),tech:tech.map(x=>({...x})),research:research.map(x=>x?{...x}:null),resources:resources.map(r=>({...r})),pop:occupiedPop(),popReserved:reservedPop(),popLimit,popMax:POP_MAX,castleStage:(popLimit-POP_START)/POP_STEP,enemies:alive(1).length,queue:queue.length,enemyQueue:enemyQueue.length,gameOver,paused,units:units.map(u=>({type:u.type,team:u.team,x:u.x,y:u.y,hp:u.hp,max:u.max})),wave,waveActive,waveTimer,pending:pendingSpawns.length,bossSpawned,castleHp:castle(0)?.hp,castleMaxHp:castle(0)?.maxHp,villagerCount:villagerCount(),nextAttackTotal}),wavePlan:buildWaveSpawns,train,buyHouse,start,finish,step,beginResearch,openTech,closeTech,beginWave,spawnInvader,spawnBoss,launchWave};
+window.__ageDebug={music:{enabled:soundtrack.enabled,state:soundtrack.state},language:()=>language,setLanguage,home:()=>atHome,civilization:()=>activeCiv,difficulty:()=>activeDifficulty,selectCiv:key=>{if(CIVS[key]){selectedCiv=key;renderSetupChoices()}},selectDifficulty:key=>{if(DIFFICULTIES[key]){selectedDifficulty=key;renderSetupChoices()}},goHome:()=>{$('homeFromPause').click()},state:()=>({food,gold,enemyFood,enemyGold,civ:activeCiv,difficulty:activeDifficulty,modifier:difficulty(),tech:tech.map(x=>({...x})),research:research.map(x=>x?{...x}:null),resources:resources.map(r=>({...r})),pop:occupiedPop(),popReserved:reservedPop(),popLimit,popMax:POP_MAX,castleStage:(popLimit-POP_START)/POP_STEP,enemies:alive(1).length,queue:queue.length,enemyQueue:enemyQueue.length,gameOver,paused,units:units.map(u=>({type:u.type,team:u.team,x:u.x,y:u.y,hp:u.hp,max:u.max})),wave,waveActive,waveTimer,pending:pendingSpawns.length,bossSpawned,castleHp:castle(0)?.hp,castleMaxHp:castle(0)?.maxHp,villagerCount:villagerCount(),nextAttackTotal}),wavePlan:buildWaveSpawns,train,buyHouse,start,finish,step,beginResearch,openTech,closeTech,beginWave,spawnInvader,spawnBoss,launchWave};
 try{
  start();paused=true;atHome=true;$('homeScreen').hidden=false;applyLanguage();resize();render();
  $('startupHelp').hidden=true;
