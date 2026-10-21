@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Age of Piedras — El Asedio",
-  "short_name": "Age Piedras",
-  "description": "Defiende el castillo, recolecta recursos y enfréntate a cinco oleadas y al Gran Ogro del Garrote.",
+  "name": "Tiny Kingdoms: Under Siege",
+  "short_name": "Tiny Kingdoms",
+  "description": "Little Kingdoms. Big Trouble. Defiende tu pequeño reino, supera cinco oleadas y derrota al Gran Ogro del Garrote.",
   "lang": "es-MX",
   "start_url": "./",
   "scope": "./",
